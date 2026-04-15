@@ -37,9 +37,13 @@ export default function SignupAdvisor() {
     setTimeout(() => setKeyCopied(false), 2000);
   };
 
-  const continueToApp = () => {
-    signup({ name: form.name, email: form.email, isAdvisor: true, chapterId: 1 });
-    navigate('/dashboard');
+  const continueToApp = async () => {
+    const result = await signup({ name: form.name, email: form.email, password: form.password, isAdvisor: true, chapterId: 1 });
+    if (result.success) {
+      navigate('/dashboard');
+    } else {
+      setError(result.error);
+    }
   };
 
   if (generatedKey) {
@@ -71,6 +75,12 @@ export default function SignupAdvisor() {
             <strong>Save this key!</strong> Students will need it to join your chapter.
             You can regenerate it from the admin dashboard if needed.
           </div>
+
+          {error && (
+            <div className="mt-4 rounded-lg bg-danger-light p-3 text-left text-xs text-danger dark:bg-danger/10">
+              {error}
+            </div>
+          )}
 
           <button
             onClick={continueToApp}

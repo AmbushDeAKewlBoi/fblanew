@@ -36,7 +36,7 @@ export default function SignupStudent() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.password || !form.chapterKey) {
       setError('Please fill in all fields.');
@@ -46,8 +46,12 @@ export default function SignupStudent() {
       setError('Please enter a valid chapter key.');
       return;
     }
-    signup({ name: form.name, email: form.email, isAdvisor: false, chapterId: 1 });
-    navigate('/dashboard');
+    const result = await signup({ name: form.name, email: form.email, password: form.password, isAdvisor: false, chapterId: 1 });
+    if (result.success) {
+      navigate('/dashboard');
+    } else {
+      setError(result.error);
+    }
   };
 
   return (
