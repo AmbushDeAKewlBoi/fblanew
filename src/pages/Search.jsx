@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search as SearchIcon } from 'lucide-react';
-import { RESOURCES } from '../data/mockResources';
+import { useResources } from '../hooks/useResources';
 import ResourceCard from '../components/ResourceCard';
 import FilterSidebar from '../components/FilterSidebar';
 
@@ -16,20 +16,24 @@ export default function Search() {
     sort: 'recent',
   });
 
+  const { resources, loading } = useResources();
+
   const allTags = useMemo(() => {
     const tags = new Set();
-    RESOURCES.forEach(r => r.tags.forEach(t => tags.add(t)));
+    resources.forEach(r => {
+      if (r.tags) r.tags.forEach(t => tags.add(t));
+    });
     return [...tags].sort();
-  }, []);
+  }, [resources]);
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
     const q = query.toLowerCase();
-    let filtered = RESOURCES.filter(r =>
-      r.title.toLowerCase().includes(q) ||
-      r.description.toLowerCase().includes(q) ||
-      r.tags.some(t => t.toLowerCase().includes(q)) ||
-      r.event.toLowerCase().includes(q)
+    let filtered = resources.filter(r =>
+      (r.title || '').toLowerCase().includes(q) ||
+      (r.description || '').toLowerCase().includes(q) ||
+      (r.tags && r.tags.some(t => t.toLowerCase().includes(q))) ||
+      (r.event || '').toLowerCase().includes(q)
     );
 
     if (filters.types.length > 0) {
@@ -81,8 +85,11 @@ export default function Search() {
             {results.length} result{results.length !== 1 ? 's' : ''} for "<span className="font-medium text-warm-700 dark:text-warm-200">{query}</span>"
           </p>
 
-          <div className="flex gap-8">
-            <div className="hidden lg:block">
+          {loading ? (
+            <div className="flex justify-center py-10 text-warm-500">Searching live database...</div>
+          ) : (
+            <div className="flex gap-8">
+              <div className="hidden lg:block">
               <FilterSidebar filters={filters} setFilters={setFilters} tagOptions={allTags} />
             </div>
             <div className="flex-1">
@@ -98,8 +105,9 @@ export default function Search() {
                   <p className="mt-1 text-sm text-warm-400">Try a different search term.</p>
                 </div>
               )}
+              </div>
             </div>
-          </div>
+          )}
         </>
       ) : (
         <div className="py-16 text-center">

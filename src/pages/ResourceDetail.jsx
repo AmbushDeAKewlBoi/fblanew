@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ThumbsUp, Download, FileText, Clock, User as UserIcon, Eye, Tag, Share2 } from 'lucide-react';
-import { getResourceById, getResourcesByEvent } from '../data/mockResources';
-import { getUserById, getChapterById } from '../data/mockUsers';
+import { useResources } from '../hooks/useResources';
+import { doc, updateDoc, increment } from 'firebase/firestore';
+import { db } from '../config/firebase';
 import VisibilityBadge from '../components/VisibilityBadge';
-import ResourceCard from '../components/ResourceCard';
 
 function formatFileSize(bytes) {
   if (bytes < 1024) return bytes + ' B';
@@ -28,9 +28,16 @@ const TYPE_LABELS = {
 
 export default function ResourceDetail() {
   const { id } = useParams();
-  const resource = getResourceById(parseInt(id));
+  const { resources, loading } = useResources();
+  
+  const resource = resources.find(r => String(r.id) === String(id));
+  const related = resource ? resources.filter(r => r.event === resource.event && r.id !== resource.id).slice(0, 3) : [];
+
   const [upvoted, setUpvoted] = useState(false);
-  const [upvoteCount, setUpvoteCount] = useState(resource?.upvoteCount || 0);
+
+  if (loading) {
+    return <div className="flex justify-center py-20 text-warm-500">Loading resource...</div>;
+  }
 
   if (!resource) {
     return (
@@ -43,17 +50,29 @@ export default function ResourceDetail() {
     );
   }
 
-  const uploader = getUserById(resource.uploaderId);
-  const chapter = getChapterById(resource.chapterId);
-  const related = getResourcesByEvent(resource.eventSlug).filter(r => r.id !== resource.id).slice(0, 3);
-
-  const handleUpvote = () => {
-    if (upvoted) {
-      setUpvoteCount(prev => prev - 1);
-    } else {
-      setUpvoteCount(prev => prev + 1);
+  const handleUpvote = async () => {
+    try {
+      const modifier = upvoted ? -1 : 1;
+      setUpvoted(!upvoted);
+      await updateDoc(doc(db, 'resources', resource.id), {
+        upvoteCount: increment(modifier)
+      });
+    } catch (err) {
+      console.error(err);
     }
-    setUpvoted(!upvoted);
+  };
+
+  const handleDownload = async () => {
+    try {
+      await updateDoc(doc(db, 'resources', resource.id), {
+        downloadCount: increment(1)
+      });
+      if (resource.downloadUrl) {
+         window.open(resource.downloadUrl, '_blank');
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -83,9 +102,8 @@ export default function ResourceDetail() {
             <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-warm-500 dark:text-warm-400">
               <span className="flex items-center gap-1.5">
                 <UserIcon size={14} />
-                {resource.isAnonymous ? 'Anonymous' : uploader?.name}
+                {resource.isAnonymous ? 'Anonymous' : 'Community Member'}
               </span>
-              <span>{chapter?.name}</span>
               <span className="flex items-center gap-1.5">
                 <Clock size={14} />
                 {formatDate(resource.createdAt)}
@@ -109,13 +127,13 @@ export default function ResourceDetail() {
             {/* Stats */}
             <div className="mt-6 flex items-center gap-6 border-t border-warm-100 pt-6 dark:border-warm-800">
               <div className="flex items-center gap-1.5 text-sm text-warm-500">
-                <ThumbsUp size={16} /> {upvoteCount} upvotes
+                <ThumbsUp size={16} /> {resource.upvoteCount || 0} upvotes
               </div>
               <div className="flex items-center gap-1.5 text-sm text-warm-500">
-                <Download size={16} /> {resource.downloadCount} downloads
+                <Download size={16} /> {resource.downloadCount || 0} downloads
               </div>
               <div className="flex items-center gap-1.5 text-sm text-warm-500">
-                <Eye size={16} /> {resource.viewCount} views
+                <Eye size={16} /> {resource.viewCount || 0} views
               </div>
             </div>
 
@@ -132,9 +150,9 @@ export default function ResourceDetail() {
                 <ThumbsUp size={16} className={upvoted ? 'fill-current upvote-animate' : ''} />
                 {upvoted ? 'Upvoted' : 'Upvote'}
               </button>
-              <button className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-navy-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-navy-700 dark:bg-navy-600 dark:hover:bg-navy-500">
+              <button onClick={handleDownload} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-navy-800 px-5 py-2.5 text-sm font-semibold text-white hover:bg-navy-700 dark:bg-navy-600 dark:hover:bg-navy-500">
                 <Download size={16} />
-                Download {resource.fileExtension.replace('.', '').toUpperCase()} ({formatFileSize(resource.fileSizeBytes)})
+                Download {(resource.fileExtension || '').replace('.', '').toUpperCase()} {resource.fileSizeBytes ? `(${formatFileSize(resource.fileSizeBytes)})` : ''}
               </button>
             </div>
           </div>
@@ -157,8 +175,8 @@ export default function ResourceDetail() {
                     {r.title}
                   </h4>
                   <div className="mt-2 flex items-center gap-3 text-xs text-warm-400">
-                    <span className="flex items-center gap-1"><ThumbsUp size={10} /> {r.upvoteCount}</span>
-                    <span className="flex items-center gap-1"><Download size={10} /> {r.downloadCount}</span>
+                    <span className="flex items-center gap-1"><ThumbsUp size={10} /> {r.upvoteCount || 0}</span>
+                    <span className="flex items-center gap-1"><Download size={10} /> {r.downloadCount || 0}</span>
                   </div>
                 </Link>
               ))}

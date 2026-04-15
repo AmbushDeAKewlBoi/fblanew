@@ -2,14 +2,20 @@ import { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, SlidersHorizontal, X } from 'lucide-react';
 import { getEventBySlug } from '../data/mockEvents';
-import { getResourcesByEvent } from '../data/mockResources';
+import { useResources } from '../hooks/useResources';
 import ResourceCard from '../components/ResourceCard';
 import FilterSidebar from '../components/FilterSidebar';
 
 export default function EventDetail() {
   const { slug } = useParams();
   const event = getEventBySlug(slug);
-  const allResources = getResourcesByEvent(slug);
+  const { resources, loading } = useResources();
+  
+  const allResources = useMemo(() => {
+    if (!event) return [];
+    return resources.filter(r => r.event === event.name);
+  }, [resources, event]);
+
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
     types: [],
@@ -20,7 +26,9 @@ export default function EventDetail() {
 
   const allTags = useMemo(() => {
     const tags = new Set();
-    allResources.forEach(r => r.tags.forEach(t => tags.add(t)));
+    allResources.forEach(r => {
+      if (r.tags) r.tags.forEach(t => tags.add(t));
+    });
     return [...tags].sort();
   }, [allResources]);
 
@@ -34,7 +42,7 @@ export default function EventDetail() {
       result = result.filter(r => filters.visibility.includes(r.visibilityLevel));
     }
     if (filters.tags.length > 0) {
-      result = result.filter(r => filters.tags.some(t => r.tags.includes(t)));
+      result = result.filter(r => r.tags && filters.tags.some(t => r.tags.includes(t)));
     }
 
     if (filters.sort === 'recent') {
@@ -67,9 +75,13 @@ export default function EventDetail() {
           <ArrowLeft size={14} /> Events
         </Link>
         <h1 className="text-2xl font-bold text-warm-900 dark:text-warm-100">{event.name}</h1>
-        <p className="mt-1 text-sm text-warm-500 dark:text-warm-400">
-          {filtered.length} resource{filtered.length !== 1 ? 's' : ''} available
-        </p>
+        {loading ? (
+           <p className="mt-1 text-sm text-warm-500">Loading resources...</p>
+        ) : (
+           <p className="mt-1 text-sm text-warm-500 dark:text-warm-400">
+             {filtered.length} resource{filtered.length !== 1 ? 's' : ''} available
+           </p>
+        )}
       </div>
 
       {/* Mobile filter toggle */}

@@ -2,19 +2,23 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Upload, ThumbsUp, Download, TrendingUp, ArrowRight, Flame } from 'lucide-react';
 import ResourceCard from '../components/ResourceCard';
-import { getRecentResources, getPopularResources, getResourcesByUser } from '../data/mockResources';
+import { useResources } from '../hooks/useResources';
 
 export default function Dashboard() {
   const { user, chapter } = useAuth();
-  const recentResources = getRecentResources(6);
-  const popularResources = getPopularResources(3);
-  const myResources = user ? getResourcesByUser(user.id) : [];
+  const { resources, loading } = useResources();
+
+  const recentResources = [...resources].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 6);
+  const popularResources = [...resources].sort((a, b) => b.viewCount - a.viewCount).slice(0, 3);
+  const myResources = user ? resources.filter(r => r.uploaderId === user.id) : [];
 
   const myStats = {
     uploads: myResources.length,
-    upvotes: myResources.reduce((sum, r) => sum + r.upvoteCount, 0),
-    downloads: myResources.reduce((sum, r) => sum + r.downloadCount, 0),
+    upvotes: myResources.reduce((sum, r) => sum + (r.upvoteCount || 0), 0),
+    downloads: myResources.reduce((sum, r) => sum + (r.downloadCount || 0), 0),
   };
+
+  if (loading) return <div className="flex justify-center py-20 px-4 text-warm-500">Loading your dashboard...</div>;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">

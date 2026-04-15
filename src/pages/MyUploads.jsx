@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ThumbsUp, Download, Eye, Trash2, Edit3, ExternalLink } from 'lucide-react';
-import { getResourcesByUser } from '../data/mockResources';
+import { useResources } from '../hooks/useResources';
 import VisibilityBadge from '../components/VisibilityBadge';
 
 function formatFileSize(bytes) {
@@ -20,10 +20,11 @@ const TYPE_LABELS = {
 
 export default function MyUploads() {
   const { user } = useAuth();
-  const resources = user ? getResourcesByUser(user.id) : [];
+  const { resources, loading } = useResources();
+  const myResources = user ? resources.filter(r => r.uploaderId === user.id) : [];
   const [deletedIds, setDeletedIds] = useState([]);
 
-  const active = resources.filter(r => !deletedIds.includes(r.id));
+  const active = myResources.filter(r => !deletedIds.includes(r.id));
 
   const totalStats = active.reduce(
     (acc, r) => ({
@@ -48,7 +49,11 @@ export default function MyUploads() {
       </div>
 
       {/* Summary stats */}
-      <div className="mb-8 grid grid-cols-3 gap-4">
+      {loading ? (
+        <div className="flex justify-center py-20 px-4 text-warm-500">Loading your uploads...</div>
+      ) : (
+        <>
+          <div className="mb-8 grid grid-cols-3 gap-4">
         {[
           { label: 'Total Upvotes', value: totalStats.upvotes, icon: ThumbsUp, color: 'text-success' },
           { label: 'Total Downloads', value: totalStats.downloads, icon: Download, color: 'text-navy-600 dark:text-navy-400' },
@@ -120,6 +125,8 @@ export default function MyUploads() {
             Upload your first resource
           </Link>
         </div>
+      )}
+      </>
       )}
     </div>
   );

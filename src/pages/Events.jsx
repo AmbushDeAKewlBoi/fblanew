@@ -2,11 +2,12 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Grid3X3, List } from 'lucide-react';
 import { FBLA_EVENTS, EVENT_CATEGORIES } from '../data/mockEvents';
-import { getResourceCountByEvent } from '../data/mockResources';
+import { useResources } from '../hooks/useResources';
 
 export default function Events() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
+  const { resources, loading } = useResources();
 
   const filtered = useMemo(() => {
     return FBLA_EVENTS.filter(e => {
@@ -63,7 +64,7 @@ export default function Events() {
       {/* Events Grid */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {filtered.map(event => {
-          const count = getResourceCountByEvent(event.slug);
+          const count = resources.filter(r => r.event === event.name).length;
           return (
             <Link
               key={event.slug}

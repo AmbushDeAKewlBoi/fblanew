@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Trophy, Medal, TrendingUp, Upload, ThumbsUp, Download } from 'lucide-react';
-import { SCHOOL_LEADERBOARD, REGION_LEADERBOARD, STATE_LEADERBOARD } from '../data/mockLeaderboard';
+import { useAuth } from '../context/AuthContext';
+import { useResources } from '../hooks/useResources';
+import { CHAPTERS } from '../data/mockUsers';
 
 const TABS = ['Schools', 'Regions', 'States'];
 const METRICS = ['uploads', 'upvotes', 'downloads'];
@@ -25,15 +27,55 @@ function RankBadge({ rank }) {
 }
 
 export default function Leaderboard() {
+  const { user } = useAuth();
+  const { resources, loading } = useResources();
   const [tab, setTab] = useState('Schools');
   const [metric, setMetric] = useState('uploads');
   const [timeFilter, setTimeFilter] = useState('All Time');
 
-  const data = tab === 'Schools'
-    ? SCHOOL_LEADERBOARD
-    : tab === 'Regions'
-    ? REGION_LEADERBOARD
-    : STATE_LEADERBOARD;
+  const data = useMemo(() => {
+    const statsByChapter = {};
+    CHAPTERS.forEach(c => {
+       statsByChapter[c.id] = { uploads: 0, upvotes: 0, downloads: 0, chapter: c };
+    });
+    
+    resources.forEach(r => {
+      const cId = r.chapterId || 1;
+      if (statsByChapter[cId]) {
+         statsByChapter[cId].uploads++;
+         statsByChapter[cId].upvotes += (r.upvoteCount || 0);
+         statsByChapter[cId].downloads += (r.downloadCount || 0);
+      }
+    });
+
+    if (tab === 'Schools') {
+      return Object.values(statsByChapter).map(stat => ({
+        chapter: stat.chapter,
+        is_user_chapter: stat.chapter.id === user?.chapterId,
+        metrics: { totalUploads: stat.uploads, totalUpvotes: stat.upvotes, totalDownloads: stat.downloads }
+      }));
+    } else if (tab === 'Regions') {
+      const regionsMap = {};
+      Object.values(statsByChapter).forEach(stat => {
+        const rName = stat.chapter.region;
+        if (!regionsMap[rName]) regionsMap[rName] = { region: { name: rName, state: stat.chapter.state }, metrics: { totalUploads: 0, totalUpvotes: 0, totalDownloads: 0 } };
+        regionsMap[rName].metrics.totalUploads += stat.uploads;
+        regionsMap[rName].metrics.totalUpvotes += stat.upvotes;
+        regionsMap[rName].metrics.totalDownloads += stat.downloads;
+      });
+      return Object.values(regionsMap);
+    } else {
+      const statesMap = {};
+      Object.values(statsByChapter).forEach(stat => {
+        const sName = stat.chapter.state;
+        if (!statesMap[sName]) statesMap[sName] = { state: { name: sName }, metrics: { totalUploads: 0, totalUpvotes: 0, totalDownloads: 0 } };
+        statesMap[sName].metrics.totalUploads += stat.uploads;
+        statesMap[sName].metrics.totalUpvotes += stat.upvotes;
+        statesMap[sName].metrics.totalDownloads += stat.downloads;
+      });
+      return Object.values(statesMap);
+    }
+  }, [resources, tab, user?.chapterId]);
 
   // Sort by selected metric
   const sorted = [...data].sort((a, b) => {
@@ -171,6 +213,9 @@ export default function Leaderboard() {
             </div>
           );
         })}
+        {loading && (
+           <div className="p-10 text-center text-warm-500">Calculating rankings from database...</div>
+        )}
       </div>
     </div>
   );

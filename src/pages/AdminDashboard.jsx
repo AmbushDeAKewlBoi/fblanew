@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Copy, Check, RefreshCw, Shield, Users, FileText, ThumbsUp, Download, Eye, EyeOff, Trash2, ExternalLink, BarChart3 } from 'lucide-react';
-import { getResourcesByChapter } from '../data/mockResources';
-import { getUsersByChapter } from '../data/mockUsers';
+import { useResources } from '../hooks/useResources';
+import { db } from '../config/firebase';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { useEffect } from 'react';
 import VisibilityBadge from '../components/VisibilityBadge';
 
 const TYPE_LABELS = {
@@ -21,14 +23,26 @@ export default function AdminDashboard() {
   const [hiddenIds, setHiddenIds] = useState([]);
   const [deletedIds, setDeletedIds] = useState([]);
 
-  const chapterResources = chapter ? getResourcesByChapter(chapter.id).filter(r => !deletedIds.includes(r.id)) : [];
-  const chapterStudents = chapter ? getUsersByChapter(chapter.id).filter(u => u.id !== user?.id) : [];
+  const { resources, loading } = useResources();
+  const [dbUsers, setDbUsers] = useState([]);
+
+  useEffect(() => {
+    if (!chapter?.id) return;
+    const q = query(collection(db, 'users'), where('chapterId', '==', chapter.id));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setDbUsers(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+    });
+    return () => unsubscribe();
+  }, [chapter?.id]);
+
+  const chapterResources = chapter ? resources.filter(r => r.chapterId === chapter.id && !deletedIds.includes(r.id)) : [];
+  const chapterStudents = dbUsers.filter(u => u.id !== user?.id && !u.isAdvisor);
 
   const totalStats = chapterResources.reduce(
     (acc, r) => ({
       uploads: acc.uploads + 1,
-      upvotes: acc.upvotes + r.upvoteCount,
-      downloads: acc.downloads + r.downloadCount,
+      upvotes: acc.upvotes + (r.upvoteCount || 0),
+      downloads: acc.downloads + (r.downloadCount || 0),
     }),
     { uploads: 0, upvotes: 0, downloads: 0 }
   );
@@ -149,8 +163,8 @@ export default function AdminDashboard() {
               </div>
 
               <div className="flex items-center gap-4 text-xs text-warm-500">
-                <span className="flex items-center gap-1"><ThumbsUp size={12} /> {r.upvoteCount}</span>
-                <span className="flex items-center gap-1"><Download size={12} /> {r.downloadCount}</span>
+                <span className="flex items-center gap-1"><ThumbsUp size={12} /> {r.upvoteCount || 0}</span>
+                <span className="flex items-center gap-1"><Download size={12} /> {r.downloadCount || 0}</span>
               </div>
 
               <div className="flex items-center gap-1 shrink-0">
@@ -189,7 +203,7 @@ export default function AdminDashboard() {
               <div className="col-span-4 text-warm-500 truncate">{s.email}</div>
               <div className="col-span-2 text-right text-warm-600 dark:text-warm-400">{s.uploadCount}</div>
               <div className="col-span-2 text-right text-warm-400 text-xs">
-                {new Date(s.joinedAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                {s.createdAt ? new Date(s.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Unknown'}
               </div>
             </div>
           ))}

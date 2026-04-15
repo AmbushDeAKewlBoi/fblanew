@@ -3,9 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { Upload as UploadIcon, X, FileText, CheckCircle2, School, MapPin, Map, Globe } from 'lucide-react';
 import { FBLA_EVENTS } from '../data/mockEvents';
 import { RESOURCE_TYPES, VISIBILITY_LEVELS } from '../data/mockResources';
+import { useAuth } from '../context/AuthContext';
+import { db, storage } from '../config/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { collection, addDoc } from 'firebase/firestore';
 
 export default function Upload() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -19,6 +24,7 @@ export default function Upload() {
   const [file, setFile] = useState(null);
   const [dragOver, setDragOver] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
 
   const handleAddTag = (e) => {
@@ -43,13 +49,60 @@ export default function Upload() {
     if (f) setFile(f);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.title || !form.event || !form.resourceType || !file) {
       setError('Please fill in all required fields and upload a file.');
       return;
     }
-    setSubmitted(true);
+    
+    if (!user) {
+      setError('You must be logged in to upload.');
+      return;
+    }
+
+    setUploading(true);
+    
+    try {
+      // 1. Create storage reference
+      const extension = file.name.split('.').pop();
+      const filename = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${extension}`;
+      const storageRef = ref(storage, `resources/${user.id}/${filename}`);
+      
+      // 2. Upload file
+      const snapshot = await uploadBytes(storageRef, file);
+      
+      // 3. Get download URL
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      
+      // 4. Save metadata to Firestore
+      const newResource = {
+        title: form.title,
+        description: form.description,
+        event: form.event,
+        resourceType: form.resourceType,
+        tags: form.tags,
+        visibilityLevel: form.visibilityLevel,
+        isAnonymous: form.isAnonymous,
+        uploaderId: user.id,
+        chapterId: user.chapterId || 1,
+        fileExtension: `.${extension}`,
+        fileSizeBytes: file.size,
+        downloadUrl: downloadURL,
+        upvoteCount: 0,
+        downloadCount: 0,
+        viewCount: 0,
+        createdAt: new Date().toISOString()
+      };
+      
+      await addDoc(collection(db, 'resources'), newResource);
+      setSubmitted(true);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to upload file. Please try again.');
+    } finally {
+      setUploading(false);
+    }
   };
 
   if (submitted) {
@@ -293,9 +346,10 @@ export default function Upload() {
           </button>
           <button
             type="submit"
-            className="flex-1 rounded-lg bg-navy-800 py-2.5 text-sm font-semibold text-white hover:bg-navy-700 dark:bg-navy-600 dark:hover:bg-navy-500"
+            disabled={uploading}
+            className="flex-1 rounded-lg bg-navy-800 py-2.5 text-sm font-semibold text-white hover:bg-navy-700 disabled:opacity-70 dark:bg-navy-600 dark:hover:bg-navy-500"
           >
-            Upload Resource
+            {uploading ? 'Uploading securely...' : 'Upload Resource'}
           </button>
         </div>
       </form>
