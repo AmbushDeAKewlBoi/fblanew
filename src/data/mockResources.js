@@ -542,8 +542,8 @@ export const RESOURCE_TYPES = [
 ];
 
 export const VISIBILITY_LEVELS = [
-  { value: "school", label: "School Only", iconName: "school", description: "Only your chapter can see this" },
-  { value: "region", label: "Region", iconName: "mapPin", description: "All chapters in your region" },
+  { value: "school", label: "Chapter Only", iconName: "school", description: "Only your chapter can see this" },
+  { value: "region", label: "Regional", iconName: "mapPin", description: "All chapters in your region" },
   { value: "state", label: "State", iconName: "map", description: "All chapters in your state" },
   { value: "public", label: "Public", iconName: "globe", description: "Everyone on the platform" },
 ];
