@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { db, storage } from '../config/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc } from 'firebase/firestore';
+import SelectDropdown from '../components/SelectDropdown';
 
 export default function Upload() {
   const navigate = useNavigate();
@@ -231,31 +232,23 @@ export default function Upload() {
             <label className="mb-1.5 block text-sm font-medium text-warm-700 dark:text-warm-300">
               Event <span className="text-danger">*</span>
             </label>
-            <select
+            <SelectDropdown
               value={form.event}
-              onChange={(e) => setForm({ ...form, event: e.target.value })}
-              className="w-full rounded-lg border border-warm-200 bg-white px-3 py-2.5 text-sm text-warm-900 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500 dark:border-warm-700 dark:bg-warm-800 dark:text-warm-100"
-            >
-              <option value="">Select event...</option>
-              {FBLA_EVENTS.map(e => (
-                <option key={e.slug} value={e.name}>{e.name}</option>
-              ))}
-            </select>
+              onChange={(val) => setForm({ ...form, event: val })}
+              options={FBLA_EVENTS}
+              placeholder="Select event..."
+            />
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-warm-700 dark:text-warm-300">
               Resource Type <span className="text-danger">*</span>
             </label>
-            <select
+            <SelectDropdown
               value={form.resourceType}
-              onChange={(e) => setForm({ ...form, resourceType: e.target.value })}
-              className="w-full rounded-lg border border-warm-200 bg-white px-3 py-2.5 text-sm text-warm-900 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500 dark:border-warm-700 dark:bg-warm-800 dark:text-warm-100"
-            >
-              <option value="">Select type...</option>
-              {RESOURCE_TYPES.map(t => (
-                <option key={t.value} value={t.value}>{t.label}</option>
-              ))}
-            </select>
+              onChange={(val) => setForm({ ...form, resourceType: val })}
+              options={RESOURCE_TYPES}
+              placeholder="Select type..."
+            />
           </div>
         </div>
 

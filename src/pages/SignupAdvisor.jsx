@@ -4,7 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import { BookOpen, Eye, EyeOff, Copy, Check } from 'lucide-react';
 
 const REGIONS = ['Shenandoah', 'Northern', 'Central', 'Southwest', 'Tidewater', 'Piedmont'];
-const STATES = ['Virginia', 'Maryland', 'North Carolina', 'West Virginia', 'Pennsylvania'];
+const STATES = ['Virginia'];
+
+import SelectDropdown from '../components/SelectDropdown';
 
 export default function SignupAdvisor() {
   const [form, setForm] = useState({ name: '', email: '', password: '', schoolName: '', region: '', state: '' });
@@ -155,25 +157,21 @@ export default function SignupAdvisor() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-warm-700 dark:text-warm-300">Region</label>
-              <select
+              <SelectDropdown
                 value={form.region}
-                onChange={(e) => setForm({ ...form, region: e.target.value })}
-                className="w-full rounded-lg border border-warm-200 bg-white px-3 py-2.5 text-sm text-warm-900 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500 dark:border-warm-700 dark:bg-warm-800 dark:text-warm-100"
-              >
-                <option value="">Select...</option>
-                {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
-              </select>
+                onChange={(val) => setForm({ ...form, region: val })}
+                options={REGIONS}
+                placeholder="Region..."
+              />
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-warm-700 dark:text-warm-300">State</label>
-              <select
+              <SelectDropdown
                 value={form.state}
-                onChange={(e) => setForm({ ...form, state: e.target.value })}
-                className="w-full rounded-lg border border-warm-200 bg-white px-3 py-2.5 text-sm text-warm-900 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500 dark:border-warm-700 dark:bg-warm-800 dark:text-warm-100"
-              >
-                <option value="">Select...</option>
-                {STATES.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
+                onChange={(val) => setForm({ ...form, state: val })}
+                options={STATES}
+                placeholder="State..."
+              />
             </div>
           </div>
 
