@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { BookOpen, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
-
+import { CheckCircle2 } from 'lucide-react';
 export default function SignupStudent() {
   const [form, setForm] = useState({ chapterKey: '' });
   const [keyValid, setKeyValid] = useState(null);

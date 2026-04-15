@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { BookOpen, Eye, EyeOff, Copy, Check } from 'lucide-react';
 
 const REGIONS = ['Shenandoah', 'Northern', 'Central', 'Southwest', 'Tidewater', 'Piedmont'];
 const STATES = ['Virginia'];
@@ -56,12 +55,47 @@ export default function SignupAdvisor() {
           </p>
         </div>
 
+        <div className="space-y-4">
+          {error && (
+            <div className="rounded-lg bg-danger-light p-3 text-sm text-danger dark:bg-danger/10">{error}</div>
+          )}
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-warm-700 dark:text-warm-300">School Name</label>
+            <input
+              type="text"
+              value={form.schoolName}
+              onChange={(e) => setForm({ ...form, schoolName: e.target.value })}
+              placeholder="Independence High School"
+              className="w-full rounded-lg border border-warm-200 bg-white px-3.5 py-2.5 text-sm text-warm-900 placeholder:text-warm-400 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500 dark:border-warm-700 dark:bg-warm-800 dark:text-warm-100"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-warm-700 dark:text-warm-300">Region</label>
+              <SelectDropdown
+                value={form.region}
+                onChange={(val) => setForm({ ...form, region: val })}
+                options={REGIONS}
+                placeholder="Region..."
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-warm-700 dark:text-warm-300">State</label>
+              <SelectDropdown
+                value={form.state}
+                onChange={(val) => setForm({ ...form, state: val })}
+                options={STATES}
+                placeholder="State..."
+              />
+            </div>
           </div>
 
           <button
             type="button"
             onClick={handleGoogleSignup}
-            className="w-full flex items-center justify-center gap-2 rounded-lg border border-warm-200 bg-white py-2.5 text-sm font-medium text-warm-700 hover:bg-warm-50 focus:outline-none focus:ring-2 focus:ring-navy-500 focus:ring-offset-2 dark:border-warm-700 dark:bg-warm-800 dark:text-warm-300 dark:hover:bg-warm-700"
+            className="mt-6 w-full flex items-center justify-center gap-2 rounded-lg border border-warm-200 bg-white py-2.5 text-sm font-medium text-warm-700 hover:bg-warm-50 focus:outline-none focus:ring-2 focus:ring-navy-500 focus:ring-offset-2 dark:border-warm-700 dark:bg-warm-800 dark:text-warm-300 dark:hover:bg-warm-700"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
