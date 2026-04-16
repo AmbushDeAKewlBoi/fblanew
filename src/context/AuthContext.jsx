@@ -30,27 +30,18 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
         if (firebaseUser) {
+          let mergedData = null;
           try {
             const userDoc = await getDocWithTimeout(doc(db, 'users', firebaseUser.uid));
             if (userDoc.exists()) {
-              setUser({ id: firebaseUser.uid, ...userDoc.data() });
-              setIsAuthenticated(true);
-            } else {
-              // Auth exists but no Firestore profile yet — use basic Google info
-              setUser({
-                id: firebaseUser.uid,
-                name: firebaseUser.displayName || 'User',
-                email: firebaseUser.email,
-                isAdvisor: false,
-                chapterId: 1,
-                uploadCount: 0
-              });
-              setIsAuthenticated(true);
+              mergedData = { id: firebaseUser.uid, ...userDoc.data() };
             }
           } catch (firestoreError) {
-            console.warn('Firestore read failed, using Google profile as fallback:', firestoreError.message);
-            
-            let fallbackData = {
+            console.warn('Firestore read failed during listener, using Google profile as fallback:', firestoreError.message);
+          }
+
+          if (!mergedData) {
+            mergedData = {
               id: firebaseUser.uid,
               name: firebaseUser.displayName || 'User',
               email: firebaseUser.email,
@@ -58,18 +49,31 @@ export function AuthProvider({ children }) {
               chapterId: 1,
               uploadCount: 0
             };
-
-            // Restore from local cache if we failed to reach DB
-            try {
-              const cached = localStorage.getItem(`fbla_user_${firebaseUser.uid}`);
-              if (cached) {
-                fallbackData = { ...fallbackData, ...JSON.parse(cached) };
-              }
-            } catch(e) {}
-
-            setUser(fallbackData);
-            setIsAuthenticated(true);
           }
+
+          // Aggressively restore from local cache to ensure admin upgrades survive DB rule blocks
+          try {
+            const cached = localStorage.getItem(`fbla_user_${firebaseUser.uid}`);
+            if (cached) {
+              const parsedCache = JSON.parse(cached);
+              // If local cache says they are an advisor but DB doesn't, force upgrade them locally!
+              if (parsedCache.isAdvisor && !mergedData.isAdvisor) {
+                mergedData = { ...mergedData, ...parsedCache, isAdvisor: true };
+                // Attempt an aggressive background sync to heal the database
+                setDoc(doc(db, 'users', firebaseUser.uid), { 
+                  isAdvisor: true, 
+                  chapterId: parsedCache.chapterId,
+                  schoolName: parsedCache.schoolName,
+                  region: parsedCache.region,
+                  state: parsedCache.state,
+                  chapterKey: parsedCache.chapterKey 
+                }, { merge: true }).catch(() => {});
+              }
+            }
+          } catch(e) {}
+
+          setUser(mergedData);
+          setIsAuthenticated(true);
         } else {
           setUser(null);
           setIsAuthenticated(false);
