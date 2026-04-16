@@ -11,6 +11,16 @@ import { CHAPTERS } from '../data/mockUsers';
 
 const AuthContext = createContext(null);
 
+// Helper: getDoc with a timeout so the app never hangs
+function getDocWithTimeout(docRef, timeoutMs = 5000) {
+  return Promise.race([
+    getDoc(docRef),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Firestore timeout')), timeoutMs)
+    )
+  ]);
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -20,10 +30,34 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
         if (firebaseUser) {
-          // Fetch custom user profile from Firestore
-          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-          if (userDoc.exists()) {
-            setUser({ id: firebaseUser.uid, ...userDoc.data() });
+          try {
+            const userDoc = await getDocWithTimeout(doc(db, 'users', firebaseUser.uid));
+            if (userDoc.exists()) {
+              setUser({ id: firebaseUser.uid, ...userDoc.data() });
+              setIsAuthenticated(true);
+            } else {
+              // Auth exists but no Firestore profile yet — use basic Google info
+              setUser({
+                id: firebaseUser.uid,
+                name: firebaseUser.displayName || 'User',
+                email: firebaseUser.email,
+                isAdvisor: false,
+                chapterId: 1,
+                uploadCount: 0
+              });
+              setIsAuthenticated(true);
+            }
+          } catch (firestoreError) {
+            console.warn('Firestore read failed, using Google profile as fallback:', firestoreError.message);
+            // Firestore is down/slow/blocked — still let the user in with Google info
+            setUser({
+              id: firebaseUser.uid,
+              name: firebaseUser.displayName || 'User',
+              email: firebaseUser.email,
+              isAdvisor: false,
+              chapterId: 1,
+              uploadCount: 0
+            });
             setIsAuthenticated(true);
           }
         } else {
@@ -31,7 +65,7 @@ export function AuthProvider({ children }) {
           setIsAuthenticated(false);
         }
       } catch (error) {
-        console.error("Auth listener error:", error);
+        console.error('Auth listener error:', error);
       } finally {
         setLoading(false);
       }
@@ -45,35 +79,48 @@ export function AuthProvider({ children }) {
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
       
-      let userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
-      
-      // First time logging in or passing explicit signup metadata
-      if (!userDoc.exists()) {
-        const newUserData = {
-          name: userCredential.user.displayName || "Google User",
+      let userData = null;
+
+      try {
+        const userDoc = await getDocWithTimeout(doc(db, 'users', userCredential.user.uid));
+        
+        if (!userDoc.exists()) {
+          // First time — create profile
+          const newUserData = {
+            name: userCredential.user.displayName || 'Google User',
+            email: userCredential.user.email,
+            chapterId: metadata?.chapterId || 1,
+            isAdvisor: metadata?.isAdvisor || false,
+            schoolName: metadata?.schoolName || null,
+            region: metadata?.region || null,
+            state: metadata?.state || null,
+            chapterKey: metadata?.generatedKey || null,
+            createdAt: new Date().toISOString(),
+            uploadCount: 0
+          };
+          await setDoc(doc(db, 'users', userCredential.user.uid), newUserData);
+          userData = { id: userCredential.user.uid, ...newUserData };
+        } else {
+          userData = { id: userCredential.user.uid, ...userDoc.data() };
+        }
+      } catch (firestoreError) {
+        console.warn('Firestore failed during login, using Google profile:', firestoreError.message);
+        // Firestore is down — still authenticate with basic info
+        userData = {
+          id: userCredential.user.uid,
+          name: userCredential.user.displayName || 'Google User',
           email: userCredential.user.email,
           chapterId: metadata?.chapterId || 1,
           isAdvisor: metadata?.isAdvisor || false,
-          schoolName: metadata?.schoolName || null,
-          region: metadata?.region || null,
-          state: metadata?.state || null,
-          chapterKey: metadata?.generatedKey || null,
-          createdAt: new Date().toISOString(),
           uploadCount: 0
         };
-        await setDoc(doc(db, 'users', userCredential.user.uid), newUserData);
-        userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
-      } else if (metadata) {
-        // If they already exist but tried to "sign up", we could update their profile here if needed
-        // For now, we'll just log them in normally.
       }
       
-      const fullUser = { id: userCredential.user.uid, ...userDoc.data() };
-      setUser(fullUser);
+      setUser(userData);
       setIsAuthenticated(true);
-      return { success: true, user: fullUser };
+      return { success: true, user: userData };
     } catch (error) {
-      console.error("Google Login Error:", error);
+      console.error('Google Login Error:', error);
       return { success: false, error: error.message };
     }
   };
@@ -86,6 +133,33 @@ export function AuthProvider({ children }) {
 
   const chapter = user ? CHAPTERS.find(c => c.id === user.chapterId) : null;
 
+  // Show a loading spinner instead of a blank white screen
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        background: '#141414',
+        color: '#e5e2de',
+        fontFamily: 'Inter, system-ui, sans-serif'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: 40, height: 40, margin: '0 auto 16px',
+            border: '3px solid #334155',
+            borderTopColor: '#3b82f6',
+            borderRadius: '50%',
+            animation: 'spin 0.8s linear infinite'
+          }} />
+          <p style={{ fontSize: 14, opacity: 0.6 }}>Loading FBLA Hub...</p>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -95,7 +169,7 @@ export function AuthProvider({ children }) {
       logout,
       loading
     }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }

@@ -7,22 +7,40 @@ export function useResources() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Listen to real-time updates from Firestore 'resources' collection
-    const q = query(collection(db, 'resources'), orderBy('createdAt', 'desc'));
+    let unsubscribe = () => {};
     
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setResources(data);
+    // Safety timeout — if Firestore doesn't respond in 8 seconds, stop waiting
+    const timeout = setTimeout(() => {
       setLoading(false);
-    }, (error) => {
-      console.error("Error fetching resources: ", error);
-      setLoading(false);
-    });
+    }, 8000);
 
-    return () => unsubscribe();
+    try {
+      const q = query(collection(db, 'resources'), orderBy('createdAt', 'desc'));
+      
+      unsubscribe = onSnapshot(q, (snapshot) => {
+        clearTimeout(timeout);
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setResources(data);
+        setLoading(false);
+      }, (error) => {
+        clearTimeout(timeout);
+        console.error("Error fetching resources:", error);
+        setResources([]);
+        setLoading(false);
+      });
+    } catch (error) {
+      clearTimeout(timeout);
+      console.error("Error setting up resources listener:", error);
+      setLoading(false);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+      unsubscribe();
+    };
   }, []);
 
   return { resources, loading };
