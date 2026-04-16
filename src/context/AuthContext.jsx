@@ -18,18 +18,23 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        // Fetch custom user profile from Firestore
-        const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-        if (userDoc.exists()) {
-          setUser({ id: firebaseUser.uid, ...userDoc.data() });
-          setIsAuthenticated(true);
+      try {
+        if (firebaseUser) {
+          // Fetch custom user profile from Firestore
+          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          if (userDoc.exists()) {
+            setUser({ id: firebaseUser.uid, ...userDoc.data() });
+            setIsAuthenticated(true);
+          }
+        } else {
+          setUser(null);
+          setIsAuthenticated(false);
         }
-      } else {
-        setUser(null);
-        setIsAuthenticated(false);
+      } catch (error) {
+        console.error("Auth listener error:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
