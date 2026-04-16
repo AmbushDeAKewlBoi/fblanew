@@ -102,6 +102,20 @@ export function AuthProvider({ children }) {
           userData = { id: userCredential.user.uid, ...newUserData };
         } else {
           userData = { id: userCredential.user.uid, ...userDoc.data() };
+          
+          // Upgrade profile if they are registering as an advisor now
+          if (metadata && metadata.isAdvisor && !userData.isAdvisor) {
+            const updates = {
+              isAdvisor: true,
+              chapterId: metadata.chapterId || userData.chapterId,
+              schoolName: metadata.schoolName || userData.schoolName,
+              region: metadata.region || userData.region,
+              state: metadata.state || userData.state,
+              chapterKey: metadata.generatedKey || userData.chapterKey,
+            };
+            await setDoc(doc(db, 'users', userCredential.user.uid), updates, { merge: true });
+            userData = { ...userData, ...updates };
+          }
         }
       } catch (firestoreError) {
         console.warn('Firestore failed during login, using Google profile:', firestoreError.message);
