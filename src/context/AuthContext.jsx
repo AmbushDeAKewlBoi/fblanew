@@ -108,7 +108,7 @@ export function AuthProvider({ children }) {
             schoolName: metadata?.schoolName || null,
             region: metadata?.region || null,
             state: metadata?.state || null,
-            chapterKey: metadata?.generatedKey || null,
+            chapterKey: metadata?.generatedKey || metadata?.chapterKey || null,
             createdAt: new Date().toISOString(),
             uploadCount: 0
           };
@@ -174,7 +174,13 @@ export function AuthProvider({ children }) {
     setIsAuthenticated(false);
   };
 
-  const chapter = user ? CHAPTERS.find(c => c.id === user.chapterId) : null;
+  const chapter = user ? {
+    id: user.chapterId || 1,
+    name: user.schoolName || 'Your FBLA Chapter',
+    region: user.region || 'Region',
+    state: user.state || 'State',
+    masterKey: user.chapterKey || 'UNKNOWN-KEY'
+  } : null;
 
   // Show a loading spinner instead of a blank white screen
   if (loading) {
