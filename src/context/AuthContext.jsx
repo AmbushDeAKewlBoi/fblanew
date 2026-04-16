@@ -49,15 +49,25 @@ export function AuthProvider({ children }) {
             }
           } catch (firestoreError) {
             console.warn('Firestore read failed, using Google profile as fallback:', firestoreError.message);
-            // Firestore is down/slow/blocked — still let the user in with Google info
-            setUser({
+            
+            let fallbackData = {
               id: firebaseUser.uid,
               name: firebaseUser.displayName || 'User',
               email: firebaseUser.email,
               isAdvisor: false,
               chapterId: 1,
               uploadCount: 0
-            });
+            };
+
+            // Restore from local cache if we failed to reach DB
+            try {
+              const cached = localStorage.getItem(`fbla_user_${firebaseUser.uid}`);
+              if (cached) {
+                fallbackData = { ...fallbackData, ...JSON.parse(cached) };
+              }
+            } catch(e) {}
+
+            setUser(fallbackData);
             setIsAuthenticated(true);
           }
         } else {
@@ -119,8 +129,8 @@ export function AuthProvider({ children }) {
         }
       } catch (firestoreError) {
         console.warn('Firestore failed during login, using Google profile:', firestoreError.message);
-        // Firestore is down — still authenticate with basic info
-        userData = {
+        
+        let fallbackData = {
           id: userCredential.user.uid,
           name: userCredential.user.displayName || 'Google User',
           email: userCredential.user.email,
@@ -128,7 +138,22 @@ export function AuthProvider({ children }) {
           isAdvisor: metadata?.isAdvisor || false,
           uploadCount: 0
         };
+
+        // If doing a regular sign in (no metadata) and DB fails, use cached memory to remember advisor
+        try {
+          const cached = localStorage.getItem(`fbla_user_${userCredential.user.uid}`);
+          if (cached && !metadata) {
+            fallbackData = { ...fallbackData, ...JSON.parse(cached) };
+          }
+        } catch(e) {}
+
+        userData = fallbackData;
       }
+      
+      // Cache locally to survive DB rule blocks
+      try {
+        localStorage.setItem(`fbla_user_${userCredential.user.uid}`, JSON.stringify(userData));
+      } catch(e) {}
       
       setUser(userData);
       setIsAuthenticated(true);
