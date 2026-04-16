@@ -53,6 +53,7 @@ export default function Upload() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.title || !form.event || !form.resourceType || !file) {
+      console.log('Form validation failed:', { title: form.title, event: form.event, rootType: form.resourceType, file });
       setError('Please fill in all required fields and upload a file.');
       return;
     }
@@ -99,8 +100,15 @@ export default function Upload() {
       await addDoc(collection(db, 'resources'), newResource);
       setSubmitted(true);
     } catch (err) {
-      console.error(err);
-      setError('Failed to upload file. Please try again.');
+      console.error('Firebase upload error:', err);
+      // Give a more descriptive error if it's a permission issue or bucket error
+      if (err.code === 'storage/unauthorized' || err.code === 'permission-denied') {
+        setError('Permission denied by Firebase. Check your Firebase Storage/Firestore rules!');
+      } else if (err.code === 'storage/bucket-not-found') {
+        setError('Firebase Storage is not enabled. Please enable Storage in your Firebase console.');
+      } else {
+        setError(`Failed to upload file: ${err.message || 'Please try again.'}`);
+      }
     } finally {
       setUploading(false);
     }
@@ -144,9 +152,6 @@ export default function Upload() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {error && (
-          <div className="rounded-lg bg-danger-light p-3 text-sm text-danger dark:bg-danger/10">{error}</div>
-        )}
 
         {/* File upload */}
         <div
@@ -329,6 +334,13 @@ export default function Upload() {
           </div>
         </label>
 
+        {/* Error Message */}
+        {error && (
+          <div className="rounded-lg bg-danger-light p-3 text-sm font-medium text-danger dark:bg-danger/10">
+            {error}
+          </div>
+        )}
+
         {/* Submit */}
         <div className="flex gap-3 pt-2">
           <button
@@ -341,7 +353,7 @@ export default function Upload() {
           <button
             type="submit"
             disabled={uploading}
-            className="flex-1 rounded-lg bg-navy-800 py-2.5 text-sm font-semibold text-white hover:bg-navy-700 disabled:opacity-70 dark:bg-navy-600 dark:hover:bg-navy-500"
+            className="flex-1 rounded-lg bg-navy-800 py-2.5 text-sm font-semibold text-white hover:bg-navy-700 disabled:opacity-70 dark:bg-navy-600 dark:hover:bg-navy-500 transition-colors"
           >
             {uploading ? 'Uploading securely...' : 'Upload Resource'}
           </button>
