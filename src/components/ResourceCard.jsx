@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ThumbsUp, Download, FileText, Clock, User as UserIcon } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ThumbsUp, Download, FileText, Clock, User as UserIcon, Eye } from 'lucide-react';
 import VisibilityBadge from './VisibilityBadge';
 import { getUserById, getChapterById } from '../data/mockUsers';
 
@@ -19,7 +20,6 @@ function timeAgo(dateString) {
   const days = Math.floor(hours / 24);
   const weeks = Math.floor(days / 7);
   const months = Math.floor(days / 30);
-
   if (months > 0) return `${months}mo ago`;
   if (weeks > 0) return `${weeks}w ago`;
   if (days > 0) return `${days}d ago`;
@@ -37,11 +37,11 @@ const TYPE_LABELS = {
 };
 
 const TYPE_COLORS = {
-  presentation: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
-  roleplay: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
-  questions: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
-  study_guide: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300',
-  other: 'bg-warm-200 text-warm-600 dark:bg-warm-800 dark:text-warm-400',
+  presentation: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
+  roleplay: 'bg-pink-500/10 text-pink-600 dark:text-pink-400',
+  questions: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+  study_guide: 'bg-sky-500/10 text-sky-600 dark:text-sky-400',
+  other: 'bg-warm-200/60 text-warm-600 dark:bg-warm-800 dark:text-warm-400',
 };
 
 export default function ResourceCard({ resource }) {
@@ -70,80 +70,89 @@ export default function ResourceCard({ resource }) {
   };
 
   return (
-    <Link
-      to={`/resource/${resource.id}`}
-      className="block rounded-xl border border-warm-200 bg-white p-5 transition-all duration-200 hover:border-warm-300 dark:border-warm-800 dark:bg-warm-900 dark:hover:border-warm-700"
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -3, transition: { duration: 0.2, ease: 'easeOut' } }}
+      className="card-surface group relative flex flex-col overflow-hidden"
     >
-      {/* Header badges */}
-      <div className="flex flex-wrap items-center gap-2 mb-3">
-        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${TYPE_COLORS[resource.resourceType]}`}>
-          {TYPE_LABELS[resource.resourceType]}
-        </span>
-        <VisibilityBadge level={resource.visibilityLevel} />
-      </div>
+      {/* Top accent gradient — reveals on hover */}
+      <div className="h-0.5 w-full bg-gradient-to-r from-navy-600 via-navy-400 to-gold-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-      {/* Title */}
-      <h3 className="text-[15px] font-semibold text-warm-900 leading-snug mb-2 dark:text-warm-100">
-        {resource.title}
-      </h3>
-
-      {/* Description */}
-      <p className="text-sm text-warm-500 leading-relaxed mb-3 line-clamp-2 dark:text-warm-400">
-        {resource.description}
-      </p>
-
-      {/* Tags */}
-      <div className="flex flex-wrap gap-1.5 mb-4">
-        {resource.tags.slice(0, 4).map(tag => (
-          <span key={tag} className="rounded-md bg-warm-100 px-2 py-0.5 text-xs text-warm-600 dark:bg-warm-800 dark:text-warm-400">
-            {tag}
+      <Link to={`/resource/${resource.id}`} className="flex flex-1 flex-col p-5">
+        {/* Header badges */}
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${TYPE_COLORS[resource.resourceType]}`}>
+            {TYPE_LABELS[resource.resourceType]}
           </span>
-        ))}
-        {resource.tags.length > 4 && (
-          <span className="text-xs text-warm-400">+{resource.tags.length - 4}</span>
-        )}
-      </div>
+          <VisibilityBadge level={resource.visibilityLevel} />
+        </div>
 
-      {/* Meta row */}
-      <div className="flex items-center gap-3 text-xs text-warm-400 mb-4">
-        <span className="flex items-center gap-1">
-          <UserIcon size={12} />
-          {resource.isAnonymous ? 'Anonymous' : uploader?.name}
-        </span>
-        <span>•</span>
-        <span>{chapter?.name}</span>
-        <span>•</span>
-        <span className="flex items-center gap-1">
-          <Clock size={12} />
-          {timeAgo(resource.createdAt)}
-        </span>
-      </div>
+        {/* Title */}
+        <h3 className="mb-2 text-[15px] font-semibold leading-snug text-warm-900 transition-colors group-hover:text-navy-700 dark:text-warm-100 dark:group-hover:text-navy-300 line-clamp-2">
+          {resource.title}
+        </h3>
 
-      {/* Actions */}
-      <div className="flex items-center gap-3 pt-3 border-t border-warm-100 dark:border-warm-800">
-        <button
+        {/* Description */}
+        <p className="mb-3 flex-1 text-sm leading-relaxed text-warm-500 dark:text-warm-400 line-clamp-2">
+          {resource.description}
+        </p>
+
+        {/* Tags */}
+        <div className="mb-4 flex flex-wrap gap-1.5">
+          {resource.tags.slice(0, 3).map(tag => (
+            <span key={tag} className="rounded-md bg-warm-100 px-2 py-0.5 text-xs font-medium text-warm-600 dark:bg-warm-800 dark:text-warm-400 transition-colors">
+              {tag}
+            </span>
+          ))}
+          {resource.tags.length > 3 && (
+            <span className="text-xs text-warm-400 dark:text-warm-500">+{resource.tags.length - 3}</span>
+          )}
+        </div>
+
+        {/* Meta row */}
+        <div className="flex items-center gap-2 text-xs text-warm-400 dark:text-warm-500 mb-3">
+          <span className="flex items-center gap-1">
+            <UserIcon size={11} />
+            {resource.isAnonymous ? 'Anonymous' : uploader?.name}
+          </span>
+          <span className="text-warm-300 dark:text-warm-700">·</span>
+          <span className="truncate">{chapter?.name}</span>
+          <span className="text-warm-300 dark:text-warm-700">·</span>
+          <span className="flex items-center gap-1">
+            <Clock size={11} />
+            {timeAgo(resource.createdAt)}
+          </span>
+        </div>
+      </Link>
+
+      {/* Actions footer */}
+      <div className="flex items-center gap-2 border-t border-warm-100 px-5 py-3 dark:border-warm-800/60">
+        <motion.button
           onClick={handleUpvote}
-          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+          whileTap={{ scale: 1.15 }}
+          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-200 ${
             upvoted
-              ? 'bg-success/10 text-success'
+              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
               : 'text-warm-500 hover:bg-warm-100 hover:text-warm-700 dark:hover:bg-warm-800 dark:hover:text-warm-300'
           }`}
         >
-          <ThumbsUp size={14} className={upvoted ? 'upvote-animate fill-current' : ''} />
+          <ThumbsUp size={13} className={upvoted ? 'fill-current' : ''} />
           {upvoteCount}
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={handleDownload}
-          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-warm-500 hover:bg-warm-100 hover:text-warm-700 dark:hover:bg-warm-800 dark:hover:text-warm-300 transition-colors"
+          whileTap={{ scale: 1.1 }}
+          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-warm-500 transition-all duration-200 hover:bg-warm-100 hover:text-warm-700 dark:hover:bg-warm-800 dark:hover:text-warm-300"
         >
-          <Download size={14} />
+          <Download size={13} />
           {downloadCount}
-        </button>
-        <span className="ml-auto flex items-center gap-1.5 text-xs text-warm-400">
-          <FileText size={12} />
+        </motion.button>
+        <span className="ml-auto flex items-center gap-1.5 text-xs text-warm-400 dark:text-warm-500">
+          <FileText size={11} />
           {resource.fileExtension.replace('.', '').toUpperCase()} · {formatFileSize(resource.fileSizeBytes)}
         </span>
       </div>
-    </Link>
+    </motion.div>
   );
 }

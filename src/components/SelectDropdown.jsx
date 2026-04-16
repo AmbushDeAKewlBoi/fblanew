@@ -2,62 +2,73 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Check, Search } from 'lucide-react';
 
-export default function SelectDropdown({ value, onChange, options, placeholder = "Select...", searchable = false }) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function SelectDropdown({ value, onChange, options, placeholder = 'Select...', searchable = false }) {
+  const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const ref = useRef(null);
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) {
-        setIsOpen(false);
-      }
-    };
+    function handleClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   // Reset search term when dropdown closes
   useEffect(() => {
-    if (!isOpen) {
+    if (!open) {
       setSearchTerm('');
     }
-  }, [isOpen]);
+  }, [open]);
 
-  const selectedLabel = options.find(o => (o.value || o.name || o) === value)?.label || options.find(o => (o.value || o.name || o) === value)?.name || value || placeholder;
+  const getLabel = (opt) => {
+    if (typeof opt === 'string') return opt;
+    return opt.label || opt.name || opt.value || opt;
+  };
+
+  const getValue = (opt) => {
+    if (typeof opt === 'string') return opt;
+    return opt.value || opt.name || opt;
+  };
+
+  const selectedOption = options.find(o => getValue(o) === value);
+  const selectedLabel = selectedOption ? getLabel(selectedOption) : placeholder;
 
   const filteredOptions = searchable 
     ? options.filter(opt => {
-        const label = opt.label || opt.name || opt;
+        const label = getLabel(opt);
         return typeof label === 'string' && label.toLowerCase().includes(searchTerm.toLowerCase());
       })
     : options;
 
   return (
-    <div className="relative w-full" ref={ref}>
+    <div ref={ref} className="relative">
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex w-full items-center justify-between rounded-xl border bg-white px-4 py-3 text-sm transition-all focus:outline-none dark:bg-warm-800 ${
-          isOpen
-            ? 'border-navy-500 shadow-sm ring-2 ring-navy-500/20 dark:border-navy-400'
-            : 'border-warm-200 text-warm-900 hover:border-warm-300 dark:border-warm-700 dark:text-warm-100 dark:hover:border-warm-600'
-        }`}
+        onClick={() => setOpen(!open)}
+        className={`flex w-full items-center justify-between rounded-xl border bg-white px-4 py-3 text-sm transition-all duration-200 ${
+          open
+            ? 'border-navy-400 ring-2 ring-navy-400/20 dark:border-navy-500 dark:ring-navy-500/20'
+            : 'border-warm-200 hover:border-warm-300 dark:border-warm-700 dark:hover:border-warm-600'
+        } dark:bg-warm-900 dark:text-warm-100`}
       >
-        <span className={!value ? 'text-warm-400' : 'font-medium shrink-0 max-w-[90%] truncate text-left'}>{selectedLabel}</span>
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
+        <span className={value ? 'text-warm-900 font-medium dark:text-warm-100 truncate max-w-[90%] text-left' : 'text-warm-400 dark:text-warm-500'}>
+          {selectedLabel}
+        </span>
+        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
           <ChevronDown size={16} className="text-warm-400 shrink-0" />
         </motion.div>
       </button>
 
       <AnimatePresence>
-        {isOpen && (
+        {open && (
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            initial={{ opacity: 0, y: 4, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ type: 'spring', bounce: 0, duration: 0.2 }}
-            className="absolute z-50 mt-2 max-h-60 w-full overflow-hidden rounded-xl border border-warm-200 bg-white/95 p-1 backdrop-blur-xl shadow-xl dark:border-warm-700 dark:bg-warm-900/95 flex flex-col"
+            className="absolute z-50 mt-2 max-h-80 w-full overflow-hidden rounded-xl border border-warm-200/80 bg-white/95 p-1 backdrop-blur-xl shadow-xl dark:border-warm-700/60 dark:bg-warm-900/95 flex flex-col"
           >
             {searchable && (
               <div className="sticky top-0 z-10 px-2 pt-2 pb-2 mb-1 border-b border-warm-100 dark:border-warm-800">
@@ -78,16 +89,16 @@ export default function SelectDropdown({ value, onChange, options, placeholder =
             <div className="overflow-y-auto px-1 pb-1">
               {filteredOptions.length > 0 ? (
                 filteredOptions.map((opt, i) => {
-                  const val = opt.value || opt.name || opt;
-                  const label = opt.label || opt.name || opt;
-                  const isSelected = value === val;
+                  const optValue = getValue(opt);
+                  const optLabel = getLabel(opt);
+                  const isSelected = optValue === value;
                   return (
                     <button
                       key={i}
                       type="button"
                       onClick={() => {
-                        onChange(val);
-                        setIsOpen(false);
+                        onChange(optValue);
+                        setOpen(false);
                       }}
                       className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm transition-all text-left ${
                         isSelected
@@ -95,7 +106,7 @@ export default function SelectDropdown({ value, onChange, options, placeholder =
                           : 'text-warm-700 hover:bg-warm-100 hover:text-warm-900 dark:text-warm-300 dark:hover:bg-warm-800 dark:hover:text-warm-100'
                       }`}
                     >
-                      <span className="truncate pr-4">{label}</span>
+                      <span className="truncate pr-4">{optLabel}</span>
                       {isSelected && <Check size={14} className="text-navy-600 dark:text-navy-400 shrink-0" />}
                     </button>
                   );
