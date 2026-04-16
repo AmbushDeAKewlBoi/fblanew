@@ -237,6 +237,7 @@ export default function Upload() {
               onChange={(val) => setForm({ ...form, event: val })}
               options={FBLA_EVENTS}
               placeholder="Select event..."
+              searchable={true}
             />
           </div>
           <div>

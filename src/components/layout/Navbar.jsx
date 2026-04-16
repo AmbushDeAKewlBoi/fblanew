@@ -38,10 +38,10 @@ export default function Navbar({ darkMode, setDarkMode }) {
           {/* Logo */}
           <Link to={isAuthenticated ? '/dashboard' : '/'} className="flex items-center gap-2.5 shrink-0">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg overflow-hidden">
-              <img src="/logo.png" alt="FBLA Hub" className="h-9 w-9 object-contain" />
+              <img src="/logo.png" alt="Atlas" className="h-9 w-9 object-contain" />
             </div>
             <span className="text-lg font-bold text-navy-800 dark:text-navy-200 hidden sm:block">
-              FBLA Hub
+              Atlas
             </span>
           </Link>
 

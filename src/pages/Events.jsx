@@ -44,10 +44,10 @@ export default function Events() {
             <button
               key={cat}
               onClick={() => setCategory(cat)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-300 ${
                 category === cat
-                  ? 'bg-navy-800 text-white dark:bg-navy-600'
-                  : 'bg-warm-100 text-warm-600 hover:bg-warm-200 dark:bg-warm-800 dark:text-warm-400 dark:hover:bg-warm-700'
+                  ? 'bg-gradient-to-r from-navy-600 to-indigo-600 text-white shadow-lg shadow-navy-500/30 scale-105'
+                  : 'bg-white border border-warm-200 text-warm-600 hover:border-navy-300 hover:text-navy-700 hover:scale-105 hover:shadow-md dark:bg-warm-800 dark:border-warm-700 dark:text-warm-300 dark:hover:border-navy-500 dark:hover:text-navy-300'
               }`}
             >
               {cat}

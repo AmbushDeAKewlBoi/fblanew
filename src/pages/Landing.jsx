@@ -253,8 +253,8 @@ export default function Landing() {
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
           <div className="flex flex-col items-center justify-center gap-6 sm:flex-row sm:justify-between">
             <div className="flex items-center gap-3 grayscale transition-all hover:grayscale-0">
-              <img src="/logo.png" alt="FBLA Hub" className="h-8 w-8 object-contain drop-shadow-sm" />
-              <span className="text-base font-bold tracking-tight text-warm-700 dark:text-warm-300">FBLA Hub Project</span>
+              <img src="/logo.png" alt="Atlas" className="h-8 w-8 object-contain drop-shadow-sm" />
+              <span className="text-base font-bold tracking-tight text-warm-700 dark:text-warm-300">Atlas Project</span>
             </div>
             <p className="text-sm font-medium text-warm-400">
               Built for FBLA students, by FBLA students. Not affiliated with FBLA-PBL Inc.
