@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { db } from '../config/firebase';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { RESOURCES } from '../data/mockResources';
 
 export function useResources() {
   const [resources, setResources] = useState([]);
@@ -23,17 +24,18 @@ export function useResources() {
           id: doc.id,
           ...doc.data()
         }));
-        setResources(data);
+        setResources(data.length > 0 ? data : RESOURCES);
         setLoading(false);
       }, (error) => {
         clearTimeout(timeout);
         console.error("Error fetching resources:", error);
-        setResources([]);
+        setResources(RESOURCES);
         setLoading(false);
       });
     } catch (error) {
       clearTimeout(timeout);
       console.error("Error setting up resources listener:", error);
+      setResources(RESOURCES);
       setLoading(false);
     }
 

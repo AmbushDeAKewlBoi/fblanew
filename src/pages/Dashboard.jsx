@@ -1,12 +1,29 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import {
+  ArrowRight,
+  BookOpen,
+  Download,
+  Flame,
+  Handshake,
+  ThumbsUp,
+  Upload,
+  Users2,
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { Upload, ThumbsUp, Download, TrendingUp, ArrowRight, Flame, Sparkles } from 'lucide-react';
 import ResourceCard from '../components/ResourceCard';
 import { useResources } from '../hooks/useResources';
 import AnimatedCounter from '../components/AnimatedCounter';
 import PageTransition from '../components/PageTransition';
 import SkeletonCard from '../components/SkeletonCard';
+import PageHeader from '../components/ui/PageHeader';
+import StatTile from '../components/ui/StatTile';
+import SectionHeader from '../components/ui/SectionHeader';
+import EmptyState from '../components/ui/EmptyState';
+import Avatar from '../components/ui/Avatar';
+import Badge from '../components/ui/Badge';
+import { STUDY_CIRCLES } from '../data/mockCommunity';
+import { useSocial } from '../context/SocialContext';
 
 const fadeUp = {
   initial: { opacity: 0, y: 16 },
@@ -16,142 +33,210 @@ const fadeUp = {
 export default function Dashboard() {
   const { user, chapter } = useAuth();
   const { resources, loading } = useResources();
+  const { currentProfile, profiles } = useSocial();
 
-  const recentResources = [...resources].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 6);
-  const popularResources = [...resources].sort((a, b) => b.viewCount - a.viewCount).slice(0, 3);
-  const myResources = user ? resources.filter(r => r.uploaderId === user.id) : [];
+  const recentResources = [...resources]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 4);
+  const popularResources = [...resources]
+    .sort((a, b) => b.viewCount - a.viewCount)
+    .slice(0, 3);
+  const myResources = user ? resources.filter((resource) => resource.uploaderId === user.id) : [];
+  const suggestedConnections = profiles
+    .filter((profile) => profile.id !== currentProfile?.id)
+    .slice(0, 4);
 
   const myStats = {
     uploads: myResources.length,
-    upvotes: myResources.reduce((sum, r) => sum + (r.upvoteCount || 0), 0),
-    downloads: myResources.reduce((sum, r) => sum + (r.downloadCount || 0), 0),
+    upvotes: myResources.reduce((sum, resource) => sum + (resource.upvoteCount || 0), 0),
+    downloads: myResources.reduce((sum, resource) => sum + (resource.downloadCount || 0), 0),
   };
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      <div className="atlas-page">
         <div className="mb-8 space-y-2">
           <div className="skeleton h-8 w-64" />
           <div className="skeleton h-4 w-48" />
         </div>
-        <div className="grid gap-4 sm:grid-cols-3 mb-10">
-          {[1, 2, 3].map(i => <div key={i} className="skeleton h-24 rounded-2xl" />)}
+        <div className="mb-10 grid gap-4 sm:grid-cols-3">
+          {[1, 2, 3].map((item) => <div key={item} className="skeleton h-24" />)}
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map(i => <SkeletonCard key={i} />)}
+          {[1, 2, 3].map((item) => <SkeletonCard key={item} />)}
         </div>
       </div>
     );
   }
 
-  const statCards = [
-    { label: 'Your Uploads', value: myStats.uploads, icon: Upload, gradient: 'from-navy-600 to-navy-800', bg: 'bg-navy-500/10 dark:bg-navy-400/10' },
-    { label: 'Upvotes Received', value: myStats.upvotes, icon: ThumbsUp, gradient: 'from-emerald-500 to-emerald-700', bg: 'bg-emerald-500/10 dark:bg-emerald-400/10' },
-    { label: 'Downloads Received', value: myStats.downloads, icon: Download, gradient: 'from-gold-400 to-gold-500', bg: 'bg-gold-400/10 dark:bg-gold-400/10' },
-  ];
-
   return (
     <PageTransition>
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        {/* Welcome */}
-        <motion.div {...fadeUp} transition={{ duration: 0.4 }} className="mb-8">
-          <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-2xl font-bold text-warm-900 dark:text-white">
-              Welcome back, {user?.name?.split(' ')[0]}
-            </h1>
-            <motion.div
-              animate={{ rotate: [0, 14, -8, 14, -4, 10, 0] }}
-              transition={{ duration: 2.5, delay: 0.5 }}
-              className="text-2xl"
-            >
-              👋
-            </motion.div>
-          </div>
-          <p className="text-sm text-warm-500 dark:text-warm-400">
-            {chapter?.name} · {chapter?.region}, {chapter?.state}
-          </p>
-        </motion.div>
+      <div className="atlas-page">
+        <PageHeader
+          kicker="Dashboard"
+          title={`Welcome back, ${user?.name?.split(' ')[0] || 'Atlas member'}.`}
+          subtitle="Keep the chapter moving: publish better prep, meet stronger collaborators, and turn study time into momentum."
+          meta={chapter ? `${chapter.name} · ${chapter.region}, ${chapter.state}` : null}
+          actions={(
+            <>
+              <Link to="/upload" className="atlas-btn atlas-btn-primary">
+                <Upload size={13} />
+                Upload resource
+              </Link>
+              <Link to="/connections" className="atlas-btn atlas-btn-ghost">
+                <Handshake size={13} />
+                Grow your network
+              </Link>
+            </>
+          )}
+          rightSlot={(
+            <div className="grid grid-cols-3 gap-2 sm:w-[420px]">
+              <StatTile
+                label="Shared"
+                value={<AnimatedCounter value={myStats.uploads} />}
+                hint="Resources"
+                icon={<Upload size={14} />}
+                tone="accent"
+              />
+              <StatTile
+                label="Upvotes"
+                value={<AnimatedCounter value={myStats.upvotes} />}
+                hint="Earned"
+                icon={<ThumbsUp size={14} />}
+                tone="gold"
+              />
+              <StatTile
+                label="Downloads"
+                value={<AnimatedCounter value={myStats.downloads} />}
+                hint="Driven"
+                icon={<Download size={14} />}
+              />
+            </div>
+          )}
+        />
 
-        {/* Stats */}
-        <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {statCards.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              {...fadeUp}
-              transition={{ duration: 0.4, delay: 0.1 * (i + 1) }}
-              whileHover={{ y: -3, transition: { duration: 0.2 } }}
-              className="card-surface group relative overflow-hidden p-5"
-            >
-              <div className="flex items-center gap-4">
-                <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${stat.gradient} text-white shadow-lg`}>
-                  <stat.icon size={20} />
+        <div className="mt-8 grid gap-8 xl:grid-cols-[1.2fr_0.92fr]">
+          <div className="space-y-8">
+            <motion.section {...fadeUp} transition={{ duration: 0.4, delay: 0.08 }}>
+              <SectionHeader
+                kicker="Suggested"
+                title="People worth meeting this week"
+                action={(
+                  <Link
+                    to="/connections"
+                    className="group inline-flex items-center gap-1 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--atlas-accent)] hover:text-[var(--atlas-fg)]"
+                  >
+                    View network
+                    <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                )}
+              />
+              {suggestedConnections.length === 0 ? (
+                <div className="mt-5">
+                  <EmptyState title="No suggestions yet" description="Visit the network page to find people." />
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-warm-900 dark:text-white">
-                    <AnimatedCounter value={stat.value} />
-                  </p>
-                  <p className="text-sm text-warm-500 dark:text-warm-400">{stat.label}</p>
+              ) : (
+                <div className="mt-5 grid gap-4 md:grid-cols-2">
+                  {suggestedConnections.map((profile, index) => (
+                    <motion.article
+                      key={profile.id}
+                      {...fadeUp}
+                      transition={{ duration: 0.35, delay: 0.1 + index * 0.05 }}
+                      className="card-surface flex h-full flex-col p-5"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <Link to={`/profile/${profile.id}`} className="flex min-w-0 items-center gap-3">
+                          <Avatar name={profile.name} size="md" />
+                          <div className="min-w-0">
+                            <p className="truncate font-semibold text-[var(--atlas-fg)]">{profile.name}</p>
+                            <p className="truncate text-sm text-[var(--atlas-muted)]">{profile.chapterName}</p>
+                          </div>
+                        </Link>
+                        <Badge tone="success">Network fit</Badge>
+                      </div>
+                      <p className="mt-4 line-clamp-2 text-sm leading-6 text-[var(--atlas-fg)]">{profile.headline}</p>
+                      <div className="mt-4 flex flex-wrap gap-1.5">
+                        {profile.skills.slice(0, 3).map((skill) => (
+                          <span key={skill} className="atlas-chip">{skill}</span>
+                        ))}
+                      </div>
+                      <div className="mt-auto flex items-end justify-between gap-3 pt-4 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-[var(--atlas-muted)]">
+                        <span>{profile.region}, {profile.state}</span>
+                        <span>{profile.year}</span>
+                      </div>
+                    </motion.article>
+                  ))}
                 </div>
+              )}
+            </motion.section>
+
+            <motion.section {...fadeUp} transition={{ duration: 0.4, delay: 0.15 }}>
+              <SectionHeader
+                kicker="Trending"
+                title="What the network is studying"
+                action={<Flame size={16} className="text-[var(--atlas-gold)]" aria-hidden="true" />}
+              />
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {popularResources.length === 0
+                  ? [1, 2, 3].map((item) => <SkeletonCard key={item} />)
+                  : popularResources.map((resource) => (
+                      <ResourceCard key={resource.id} resource={resource} />
+                    ))}
               </div>
-              <div className="absolute -bottom-6 -right-6 h-24 w-24 rounded-full bg-navy-400/5 blur-2xl transition-opacity duration-500 opacity-0 group-hover:opacity-100" />
-            </motion.div>
-          ))}
+            </motion.section>
+          </div>
+
+          <div className="space-y-8">
+            <motion.section {...fadeUp} transition={{ duration: 0.4, delay: 0.12 }} className="card-surface p-5">
+              <SectionHeader
+                kicker="Study circles"
+                title="Find your accountability crew"
+                action={<Users2 size={16} className="text-[var(--atlas-accent)]" aria-hidden="true" />}
+              />
+              <ul className="mt-5 space-y-3">
+                {STUDY_CIRCLES.map((circle) => (
+                  <li key={circle.id} className="atlas-panel border-l-2 border-l-[var(--atlas-accent)]/55 px-4 py-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h3 className="font-semibold text-[var(--atlas-fg)]">{circle.name}</h3>
+                        <p className="text-xs text-[var(--atlas-muted)]">{circle.event}</p>
+                      </div>
+                      <Badge>{circle.members} mem</Badge>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-[var(--atlas-fg)]">{circle.focus}</p>
+                    <p className="mt-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-[var(--atlas-muted)]">
+                      {circle.cadence}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </motion.section>
+
+            <motion.section {...fadeUp} transition={{ duration: 0.4, delay: 0.18 }}>
+              <SectionHeader
+                kicker="Fresh"
+                title="Recently added"
+                action={(
+                  <Link
+                    to="/events"
+                    className="group inline-flex items-center gap-1 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--atlas-accent)] hover:text-[var(--atlas-fg)]"
+                  >
+                    <BookOpen size={12} />
+                    Browse all
+                    <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                )}
+              />
+              <div className="mt-5 grid gap-4">
+                {recentResources.length === 0
+                  ? <EmptyState title="No resources yet" description="Be the first to upload one." />
+                  : recentResources.map((resource) => (
+                      <ResourceCard key={resource.id} resource={resource} />
+                    ))}
+              </div>
+            </motion.section>
+          </div>
         </div>
-
-        {/* Quick actions */}
-        <motion.div {...fadeUp} transition={{ duration: 0.4, delay: 0.4 }} className="mb-10 flex flex-wrap gap-3">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
-            <Link
-              to="/upload"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-navy-800 to-navy-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-md dark:from-navy-600 dark:to-navy-500"
-            >
-              <Upload size={16} /> Upload Resource
-            </Link>
-          </motion.div>
-          <Link
-            to="/events"
-            className="inline-flex items-center gap-2 rounded-xl border border-warm-200 bg-white px-5 py-2.5 text-sm font-medium text-warm-700 transition-all duration-200 hover:border-warm-300 hover:shadow-sm dark:border-warm-700 dark:bg-warm-800 dark:text-warm-300"
-          >
-            Browse Events
-          </Link>
-          <Link
-            to="/leaderboard"
-            className="inline-flex items-center gap-2 rounded-xl border border-warm-200 bg-white px-5 py-2.5 text-sm font-medium text-warm-700 transition-all duration-200 hover:border-warm-300 hover:shadow-sm dark:border-warm-700 dark:bg-warm-800 dark:text-warm-300"
-          >
-            <TrendingUp size={16} /> Leaderboard
-          </Link>
-        </motion.div>
-
-        {/* Trending */}
-        <motion.div {...fadeUp} transition={{ duration: 0.4, delay: 0.5 }} className="mb-10">
-          <div className="mb-5 flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-lg font-bold text-warm-900 dark:text-white">
-              <Flame size={20} className="text-orange-500" /> Trending Resources
-            </h2>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {popularResources.map(r => (
-              <ResourceCard key={r.id} resource={r} />
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Recent */}
-        <motion.div {...fadeUp} transition={{ duration: 0.4, delay: 0.6 }}>
-          <div className="mb-5 flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-lg font-bold text-warm-900 dark:text-white">
-              <Sparkles size={18} className="text-navy-500" /> Recently Added
-            </h2>
-            <Link to="/events" className="group flex items-center gap-1 text-sm font-medium text-navy-700 hover:text-navy-600 dark:text-navy-400 transition-colors">
-              View all <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-            </Link>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {recentResources.map(r => (
-              <ResourceCard key={r.id} resource={r} />
-            ))}
-          </div>
-        </motion.div>
       </div>
     </PageTransition>
   );

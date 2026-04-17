@@ -22,8 +22,8 @@ const badgeConfig = {
   public: {
     label: 'Public',
     icon: Globe,
-    classes: 'bg-warm-500/10 text-warm-600 dark:bg-warm-400/15 dark:text-warm-400 ring-warm-500/20',
-    dotColor: 'bg-warm-500',
+    classes: 'border border-[var(--atlas-border)] bg-[var(--atlas-surface)] text-[var(--atlas-muted)] ring-[var(--atlas-border)]',
+    dotColor: 'bg-[var(--atlas-muted)]',
   },
 };
 
@@ -34,8 +34,8 @@ export default function VisibilityBadge({ level, size = 'sm' }) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full ring-1 ring-inset font-medium ${c.classes} ${
-        isSmall ? 'px-2.5 py-0.5 text-xs' : 'px-3 py-1 text-sm'
+      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-semibold uppercase tracking-wide ${c.classes} ${
+        isSmall ? '' : 'px-3 py-1 text-sm'
       }`}
     >
       <span className="relative flex h-1.5 w-1.5">

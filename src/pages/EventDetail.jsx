@@ -50,10 +50,10 @@ export default function EventDetail() {
     return (
       <PageTransition>
         <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-warm-100 dark:bg-warm-800">
-            <Search size={24} className="text-warm-400" />
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]">
+            <Search size={24} className="text-[var(--atlas-muted)]" />
           </div>
-          <h1 className="text-xl font-bold text-warm-900 dark:text-white">Event not found</h1>
+          <h1 className="text-xl font-bold text-[var(--atlas-fg)]">Event not found</h1>
           <Link to="/events" className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-navy-700 dark:text-navy-400 transition-colors hover:text-navy-600">
             <ArrowLeft size={14} /> Back to Events
           </Link>
@@ -69,14 +69,14 @@ export default function EventDetail() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="mb-6">
-          <Link to="/events" className="mb-3 inline-flex items-center gap-1.5 text-sm text-warm-500 hover:text-warm-700 dark:text-warm-400 dark:hover:text-warm-200 transition-colors">
+          <Link to="/events" className="mb-3 inline-flex items-center gap-1.5 text-sm text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] dark:text-[var(--atlas-muted)] dark:hover:text-warm-200 transition-colors">
             <ArrowLeft size={14} /> Events
           </Link>
-          <h1 className="text-2xl font-bold text-warm-900 dark:text-white">{event.name}</h1>
+          <h1 className="text-2xl font-bold text-[var(--atlas-fg)]">{event.name}</h1>
           {loading ? (
             <div className="mt-2 skeleton h-4 w-40" />
           ) : (
-            <p className="mt-1 text-sm text-warm-500 dark:text-warm-400">
+            <p className="mt-1 text-sm text-[var(--atlas-muted)]">
               {filtered.length} resource{filtered.length !== 1 ? 's' : ''} available
             </p>
           )}
@@ -86,7 +86,7 @@ export default function EventDetail() {
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={() => setShowFilters(!showFilters)}
-          className="mb-4 flex items-center gap-2 rounded-xl border border-warm-200 px-4 py-2.5 text-sm font-medium text-warm-700 lg:hidden dark:border-warm-700 dark:text-warm-300 transition-colors hover:border-warm-300"
+          className="mb-4 flex items-center gap-2 rounded-xl border border-[var(--atlas-border)] px-4 py-2.5 text-sm font-medium text-[var(--atlas-fg)] lg:hidden dark:border-warm-700 text-[var(--atlas-muted)] transition-colors hover:border-warm-300"
         >
           <SlidersHorizontal size={16} /> Filters
           {activeFilterCount > 0 && (
@@ -99,11 +99,11 @@ export default function EventDetail() {
         <div className="flex gap-8">
           {/* Sidebar */}
           <div className={`${showFilters ? 'fixed inset-0 z-50 bg-black/30 lg:static lg:bg-transparent' : 'hidden lg:block'}`}>
-            <div className={`${showFilters ? 'absolute right-0 top-0 h-full w-80 overflow-y-auto bg-white p-6 shadow-xl lg:static lg:w-auto lg:shadow-none lg:p-0 dark:bg-warm-900' : ''}`}>
+            <div className={`${showFilters ? 'absolute right-0 top-0 h-full w-80 overflow-y-auto bg-white p-6 shadow-xl lg:static lg:w-auto lg:shadow-none lg:p-0 dark:bg-[var(--atlas-surface)]' : ''}`}>
               {showFilters && (
                 <button
                   onClick={() => setShowFilters(false)}
-                  className="mb-4 flex items-center gap-2 text-sm text-warm-500 lg:hidden transition-colors hover:text-warm-700"
+                  className="mb-4 flex items-center gap-2 text-sm text-[var(--atlas-muted)] lg:hidden transition-colors hover:text-[var(--atlas-fg)]"
                 >
                   <X size={16} /> Close
                 </button>
@@ -130,10 +130,10 @@ export default function EventDetail() {
                 animate={{ opacity: 1 }}
                 className="card-surface py-20 text-center"
               >
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-warm-100 dark:bg-warm-800">
-                  <Search size={22} className="text-warm-400" />
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]">
+                  <Search size={22} className="text-[var(--atlas-muted)]" />
                 </div>
-                <p className="text-warm-500 dark:text-warm-400">No resources match your filters.</p>
+                <p className="text-[var(--atlas-muted)]">No resources match your filters.</p>
                 <button
                   onClick={() => setFilters({ types: [], visibility: [], tags: [], sort: 'recent' })}
                   className="mt-3 text-sm font-semibold text-navy-700 hover:text-navy-600 dark:text-navy-400 transition-colors"

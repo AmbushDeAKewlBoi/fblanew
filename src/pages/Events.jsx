@@ -34,8 +34,8 @@ export default function Events() {
               <BookOpen size={20} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-warm-900 dark:text-white">Events</h1>
-              <p className="text-sm text-warm-500 dark:text-warm-400">Browse resources by FBLA competitive event</p>
+              <h1 className="text-2xl font-bold text-[var(--atlas-fg)]">Events</h1>
+              <p className="text-sm text-[var(--atlas-muted)]">Browse resources by FBLA competitive event</p>
             </div>
           </div>
         </motion.div>
@@ -43,13 +43,13 @@ export default function Events() {
         {/* Search + Filters */}
         <motion.div {...fadeUp} transition={{ duration: 0.4, delay: 0.1 }} className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center">
           <div className="relative flex-1 max-w-md group">
-            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-warm-400 transition-colors group-focus-within:text-navy-500" />
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)] transition-colors group-focus-within:text-navy-500" />
             <input
               type="text"
               placeholder="Search events..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-warm-200/80 bg-white py-2.5 pl-10 pr-4 text-sm text-warm-900 placeholder:text-warm-400 transition-all duration-200 focus:border-navy-400 focus:outline-none focus:ring-2 focus:ring-navy-400/20 dark:border-warm-700/60 dark:bg-warm-900 dark:text-warm-100 dark:focus:border-navy-500"
+              className="w-full rounded-xl border border-[var(--atlas-border)] bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--atlas-fg)] placeholder:text-[var(--atlas-muted)] transition-all duration-200 focus:border-navy-400 focus:outline-none focus:ring-2 focus:ring-navy-400/20 dark:border-[var(--atlas-border)] dark:bg-[var(--atlas-surface)] dark:text-warm-100 dark:focus:border-navy-500"
             />
           </div>
           <div className="flex flex-wrap gap-2">
@@ -61,7 +61,7 @@ export default function Events() {
                 className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ${
                   category === cat
                     ? 'bg-navy-800 text-white shadow-sm dark:bg-navy-600'
-                    : 'bg-warm-100 text-warm-600 hover:bg-warm-200 dark:bg-warm-800 dark:text-warm-400 dark:hover:bg-warm-700'
+                    : 'bg-[var(--atlas-elev)] text-[var(--atlas-muted)] hover:bg-warm-200 dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)] dark:hover:bg-warm-700'
                 }`}
               >
                 {cat}
@@ -71,7 +71,7 @@ export default function Events() {
         </motion.div>
 
         {/* Results count */}
-        <motion.p {...fadeUp} transition={{ duration: 0.4, delay: 0.15 }} className="mb-5 text-sm text-warm-500 dark:text-warm-400">
+        <motion.p {...fadeUp} transition={{ duration: 0.4, delay: 0.15 }} className="mb-5 text-sm text-[var(--atlas-muted)]">
           {filtered.length} event{filtered.length !== 1 ? 's' : ''}
         </motion.p>
 
@@ -94,15 +94,15 @@ export default function Events() {
                     <Grid3X3 size={18} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-sm font-semibold text-warm-900 leading-snug transition-colors group-hover:text-navy-700 dark:text-warm-100 dark:group-hover:text-navy-300">
+                    <h3 className="text-sm font-semibold text-[var(--atlas-fg)] leading-snug transition-colors group-hover:text-navy-700 dark:text-warm-100 dark:group-hover:text-navy-300">
                       {event.name}
                     </h3>
                     <div className="mt-1.5 flex items-center gap-2">
-                      <span className="rounded-lg bg-warm-100 px-2 py-0.5 text-xs font-medium text-warm-500 dark:bg-warm-800 dark:text-warm-400">
+                      <span className="rounded-lg bg-[var(--atlas-elev)] px-2 py-0.5 text-xs font-medium text-[var(--atlas-muted)] dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)]">
                         {event.category}
                       </span>
                       {count > 0 && (
-                        <span className="text-xs text-warm-400 dark:text-warm-500">
+                        <span className="text-xs text-[var(--atlas-muted)] dark:text-[var(--atlas-muted)]">
                           {count} resource{count !== 1 ? 's' : ''}
                         </span>
                       )}
@@ -120,10 +120,10 @@ export default function Events() {
             animate={{ opacity: 1 }}
             className="py-20 text-center"
           >
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-warm-100 dark:bg-warm-800">
-              <Search size={24} className="text-warm-400" />
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]">
+              <Search size={24} className="text-[var(--atlas-muted)]" />
             </div>
-            <p className="text-warm-500 dark:text-warm-400">No events match your search.</p>
+            <p className="text-[var(--atlas-muted)]">No events match your search.</p>
           </motion.div>
         )}
       </div>

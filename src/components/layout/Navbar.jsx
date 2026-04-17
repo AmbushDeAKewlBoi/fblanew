@@ -2,14 +2,16 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
+import { useSocial } from '../../context/SocialContext';
 import {
   Search, Plus, Trophy, LayoutDashboard,
   LogOut, ChevronDown, Menu, X, Sun, Moon,
-  FolderOpen, Shield, BookOpen
+  FolderOpen, Shield, BookOpen, Users2, Bell, MessagesSquare, Newspaper
 } from 'lucide-react';
 
 export default function Navbar({ darkMode, setDarkMode }) {
   const { user, isAuthenticated, logout, chapter } = useAuth();
+  const { unreadNotificationCount, currentProfile } = useSocial();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,80 +36,97 @@ export default function Navbar({ darkMode, setDarkMode }) {
   const isActive = (path) => location.pathname === path;
 
   const navLinkClass = (path) =>
-    `px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+    `group flex items-center gap-1.5 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] border transition-colors ${
       isActive(path)
-        ? 'bg-navy-800/10 text-navy-800 dark:bg-navy-400/15 dark:text-navy-300'
-        : 'text-warm-600 hover:text-warm-900 hover:bg-warm-100/80 dark:text-warm-400 dark:hover:text-warm-200 dark:hover:bg-warm-800/60'
+        ? 'border-[var(--atlas-accent)] bg-[rgba(109,158,168,0.12)] text-[var(--atlas-fg)]'
+        : 'border-transparent text-[var(--atlas-muted)] hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]'
+    }`;
+
+  const iconBtn = (path) =>
+    `relative p-2.5 border transition-colors ${
+      isActive(path)
+        ? 'border-[var(--atlas-accent)] bg-[rgba(109,158,168,0.1)] text-[var(--atlas-fg)]'
+        : 'border-transparent text-[var(--atlas-muted)] hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]'
     }`;
 
   return (
-    <nav className="sticky top-0 z-50 glass border-b border-warm-200/60 dark:border-warm-800/60">
+    <nav className="sticky top-0 z-50 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)]/92 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex h-16 items-center justify-between gap-4">
-          {/* Logo */}
-          <Link to={isAuthenticated ? '/dashboard' : '/'} className="flex items-center gap-2.5 shrink-0 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden transition-transform duration-200 group-hover:scale-105">
-              <img src="/logo.png" alt="FBLA Hub" className="h-9 w-9 object-contain" />
+        <div className="flex h-[4.25rem] items-center justify-between gap-4">
+          <Link to={isAuthenticated ? '/dashboard' : '/'} className="flex shrink-0 items-center gap-3 group">
+            <div className="flex h-10 w-10 items-center justify-center border-2 border-[var(--atlas-accent)] bg-[var(--atlas-elev)] text-sm font-bold text-[var(--atlas-fg)] font-[family-name:var(--font-mono)] transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5">
+              A
             </div>
-            <span className="text-lg font-bold tracking-tight text-navy-800 dark:text-navy-200 hidden sm:block font-[var(--font-display)]">
-              FBLA Hub
-            </span>
+            <div className="hidden sm:block">
+              <span className="block font-[family-name:var(--font-display)] text-lg tracking-tight text-[var(--atlas-fg)]">Atlas</span>
+              <span className="block font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.28em] text-[var(--atlas-muted)]">FBLA network</span>
+            </div>
           </Link>
 
-          {/* Search Bar */}
           {isAuthenticated && (
-            <form onSubmit={handleSearch} className="flex-1 max-w-md hidden md:block">
-              <div className="relative group">
-                <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-warm-400 transition-colors group-focus-within:text-navy-500" />
+            <form onSubmit={handleSearch} className="hidden max-w-md flex-1 md:block">
+              <div className="relative">
+                <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)]" />
                 <input
                   type="text"
-                  placeholder="Search resources, events, tags..."
+                  placeholder="Search resources, people, chapters…"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-xl border border-warm-200/80 bg-warm-50/80 py-2.5 pl-10 pr-4 text-sm text-warm-900 placeholder:text-warm-400 transition-all duration-200 focus:border-navy-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-navy-400/20 dark:border-warm-700/60 dark:bg-warm-900/60 dark:text-warm-100 dark:placeholder:text-warm-500 dark:focus:border-navy-500 dark:focus:bg-warm-800 dark:focus:ring-navy-500/20"
+                  className="atlas-input w-full py-2.5 pl-10 pr-14"
                 />
-                <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden items-center gap-0.5 rounded-md border border-warm-200 bg-warm-100 px-1.5 py-0.5 text-[10px] font-medium text-warm-400 sm:inline-flex dark:border-warm-700 dark:bg-warm-800 dark:text-warm-500">
+                <kbd className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 items-center gap-0.5 border border-[var(--atlas-border)] bg-[var(--atlas-elev)] px-1.5 py-0.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--atlas-muted)] sm:inline-flex">
                   ⌘K
                 </kbd>
               </div>
             </form>
           )}
 
-          {/* Right side */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
             {isAuthenticated ? (
               <>
-                {/* Nav links — desktop */}
-                <div className="hidden lg:flex items-center gap-0.5">
+                <div className="hidden items-center gap-0.5 lg:flex">
+                  <Link to="/feed" className={navLinkClass('/feed')}>
+                    <Newspaper size={15} strokeWidth={2} /> Feed
+                  </Link>
                   <Link to="/events" className={navLinkClass('/events')}>
-                    <span className="flex items-center gap-1.5">
-                      <BookOpen size={15} /> Events
-                    </span>
+                    <BookOpen size={15} strokeWidth={2} /> Events
+                  </Link>
+                  <Link to="/connections" className={navLinkClass('/connections')}>
+                    <Users2 size={15} strokeWidth={2} /> Network
                   </Link>
                   <Link to="/leaderboard" className={navLinkClass('/leaderboard')}>
-                    <span className="flex items-center gap-1.5">
-                      <Trophy size={15} /> Leaderboard
-                    </span>
+                    <Trophy size={15} strokeWidth={2} /> Board
                   </Link>
                 </div>
 
-                {/* Upload button */}
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
+                <Link to="/messages" className={iconBtn('/messages')} aria-label="Messages">
+                  <MessagesSquare size={18} strokeWidth={2} />
+                </Link>
+                <Link to="/notifications" className={iconBtn('/notifications')} aria-label="Notifications">
+                  <Bell size={18} strokeWidth={2} />
+                  {unreadNotificationCount > 0 && (
+                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center border border-[var(--atlas-bg)] bg-red-600 px-1 font-[family-name:var(--font-mono)] text-[10px] font-bold text-white">
+                      {unreadNotificationCount}
+                    </span>
+                  )}
+                </Link>
+
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Link
                     to="/upload"
-                    className="ml-1 flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-navy-800 to-navy-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-md hover:from-navy-700 hover:to-navy-600 dark:from-navy-600 dark:to-navy-500 dark:hover:from-navy-500 dark:hover:to-navy-400"
+                    className="ml-1 flex items-center gap-2 border-2 border-[var(--atlas-accent)] bg-[rgba(109,158,168,0.12)] px-4 py-2.5 font-[family-name:var(--font-mono)] text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--atlas-fg)] transition-colors hover:bg-[rgba(109,158,168,0.2)]"
                   >
                     <Plus size={16} strokeWidth={2.5} />
                     <span className="hidden sm:inline">Upload</span>
                   </Link>
                 </motion.div>
 
-                {/* Dark mode toggle */}
                 <motion.button
-                  whileTap={{ scale: 0.9, rotate: 15 }}
+                  type="button"
+                  whileTap={{ scale: 0.92 }}
                   onClick={() => setDarkMode(!darkMode)}
-                  className="p-2.5 rounded-xl text-warm-500 hover:text-warm-700 hover:bg-warm-100/80 dark:text-warm-400 dark:hover:text-warm-200 dark:hover:bg-warm-800/60 transition-colors"
-                  aria-label="Toggle dark mode"
+                  className="border border-transparent p-2.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]"
+                  aria-label="Toggle theme"
                 >
                   <AnimatePresence mode="wait">
                     <motion.div
@@ -122,17 +141,17 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   </AnimatePresence>
                 </motion.button>
 
-                {/* User menu */}
                 <div className="relative">
                   <button
+                    type="button"
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-2 rounded-xl py-1.5 pl-1.5 pr-3 hover:bg-warm-100/80 dark:hover:bg-warm-800/60 transition-all duration-200"
+                    className="flex items-center gap-2 border border-transparent py-1.5 pl-1.5 pr-2 transition-colors hover:border-[var(--atlas-border)]"
                   >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-navy-600 to-navy-800 text-white text-sm font-semibold shadow-sm">
+                    <div className="flex h-9 w-9 items-center justify-center border-2 border-[var(--atlas-border)] bg-[var(--atlas-elev)] text-sm font-semibold text-[var(--atlas-fg)] font-[family-name:var(--font-mono)]">
                       {user?.name?.charAt(0)}
                     </div>
                     <motion.div animate={{ rotate: userMenuOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                      <ChevronDown size={14} className="text-warm-400" />
+                      <ChevronDown size={14} className="text-[var(--atlas-muted)]" />
                     </motion.div>
                   </button>
 
@@ -141,49 +160,54 @@ export default function Navbar({ darkMode, setDarkMode }) {
                       <>
                         <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
                         <motion.div
-                          initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                          initial={{ opacity: 0, y: 8, scale: 0.98 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.98 }}
                           transition={{ duration: 0.15, ease: 'easeOut' }}
-                          className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-warm-200/80 bg-white p-2 shadow-xl shadow-warm-900/5 z-50 dark:border-warm-700/60 dark:bg-warm-900"
+                          className="absolute right-0 top-full z-50 mt-2 w-64 border border-[var(--atlas-border)] bg-[var(--atlas-surface)] p-2 shadow-[6px_6px_0_rgba(0,0,0,0.12)] dark:shadow-[6px_6px_0_rgba(0,0,0,0.45)]"
                         >
-                          <div className="px-3 py-2.5 mb-1">
-                            <p className="text-sm font-semibold text-warm-900 dark:text-warm-100">{user?.name}</p>
-                            <p className="text-xs text-warm-500 dark:text-warm-400">{chapter?.name}</p>
+                          <div className="mb-2 px-3 py-2">
+                            <p className="text-sm font-semibold text-[var(--atlas-fg)]">{user?.name}</p>
+                            <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.14em] text-[var(--atlas-muted)]">{chapter?.name}</p>
                             {user?.isAdvisor && (
-                              <span className="mt-1.5 inline-block rounded-full bg-gradient-to-r from-gold-400/20 to-gold-300/20 px-2.5 py-0.5 text-xs font-semibold text-gold-500 dark:text-gold-400">
+                              <span className="mt-2 inline-block border border-[var(--atlas-gold)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--atlas-gold)]">
                                 Advisor
                               </span>
                             )}
                           </div>
-                          <div className="border-t border-warm-100 dark:border-warm-800 my-1" />
-                          <Link
-                            to="/dashboard"
-                            onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-warm-700 hover:bg-warm-50 transition-colors dark:text-warm-300 dark:hover:bg-warm-800"
-                          >
-                            <LayoutDashboard size={16} /> Dashboard
-                          </Link>
-                          <Link
-                            to="/my-uploads"
-                            onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-warm-700 hover:bg-warm-50 transition-colors dark:text-warm-300 dark:hover:bg-warm-800"
-                          >
-                            <FolderOpen size={16} /> My Uploads
-                          </Link>
+                          <div className="my-2 border-t border-[var(--atlas-border)]" />
+                          {[
+                            ['/dashboard', <LayoutDashboard size={16} />, 'Dashboard'],
+                            [`/profile/${currentProfile?.id ?? 'me'}`, <Users2 size={16} />, 'My profile'],
+                            ['/feed', <Newspaper size={16} />, 'Feed'],
+                            ['/connections', <Users2 size={16} />, 'My network'],
+                            ['/messages', <MessagesSquare size={16} />, 'Messages'],
+                            ['/notifications', <Bell size={16} />, 'Notifications'],
+                            ['/my-uploads', <FolderOpen size={16} />, 'My uploads'],
+                          ].map(([to, icon, label]) => (
+                            <Link
+                              key={to}
+                              to={to}
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-[var(--atlas-fg)] transition-colors hover:bg-[rgba(109,158,168,0.1)]"
+                            >
+                              {icon} {label}
+                            </Link>
+                          ))}
                           {user?.isAdvisor && (
                             <Link
                               to="/admin"
                               onClick={() => setUserMenuOpen(false)}
-                              className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-warm-700 hover:bg-warm-50 transition-colors dark:text-warm-300 dark:hover:bg-warm-800"
+                              className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-[var(--atlas-fg)] transition-colors hover:bg-[rgba(109,158,168,0.1)]"
                             >
-                              <Shield size={16} /> Admin Panel
+                              <Shield size={16} /> Admin
                             </Link>
                           )}
-                          <div className="border-t border-warm-100 dark:border-warm-800 my-1" />
+                          <div className="my-2 border-t border-[var(--atlas-border)]" />
                           <button
+                            type="button"
                             onClick={handleLogout}
-                            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-danger hover:bg-danger-light transition-colors dark:hover:bg-danger/10"
+                            className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm text-red-600 transition-colors hover:bg-red-500/10"
                           >
                             <LogOut size={16} /> Sign out
                           </button>
@@ -193,54 +217,43 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   </AnimatePresence>
                 </div>
 
-                {/* Mobile menu toggle */}
                 <motion.button
+                  type="button"
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="lg:hidden p-2.5 rounded-xl text-warm-500 hover:bg-warm-100/80 dark:hover:bg-warm-800/60 transition-colors"
+                  className="border border-transparent p-2.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] lg:hidden"
                 >
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={mobileMenuOpen ? 'close' : 'open'}
-                      initial={{ rotate: -90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: 90, opacity: 0 }}
-                      transition={{ duration: 0.15 }}
-                    >
-                      {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-                    </motion.div>
-                  </AnimatePresence>
+                  {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
                 </motion.button>
               </>
             ) : (
               <>
                 <motion.button
-                  whileTap={{ scale: 0.9, rotate: 15 }}
+                  type="button"
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => setDarkMode(!darkMode)}
-                  className="p-2.5 rounded-xl text-warm-500 hover:text-warm-700 hover:bg-warm-100/80 dark:text-warm-400 dark:hover:text-warm-200 dark:hover:bg-warm-800/60 transition-colors"
+                  className="border border-transparent p-2.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)]"
+                  aria-label="Toggle theme"
                 >
                   {darkMode ? <Sun size={18} /> : <Moon size={18} />}
                 </motion.button>
                 <Link
                   to="/login"
-                  className="px-4 py-2 text-sm font-medium text-warm-700 hover:text-warm-900 dark:text-warm-300 dark:hover:text-warm-100 transition-colors"
+                  className="px-3 py-2 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--atlas-muted)] transition-colors hover:text-[var(--atlas-fg)]"
                 >
                   Log in
                 </Link>
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
-                  <Link
-                    to="/signup/student"
-                    className="rounded-xl bg-gradient-to-r from-navy-800 to-navy-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:shadow-md transition-all duration-200 dark:from-navy-600 dark:to-navy-500"
-                  >
-                    Get Started
-                  </Link>
-                </motion.div>
+                <Link
+                  to="/signup/student"
+                  className="border-2 border-[var(--atlas-accent)] bg-[rgba(109,158,168,0.12)] px-4 py-2.5 font-[family-name:var(--font-mono)] text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--atlas-fg)] transition-colors hover:bg-[rgba(109,158,168,0.2)]"
+                >
+                  Join Atlas
+                </Link>
               </>
             )}
           </div>
         </div>
 
-        {/* Mobile menu */}
         <AnimatePresence>
           {mobileMenuOpen && isAuthenticated && (
             <motion.div
@@ -248,35 +261,38 @@ export default function Navbar({ darkMode, setDarkMode }) {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2, ease: 'easeInOut' }}
-              className="lg:hidden overflow-hidden"
+              className="overflow-hidden lg:hidden"
             >
-              <div className="border-t border-warm-200/60 dark:border-warm-800/60 py-3 space-y-1">
+              <div className="space-y-1 border-t border-[var(--atlas-border)] py-3">
                 <form onSubmit={handleSearch} className="mb-3 md:hidden">
                   <div className="relative">
-                    <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-warm-400" />
+                    <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)]" />
                     <input
                       type="text"
-                      placeholder="Search..."
+                      placeholder="Search…"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full rounded-xl border border-warm-200/80 bg-warm-50/80 py-2.5 pl-10 pr-4 text-sm dark:border-warm-700/60 dark:bg-warm-900/60 dark:text-warm-100"
+                      className="atlas-input w-full py-2.5 pl-10 pr-4"
                     />
                   </div>
                 </form>
-                <Link
-                  to="/events"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-warm-700 hover:bg-warm-100/80 dark:text-warm-300 dark:hover:bg-warm-800/60 transition-colors"
-                >
-                  <BookOpen size={16} /> Events
-                </Link>
-                <Link
-                  to="/leaderboard"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-warm-700 hover:bg-warm-100/80 dark:text-warm-300 dark:hover:bg-warm-800/60 transition-colors"
-                >
-                  <Trophy size={16} /> Leaderboard
-                </Link>
+                {[
+                  ['/feed', <Newspaper size={16} />, 'Feed'],
+                  ['/events', <BookOpen size={16} />, 'Events'],
+                  ['/connections', <Users2 size={16} />, 'Network'],
+                  ['/leaderboard', <Trophy size={16} />, 'Leaderboard'],
+                  ['/messages', <MessagesSquare size={16} />, 'Messages'],
+                  ['/notifications', <Bell size={16} />, 'Notifications'],
+                ].map(([to, icon, label]) => (
+                  <Link
+                    key={to}
+                    to={to}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2.5 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--atlas-fg)] transition-colors hover:bg-[rgba(109,158,168,0.08)]"
+                  >
+                    {icon} {label}
+                  </Link>
+                ))}
               </div>
             </motion.div>
           )}

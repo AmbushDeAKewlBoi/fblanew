@@ -56,11 +56,11 @@ export default function SignupStudent() {
         >
           <div className="card-surface p-8 sm:p-10">
             <div className="mb-8 text-center">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl overflow-hidden">
-                <img src="/logo.png" alt="FBLA Hub" className="h-14 w-14 object-contain" />
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center border-2 border-[var(--atlas-accent)]/55 bg-[rgba(61,109,118,0.12)] font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--atlas-fg)] dark:bg-[rgba(109,158,168,0.16)]" style={{ borderRadius: 2 }}>
+                A
               </div>
-              <h1 className="text-2xl font-bold text-warm-900 dark:text-white">Join as a Student</h1>
-              <p className="mt-2 text-sm text-warm-500 dark:text-warm-400">Enter your chapter key to get started</p>
+              <h1 className="text-2xl font-bold text-[var(--atlas-fg)]">Join as a Student</h1>
+              <p className="mt-2 text-sm text-[var(--atlas-muted)]">Enter your chapter key to join Atlas</p>
             </div>
 
             {error && (
@@ -71,20 +71,20 @@ export default function SignupStudent() {
 
             {/* Chapter Key Input */}
             <div className="mb-6">
-              <label className="mb-2 block text-sm font-medium text-warm-700 dark:text-warm-300">Chapter Key</label>
+              <label className="mb-2 block text-sm font-medium text-[var(--atlas-fg)]">Chapter Key</label>
               <div className="relative">
-                <KeyRound size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-warm-400" />
+                <KeyRound size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)]" />
                 <input
                   type="text"
                   placeholder="e.g. VA-CENT-A1B2"
                   value={chapterKey}
                   onChange={(e) => validateKey(e.target.value)}
-                  className={`w-full rounded-xl border bg-white py-3.5 pl-11 pr-11 text-sm font-mono tracking-wider transition-all duration-200 focus:outline-none focus:ring-2 dark:bg-warm-900 dark:text-warm-100 ${
+                  className={`w-full rounded-xl border bg-white py-3.5 pl-11 pr-11 text-sm font-mono tracking-wider transition-all duration-200 focus:outline-none focus:ring-2 dark:bg-[var(--atlas-surface)] dark:text-warm-100 ${
                     keyValid === true
                       ? 'border-emerald-400 focus:ring-emerald-400/20'
                       : keyValid === false
                       ? 'border-danger focus:ring-danger/20'
-                      : 'border-warm-200 focus:border-navy-400 focus:ring-navy-400/20 dark:border-warm-700'
+                      : 'border-[var(--atlas-border)] focus:border-navy-400 focus:ring-navy-400/20 dark:border-warm-700'
                   }`}
                 />
                 {keyValid !== null && (
@@ -124,8 +124,8 @@ export default function SignupStudent() {
               disabled={!keyValid}
               className={`flex w-full items-center justify-center gap-3 rounded-xl px-6 py-3.5 text-sm font-semibold shadow-sm transition-all duration-200 ${
                 keyValid
-                  ? 'border border-warm-200 bg-white text-warm-700 hover:border-warm-300 hover:shadow-md dark:border-warm-700 dark:bg-warm-800 dark:text-warm-200'
-                  : 'border border-warm-100 bg-warm-50 text-warm-400 cursor-not-allowed dark:border-warm-800 dark:bg-warm-900 dark:text-warm-600'
+                  ? 'border border-[var(--atlas-border)] bg-white text-[var(--atlas-fg)] hover:border-warm-300 hover:shadow-md dark:border-warm-700 dark:bg-[var(--atlas-elev)] dark:text-warm-200'
+                  : 'border border-[var(--atlas-border)] bg-[var(--atlas-bg)] text-[var(--atlas-muted)] cursor-not-allowed dark:border-[var(--atlas-border)] dark:bg-[var(--atlas-surface)] dark:text-[var(--atlas-muted)]'
               }`}
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -138,14 +138,14 @@ export default function SignupStudent() {
             </motion.button>
 
             <div className="mt-8 text-center">
-              <p className="text-sm text-warm-500 dark:text-warm-400">
+              <p className="text-sm text-[var(--atlas-muted)]">
                 Already have an account?{' '}
                 <Link to="/login" className="font-semibold text-navy-700 hover:text-navy-600 dark:text-navy-400 transition-colors">
                   Sign in
                 </Link>
               </p>
-              <p className="mt-2 text-sm text-warm-500 dark:text-warm-400">
-                <Link to="/signup/advisor" className="font-medium text-warm-600 hover:text-warm-700 dark:text-warm-400 transition-colors">
+              <p className="mt-2 text-sm text-[var(--atlas-muted)]">
+                <Link to="/signup/advisor" className="font-medium text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] dark:text-[var(--atlas-muted)] transition-colors">
                   Register as an Advisor →
                 </Link>
               </p>

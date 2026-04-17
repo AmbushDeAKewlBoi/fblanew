@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 /* ─── Reusable Gear SVG ─── */
 function GearShape({ size = 80, teeth = 10, speed = 25, direction = 1, className = '' }) {
@@ -27,6 +27,9 @@ function GearShape({ size = 80, teeth = 10, speed = 25, direction = 1, className
 
 /* ─── Page Gears — subtle corner decorations for inner pages ─── */
 export default function PageGears({ variant = 'default' }) {
+  const prefersReducedMotion = useReducedMotion();
+  if (prefersReducedMotion) return null;
+
   const configs = {
     default: [
       { pos: 'top-[-30px] left-[-30px]', size: 120, teeth: 12, speed: 30, dir: 1 },
@@ -55,7 +58,7 @@ export default function PageGears({ variant = 'default' }) {
   const gears = configs[variant] || configs.default;
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+    <div aria-hidden="true" className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
       {gears.map((g, i) => (
         <motion.div
           key={`${variant}-${i}`}
@@ -69,7 +72,7 @@ export default function PageGears({ variant = 'default' }) {
             teeth={g.teeth}
             speed={g.speed}
             direction={g.dir}
-            className="text-navy-400/[0.06] dark:text-navy-500/[0.06]"
+            className="text-[#6d9ea8]/[0.04] dark:text-[#6d9ea8]/[0.06]"
           />
         </motion.div>
       ))}

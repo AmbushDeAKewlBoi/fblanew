@@ -202,7 +202,7 @@ export function AuthProvider({ children }) {
             borderRadius: '50%',
             animation: 'spin 0.8s linear infinite'
           }} />
-          <p style={{ fontSize: 14, opacity: 0.6 }}>Loading FBLA Hub...</p>
+          <p style={{ fontSize: 14, opacity: 0.6 }}>Loading Atlas...</p>
           <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       </div>
