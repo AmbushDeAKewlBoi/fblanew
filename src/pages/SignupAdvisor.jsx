@@ -57,8 +57,8 @@ export default function SignupAdvisor() {
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-gold-400/20 to-gold-300/20">
                 <Shield size={28} className="text-gold-500" />
               </div>
-              <h1 className="text-2xl font-bold text-warm-900 dark:text-white">Register Your Chapter</h1>
-              <p className="mt-2 text-sm text-warm-500 dark:text-warm-400">Set up your school's FBLA Hub presence</p>
+              <h1 className="text-2xl font-bold text-[var(--atlas-fg)]">Register Your Chapter</h1>
+              <p className="mt-2 text-sm text-[var(--atlas-muted)]">Set up your chapter inside Atlas</p>
             </div>
 
             {error && (
@@ -70,20 +70,20 @@ export default function SignupAdvisor() {
             <div className="space-y-5">
               {/* School Name */}
               <div>
-                <label className="mb-2 block text-sm font-medium text-warm-700 dark:text-warm-300">School Name</label>
+                <label className="mb-2 block text-sm font-medium text-[var(--atlas-fg)]">School Name</label>
                 <input
                   type="text"
                   value={form.schoolName}
                   onChange={(e) => setForm({ ...form, schoolName: e.target.value })}
                   placeholder="Independence High School"
-                  className="w-full rounded-xl border border-warm-200 bg-white px-4 py-3.5 text-sm text-warm-900 placeholder:text-warm-400 transition-all duration-200 focus:border-navy-400 focus:outline-none focus:ring-2 focus:ring-navy-400/20 dark:border-warm-700 dark:bg-warm-900 dark:text-warm-100 dark:focus:border-navy-500"
+                  className="w-full rounded-xl border border-[var(--atlas-border)] bg-white px-4 py-3.5 text-sm text-[var(--atlas-fg)] placeholder:text-[var(--atlas-muted)] transition-all duration-200 focus:border-navy-400 focus:outline-none focus:ring-2 focus:ring-navy-400/20 dark:border-warm-700 dark:bg-[var(--atlas-surface)] dark:text-warm-100 dark:focus:border-navy-500"
                 />
               </div>
 
               {/* Region & State */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-warm-700 dark:text-warm-300">Region</label>
+                  <label className="mb-2 block text-sm font-medium text-[var(--atlas-fg)]">Region</label>
                   <SelectDropdown
                     value={form.region}
                     onChange={(val) => setForm({ ...form, region: val })}
@@ -92,7 +92,7 @@ export default function SignupAdvisor() {
                   />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-warm-700 dark:text-warm-300">State</label>
+                  <label className="mb-2 block text-sm font-medium text-[var(--atlas-fg)]">State</label>
                   <SelectDropdown
                     value={form.state}
                     onChange={(val) => setForm({ ...form, state: val })}
@@ -108,7 +108,7 @@ export default function SignupAdvisor() {
                 whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={handleGoogleSignup}
-                className="mt-2 flex w-full items-center justify-center gap-3 rounded-xl border border-warm-200 bg-white px-6 py-3.5 text-sm font-semibold text-warm-700 shadow-sm transition-all duration-200 hover:border-warm-300 hover:shadow-md dark:border-warm-700 dark:bg-warm-800 dark:text-warm-200 dark:hover:border-warm-600"
+                className="mt-2 flex w-full items-center justify-center gap-3 rounded-xl border border-[var(--atlas-border)] bg-white px-6 py-3.5 text-sm font-semibold text-[var(--atlas-fg)] shadow-sm transition-all duration-200 hover:border-warm-300 hover:shadow-md dark:border-warm-700 dark:bg-[var(--atlas-elev)] dark:text-warm-200 dark:hover:border-warm-600"
               >
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                   <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
@@ -121,7 +121,7 @@ export default function SignupAdvisor() {
             </div>
 
             <div className="mt-8 text-center">
-              <p className="text-sm text-warm-500 dark:text-warm-400">
+              <p className="text-sm text-[var(--atlas-muted)]">
                 <Link to="/login" className="font-semibold text-navy-700 hover:text-navy-600 dark:text-navy-400 transition-colors">Sign in</Link>
                 {' · '}
                 <Link to="/signup/student" className="font-semibold text-navy-700 hover:text-navy-600 dark:text-navy-400 transition-colors">Join as Student</Link>

@@ -1,27 +1,15 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ThumbsUp, Download, FileText, Clock, User as UserIcon, Eye, Tag, Share2 } from 'lucide-react';
-import { useResources } from '../hooks/useResources';
+import { ArrowLeft, ThumbsUp, Download, FileText, Clock, User as UserIcon, Eye, Tag } from 'lucide-react';
 import { doc, updateDoc, increment } from 'firebase/firestore';
+import { useResources } from '../hooks/useResources';
 import { db } from '../config/firebase';
 import VisibilityBadge from '../components/VisibilityBadge';
 import PageTransition from '../components/PageTransition';
-
-function formatFileSize(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-}
-
-function formatDate(dateString) {
-  return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-}
-
-const TYPE_LABELS = {
-  presentation: 'Presentation', roleplay: 'Roleplay Script',
-  questions: 'Practice Questions', study_guide: 'Study Guide', other: 'Other',
-};
+import { getUserById } from '../data/mockUsers';
+import { formatFileSize, formatDateLong } from '../lib/formatters';
+import { RESOURCE_TYPE_LABELS_LONG } from '../lib/resources';
 
 export default function ResourceDetail() {
   const { id } = useParams();
@@ -29,6 +17,7 @@ export default function ResourceDetail() {
   const resource = resources.find(r => String(r.id) === String(id));
   const related = resource ? resources.filter(r => r.event === resource.event && r.id !== resource.id).slice(0, 3) : [];
   const [upvoted, setUpvoted] = useState(false);
+  const uploader = resource ? getUserById(resource.uploaderId) : null;
 
   if (loading) {
     return (
@@ -51,10 +40,10 @@ export default function ResourceDetail() {
     return (
       <PageTransition>
         <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-warm-100 dark:bg-warm-800">
-            <FileText size={24} className="text-warm-400" />
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]">
+            <FileText size={24} className="text-[var(--atlas-muted)]" />
           </div>
-          <h1 className="text-xl font-bold text-warm-900 dark:text-white">Resource not found</h1>
+          <h1 className="text-xl font-bold text-[var(--atlas-fg)]">Resource not found</h1>
           <Link to="/dashboard" className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-navy-700 dark:text-navy-400 transition-colors hover:text-navy-600">
             <ArrowLeft size={14} /> Back to Dashboard
           </Link>
@@ -82,7 +71,7 @@ export default function ResourceDetail() {
     <PageTransition>
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <Link to={`/events/${resource.eventSlug}`} className="mb-6 inline-flex items-center gap-1.5 text-sm text-warm-500 hover:text-warm-700 dark:text-warm-400 dark:hover:text-warm-200 transition-colors">
+          <Link to={`/events/${resource.eventSlug}`} className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] dark:text-[var(--atlas-muted)] dark:hover:text-warm-200 transition-colors">
             <ArrowLeft size={14} /> {resource.event}
           </Link>
         </motion.div>
@@ -94,51 +83,55 @@ export default function ResourceDetail() {
               {/* Badges */}
               <div className="flex flex-wrap items-center gap-2 mb-4">
                 <span className="rounded-lg bg-navy-500/10 px-3 py-1 text-xs font-semibold text-navy-700 dark:bg-navy-400/15 dark:text-navy-300">
-                  {TYPE_LABELS[resource.resourceType]}
+                  {RESOURCE_TYPE_LABELS_LONG[resource.resourceType] || RESOURCE_TYPE_LABELS_LONG.other}
                 </span>
                 <VisibilityBadge level={resource.visibilityLevel} size="md" />
               </div>
 
               {/* Title */}
-              <h1 className="text-xl font-bold text-warm-900 leading-snug sm:text-2xl dark:text-white">
+              <h1 className="text-xl font-bold text-[var(--atlas-fg)] leading-snug sm:text-2xl dark:text-white">
                 {resource.title}
               </h1>
 
               {/* Meta */}
-              <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-warm-500 dark:text-warm-400">
+              <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-[var(--atlas-muted)]">
                 <span className="flex items-center gap-1.5">
                   <UserIcon size={14} />
-                  {resource.isAnonymous ? 'Anonymous' : 'Community Member'}
+                  {resource.isAnonymous ? 'Anonymous' : (
+                    <Link to={`/profile/${resource.uploaderId}`} className="hover:text-navy-700 dark:hover:text-navy-300 transition-colors">
+                      {uploader?.name || 'Community Member'}
+                    </Link>
+                  )}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Clock size={14} />
-                  {formatDate(resource.createdAt)}
+                  {formatDateLong(resource.createdAt)}
                 </span>
               </div>
 
               {/* Description */}
-              <div className="mt-6 text-sm leading-relaxed text-warm-700 dark:text-warm-300">
+              <div className="mt-6 text-sm leading-relaxed text-[var(--atlas-fg)]">
                 {resource.description}
               </div>
 
               {/* Tags */}
               <div className="mt-6 flex flex-wrap gap-2">
                 {resource.tags.map(tag => (
-                  <span key={tag} className="inline-flex items-center gap-1 rounded-lg bg-warm-100 px-2.5 py-1 text-xs font-medium text-warm-600 dark:bg-warm-800 dark:text-warm-400">
+                  <span key={tag} className="inline-flex items-center gap-1 rounded-lg bg-[var(--atlas-elev)] px-2.5 py-1 text-xs font-medium text-[var(--atlas-muted)] dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)]">
                     <Tag size={10} /> {tag}
                   </span>
                 ))}
               </div>
 
               {/* Stats */}
-              <div className="mt-6 flex items-center gap-6 border-t border-warm-100 pt-6 dark:border-warm-800/60">
-                <div className="flex items-center gap-1.5 text-sm text-warm-500">
+              <div className="mt-6 flex items-center gap-6 border-t border-[var(--atlas-border)] pt-6 dark:border-[var(--atlas-border)]">
+                <div className="flex items-center gap-1.5 text-sm text-[var(--atlas-muted)]">
                   <ThumbsUp size={16} /> {resource.upvoteCount || 0} upvotes
                 </div>
-                <div className="flex items-center gap-1.5 text-sm text-warm-500">
+                <div className="flex items-center gap-1.5 text-sm text-[var(--atlas-muted)]">
                   <Download size={16} /> {resource.downloadCount || 0} downloads
                 </div>
-                <div className="flex items-center gap-1.5 text-sm text-warm-500">
+                <div className="flex items-center gap-1.5 text-sm text-[var(--atlas-muted)]">
                   <Eye size={16} /> {resource.viewCount || 0} views
                 </div>
               </div>
@@ -149,7 +142,7 @@ export default function ResourceDetail() {
                   className={`flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all duration-200 ${
                     upvoted
                       ? 'bg-emerald-500 text-white shadow-sm'
-                      : 'border border-warm-200 text-warm-700 hover:border-warm-300 hover:shadow-sm dark:border-warm-700 dark:text-warm-300'
+                      : 'border border-[var(--atlas-border)] text-[var(--atlas-fg)] hover:border-warm-300 hover:shadow-sm dark:border-warm-700 text-[var(--atlas-muted)]'
                   }`}
                 >
                   <ThumbsUp size={16} className={upvoted ? 'fill-current' : ''} />
@@ -167,7 +160,7 @@ export default function ResourceDetail() {
 
           {/* Sidebar */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="w-full lg:w-80 shrink-0">
-            <h3 className="mb-4 text-sm font-semibold text-warm-900 dark:text-white">
+            <h3 className="mb-4 text-sm font-semibold text-[var(--atlas-fg)]">
               More from {resource.event}
             </h3>
             {related.length > 0 ? (
@@ -176,10 +169,10 @@ export default function ResourceDetail() {
                   <Link key={r.id} to={`/resource/${r.id}`}
                     className="card-surface block p-4 group"
                   >
-                    <h4 className="text-sm font-medium text-warm-900 leading-snug transition-colors group-hover:text-navy-700 dark:text-warm-100 dark:group-hover:text-navy-300">
+                    <h4 className="text-sm font-medium text-[var(--atlas-fg)] leading-snug transition-colors group-hover:text-navy-700 dark:text-warm-100 dark:group-hover:text-navy-300">
                       {r.title}
                     </h4>
-                    <div className="mt-2 flex items-center gap-3 text-xs text-warm-400 dark:text-warm-500">
+                    <div className="mt-2 flex items-center gap-3 text-xs text-[var(--atlas-muted)] dark:text-[var(--atlas-muted)]">
                       <span className="flex items-center gap-1"><ThumbsUp size={10} /> {r.upvoteCount || 0}</span>
                       <span className="flex items-center gap-1"><Download size={10} /> {r.downloadCount || 0}</span>
                     </div>
@@ -187,7 +180,7 @@ export default function ResourceDetail() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-warm-400 dark:text-warm-500">No related resources yet.</p>
+              <p className="text-sm text-[var(--atlas-muted)] dark:text-[var(--atlas-muted)]">No related resources yet.</p>
             )}
           </motion.div>
         </div>

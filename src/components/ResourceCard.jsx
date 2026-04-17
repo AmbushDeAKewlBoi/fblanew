@@ -1,47 +1,18 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ThumbsUp, Download, FileText, Clock, User as UserIcon, Eye } from 'lucide-react';
+import { ThumbsUp, Download, FileText, Clock, User as UserIcon } from 'lucide-react';
 import VisibilityBadge from './VisibilityBadge';
 import { getUserById, getChapterById } from '../data/mockUsers';
-
-function formatFileSize(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-}
-
-function timeAgo(dateString) {
-  const now = new Date();
-  const date = new Date(dateString);
-  const seconds = Math.floor((now - date) / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-  const weeks = Math.floor(days / 7);
-  const months = Math.floor(days / 30);
-  if (months > 0) return `${months}mo ago`;
-  if (weeks > 0) return `${weeks}w ago`;
-  if (days > 0) return `${days}d ago`;
-  if (hours > 0) return `${hours}h ago`;
-  if (minutes > 0) return `${minutes}m ago`;
-  return 'just now';
-}
-
-const TYPE_LABELS = {
-  presentation: 'Presentation',
-  roleplay: 'Roleplay',
-  questions: 'Questions',
-  study_guide: 'Study Guide',
-  other: 'Other',
-};
+import { formatFileSize, timeAgo } from '../lib/formatters';
+import { RESOURCE_TYPE_LABELS } from '../lib/resources';
 
 const TYPE_COLORS = {
-  presentation: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
-  roleplay: 'bg-pink-500/10 text-pink-600 dark:text-pink-400',
-  questions: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-  study_guide: 'bg-sky-500/10 text-sky-600 dark:text-sky-400',
-  other: 'bg-warm-200/60 text-warm-600 dark:bg-warm-800 dark:text-warm-400',
+  presentation: 'border border-[var(--atlas-accent)]/35 bg-[rgba(109,158,168,0.1)] text-[var(--atlas-accent)]',
+  roleplay: 'border border-[var(--atlas-gold)]/40 bg-[rgba(184,154,82,0.1)] text-[var(--atlas-gold)]',
+  questions: 'border border-[var(--atlas-border)] bg-[var(--atlas-surface)] text-[var(--atlas-muted)]',
+  study_guide: 'border border-emerald-800/30 bg-emerald-900/10 text-emerald-700 dark:text-emerald-400',
+  other: 'border border-[var(--atlas-border)] text-[var(--atlas-muted)]',
 };
 
 export default function ResourceCard({ resource }) {
@@ -77,48 +48,52 @@ export default function ResourceCard({ resource }) {
       className="card-surface group relative flex flex-col overflow-hidden"
     >
       {/* Top accent gradient — reveals on hover */}
-      <div className="h-0.5 w-full bg-gradient-to-r from-navy-600 via-navy-400 to-gold-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="h-0.5 w-full bg-[var(--atlas-accent)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
       <Link to={`/resource/${resource.id}`} className="flex flex-1 flex-col p-5">
         {/* Header badges */}
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${TYPE_COLORS[resource.resourceType]}`}>
-            {TYPE_LABELS[resource.resourceType]}
+          <span className={`inline-flex items-center px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.12em] ${TYPE_COLORS[resource.resourceType] || TYPE_COLORS.other}`}>
+            {RESOURCE_TYPE_LABELS[resource.resourceType] || RESOURCE_TYPE_LABELS.other}
           </span>
           <VisibilityBadge level={resource.visibilityLevel} />
         </div>
 
         {/* Title */}
-        <h3 className="mb-2 text-[15px] font-semibold leading-snug text-warm-900 transition-colors group-hover:text-navy-700 dark:text-warm-100 dark:group-hover:text-navy-300 line-clamp-2">
+        <h3 className="mb-2 text-[15px] font-bold leading-snug text-[var(--atlas-fg)] transition-colors group-hover:text-[var(--atlas-accent)] line-clamp-2">
           {resource.title}
         </h3>
 
         {/* Description */}
-        <p className="mb-3 flex-1 text-sm leading-relaxed text-warm-500 dark:text-warm-400 line-clamp-2">
+        <p className="mb-3 flex-1 text-sm leading-relaxed text-[var(--atlas-muted)] line-clamp-2">
           {resource.description}
         </p>
 
         {/* Tags */}
         <div className="mb-4 flex flex-wrap gap-1.5">
           {resource.tags.slice(0, 3).map(tag => (
-            <span key={tag} className="rounded-md bg-warm-100 px-2 py-0.5 text-xs font-medium text-warm-600 dark:bg-warm-800 dark:text-warm-400 transition-colors">
+            <span key={tag} className="border border-[var(--atlas-border)] bg-[var(--atlas-surface)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wide text-[var(--atlas-muted)] transition-colors">
               {tag}
             </span>
           ))}
           {resource.tags.length > 3 && (
-            <span className="text-xs text-warm-400 dark:text-warm-500">+{resource.tags.length - 3}</span>
+            <span className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--atlas-muted)]">+{resource.tags.length - 3}</span>
           )}
         </div>
 
         {/* Meta row */}
-        <div className="flex items-center gap-2 text-xs text-warm-400 dark:text-warm-500 mb-3">
+        <div className="mb-3 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wide text-[var(--atlas-muted)]">
           <span className="flex items-center gap-1">
             <UserIcon size={11} />
-            {resource.isAnonymous ? 'Anonymous' : uploader?.name}
+            {resource.isAnonymous ? 'Anonymous' : (
+              <Link to={`/profile/${resource.uploaderId}`} className="text-[var(--atlas-fg)] transition-colors hover:text-[var(--atlas-accent)]">
+                {uploader?.name}
+              </Link>
+            )}
           </span>
-          <span className="text-warm-300 dark:text-warm-700">·</span>
+          <span className="text-[var(--atlas-border)]">·</span>
           <span className="truncate">{chapter?.name}</span>
-          <span className="text-warm-300 dark:text-warm-700">·</span>
+          <span className="text-[var(--atlas-border)]">·</span>
           <span className="flex items-center gap-1">
             <Clock size={11} />
             {timeAgo(resource.createdAt)}
@@ -127,14 +102,14 @@ export default function ResourceCard({ resource }) {
       </Link>
 
       {/* Actions footer */}
-      <div className="flex items-center gap-2 border-t border-warm-100 px-5 py-3 dark:border-warm-800/60">
+      <div className="flex items-center gap-2 border-t border-[var(--atlas-border)] px-5 py-3">
         <motion.button
           onClick={handleUpvote}
           whileTap={{ scale: 1.15 }}
-          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-200 ${
+          className={`flex items-center gap-1.5 border px-3 py-1.5 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-wide transition-all duration-200 ${
             upvoted
-              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-              : 'text-warm-500 hover:bg-warm-100 hover:text-warm-700 dark:hover:bg-warm-800 dark:hover:text-warm-300'
+              ? 'border-emerald-700/40 bg-emerald-900/15 text-emerald-600 dark:text-emerald-400'
+              : 'border-transparent text-[var(--atlas-muted)] hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]'
           }`}
         >
           <ThumbsUp size={13} className={upvoted ? 'fill-current' : ''} />
@@ -143,12 +118,12 @@ export default function ResourceCard({ resource }) {
         <motion.button
           onClick={handleDownload}
           whileTap={{ scale: 1.1 }}
-          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-warm-500 transition-all duration-200 hover:bg-warm-100 hover:text-warm-700 dark:hover:bg-warm-800 dark:hover:text-warm-300"
+          className="flex items-center gap-1.5 border border-transparent px-3 py-1.5 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-wide text-[var(--atlas-muted)] transition-all duration-200 hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]"
         >
           <Download size={13} />
           {downloadCount}
         </motion.button>
-        <span className="ml-auto flex items-center gap-1.5 text-xs text-warm-400 dark:text-warm-500">
+        <span className="ml-auto flex items-center gap-1.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--atlas-muted)]">
           <FileText size={11} />
           {resource.fileExtension.replace('.', '').toUpperCase()} · {formatFileSize(resource.fileSizeBytes)}
         </span>

@@ -15,13 +15,13 @@ const TIME_FILTERS = ['All Time', 'This Month'];
 function RankBadge({ rank }) {
   const medalColors = {
     1: 'bg-gradient-to-br from-amber-300 to-amber-500 text-amber-900 shadow-sm shadow-amber-200/50',
-    2: 'bg-gradient-to-br from-warm-300 to-warm-400 text-warm-700 shadow-sm shadow-warm-200/50',
+    2: 'bg-gradient-to-br from-warm-300 to-warm-400 text-[var(--atlas-fg)] shadow-sm shadow-warm-200/50',
     3: 'bg-gradient-to-br from-amber-600 to-amber-700 text-amber-100 shadow-sm shadow-amber-300/30',
   };
   if (rank <= 3) {
     return <span className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs font-bold ${medalColors[rank]}`}>{rank}</span>;
   }
-  return <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-warm-100 text-xs font-bold text-warm-600 dark:bg-warm-800 dark:text-warm-400">{rank}</span>;
+  return <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--atlas-elev)] text-xs font-bold text-[var(--atlas-muted)] dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)]">{rank}</span>;
 }
 
 export default function Leaderboard() {
@@ -73,19 +73,19 @@ export default function Leaderboard() {
             <Trophy size={22} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-warm-900 dark:text-white">Leaderboard</h1>
-            <p className="text-sm text-warm-500 dark:text-warm-400">See which chapters are leading the way</p>
+            <h1 className="text-2xl font-bold text-[var(--atlas-fg)]">Leaderboard</h1>
+            <p className="text-sm text-[var(--atlas-muted)]">See which chapters are leading the way</p>
           </div>
         </motion.div>
 
         {/* Controls */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="mb-6 space-y-4">
           {/* Tabs */}
-          <div className="flex gap-1 rounded-2xl bg-warm-100 p-1 dark:bg-warm-800">
+          <div className="flex gap-1 rounded-2xl bg-[var(--atlas-elev)] p-1 dark:bg-[var(--atlas-elev)]">
             {TABS.map(t => (
               <button key={t} onClick={() => setTab(t)}
                 className={`flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all duration-200 ${
-                  tab === t ? 'bg-white text-warm-900 shadow-sm dark:bg-warm-700 dark:text-warm-100' : 'text-warm-500 hover:text-warm-700 dark:text-warm-400 dark:hover:text-warm-200'
+                  tab === t ? 'bg-white text-[var(--atlas-fg)] shadow-sm dark:bg-warm-700 dark:text-warm-100' : 'text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] dark:text-[var(--atlas-muted)] dark:hover:text-warm-200'
                 }`}
               >{t}</button>
             ))}
@@ -99,7 +99,7 @@ export default function Leaderboard() {
                 return (
                   <motion.button key={m} whileTap={{ scale: 0.95 }} onClick={() => setMetric(m)}
                     className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold capitalize transition-all duration-200 ${
-                      metric === m ? 'bg-navy-800 text-white shadow-sm dark:bg-navy-600' : 'bg-white text-warm-600 hover:bg-warm-50 border border-warm-200 dark:bg-warm-800 dark:text-warm-400 dark:border-warm-700'
+                      metric === m ? 'bg-navy-800 text-white shadow-sm dark:bg-navy-600' : 'bg-white text-[var(--atlas-muted)] hover:bg-[var(--atlas-bg)] border border-[var(--atlas-border)] dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)] dark:border-warm-700'
                     }`}
                   ><Icon size={13} /> {m}</motion.button>
                 );
@@ -109,7 +109,7 @@ export default function Leaderboard() {
               {TIME_FILTERS.map(tf => (
                 <button key={tf} onClick={() => setTimeFilter(tf)}
                   className={`rounded-xl px-3.5 py-2 text-xs font-semibold transition-all duration-200 ${
-                    timeFilter === tf ? 'bg-warm-900 text-white dark:bg-warm-200 dark:text-warm-900' : 'text-warm-500 hover:text-warm-700 dark:text-warm-400 dark:hover:text-warm-200'
+                    timeFilter === tf ? 'bg-warm-900 text-white dark:bg-warm-200 dark:text-[var(--atlas-fg)]' : 'text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] dark:text-[var(--atlas-muted)] dark:hover:text-warm-200'
                   }`}
                 >{tf}</button>
               ))}
@@ -122,7 +122,7 @@ export default function Leaderboard() {
           className="card-surface overflow-hidden !p-0"
         >
           {/* Header */}
-          <div className="grid grid-cols-12 gap-4 border-b border-warm-100 px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-warm-500 dark:border-warm-800/60 dark:text-warm-400">
+          <div className="grid grid-cols-12 gap-4 border-b border-[var(--atlas-border)] px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-[var(--atlas-muted)] dark:border-[var(--atlas-border)] dark:text-[var(--atlas-muted)]">
             <div className="col-span-1">#</div>
             <div className="col-span-5">{tab === 'Schools' ? 'School' : tab === 'Regions' ? 'Region' : 'State'}</div>
             <div className="col-span-2 text-right">Uploads</div>
@@ -138,32 +138,32 @@ export default function Leaderboard() {
             return (
               <motion.div key={item.rank} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: Math.min(i * 0.03, 0.4) }}
                 className={`grid grid-cols-12 gap-4 items-center px-5 py-4 text-sm transition-colors ${
-                  isCurrentUser ? 'bg-amber-50/60 dark:bg-amber-500/5' : 'hover:bg-warm-50/50 dark:hover:bg-warm-800/30'
-                } ${item.rank < sorted.length ? 'border-b border-warm-100/80 dark:border-warm-800/40' : ''}`}
+                  isCurrentUser ? 'bg-amber-50/60 dark:bg-amber-500/5' : 'hover:bg-[var(--atlas-bg)]/50 dark:hover:bg-[var(--atlas-elev)]/30'
+                } ${item.rank < sorted.length ? 'border-b border-[var(--atlas-border)]/80 dark:border-[var(--atlas-border)]/40' : ''}`}
               >
                 <div className="col-span-1"><RankBadge rank={item.rank} /></div>
                 <div className="col-span-5">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-warm-900 dark:text-warm-100">{name}</span>
+                    <span className="font-semibold text-[var(--atlas-fg)]">{name}</span>
                     {isCurrentUser && (
                       <span className="rounded-lg bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">YOU</span>
                     )}
                   </div>
-                  {subtitle && <p className="text-xs text-warm-400 dark:text-warm-500">{subtitle}</p>}
+                  {subtitle && <p className="text-xs text-[var(--atlas-muted)] dark:text-[var(--atlas-muted)]">{subtitle}</p>}
                 </div>
-                <div className={`col-span-2 text-right font-semibold ${metric === 'uploads' ? 'text-navy-700 dark:text-navy-300' : 'text-warm-600 dark:text-warm-400'}`}>
+                <div className={`col-span-2 text-right font-semibold ${metric === 'uploads' ? 'text-navy-700 dark:text-navy-300' : 'text-[var(--atlas-muted)]'}`}>
                   {item.metrics.totalUploads.toLocaleString()}
                 </div>
-                <div className={`col-span-2 text-right font-semibold ${metric === 'upvotes' ? 'text-navy-700 dark:text-navy-300' : 'text-warm-600 dark:text-warm-400'}`}>
+                <div className={`col-span-2 text-right font-semibold ${metric === 'upvotes' ? 'text-navy-700 dark:text-navy-300' : 'text-[var(--atlas-muted)]'}`}>
                   {item.metrics.totalUpvotes.toLocaleString()}
                 </div>
-                <div className={`col-span-2 text-right font-semibold ${metric === 'downloads' ? 'text-navy-700 dark:text-navy-300' : 'text-warm-600 dark:text-warm-400'}`}>
+                <div className={`col-span-2 text-right font-semibold ${metric === 'downloads' ? 'text-navy-700 dark:text-navy-300' : 'text-[var(--atlas-muted)]'}`}>
                   {item.metrics.totalDownloads.toLocaleString()}
                 </div>
               </motion.div>
             );
           })}
-          {loading && <div className="p-10 text-center text-warm-500 dark:text-warm-400">Calculating rankings from database...</div>}
+          {loading && <div className="p-10 text-center text-[var(--atlas-muted)]">Calculating rankings from database...</div>}
         </motion.div>
       </div>
     </PageTransition>

@@ -26,14 +26,14 @@ const VISIBILITY_OPTIONS = [
 function FilterSection({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-warm-100 pb-4 dark:border-warm-800/60 last:border-0">
+    <div className="border-b border-[var(--atlas-border)] pb-4 dark:border-[var(--atlas-border)] last:border-0">
       <button
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between py-2 text-sm font-semibold text-warm-800 dark:text-warm-200 transition-colors"
+        className="flex w-full items-center justify-between py-2 text-sm font-semibold text-[var(--atlas-fg)] transition-colors"
       >
         {title}
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronDown size={14} className="text-warm-400" />
+          <ChevronDown size={14} className="text-[var(--atlas-muted)]" />
         </motion.div>
       </button>
       <AnimatePresence>
@@ -55,7 +55,7 @@ function FilterSection({ title, children, defaultOpen = true }) {
 
 function CheckboxItem({ label, checked, onChange }) {
   return (
-    <label className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 cursor-pointer hover:bg-warm-50 dark:hover:bg-warm-800/40 transition-colors group">
+    <label className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 cursor-pointer hover:bg-[var(--atlas-bg)] dark:hover:bg-[var(--atlas-elev)]/40 transition-colors group">
       <div className={`flex h-4.5 w-4.5 items-center justify-center rounded-md border-2 transition-all duration-200 ${
         checked
           ? 'border-navy-600 bg-navy-600 dark:border-navy-400 dark:bg-navy-400'
@@ -70,7 +70,7 @@ function CheckboxItem({ label, checked, onChange }) {
           <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </motion.svg>
       </div>
-      <span className="text-sm text-warm-600 dark:text-warm-400">{label}</span>
+      <span className="text-sm text-[var(--atlas-muted)]">{label}</span>
     </label>
   );
 }
@@ -90,7 +90,7 @@ export default function FilterSidebar({ filters, setFilters, tagOptions = [] }) 
   return (
     <div className="w-64 shrink-0 space-y-1">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-warm-500 dark:text-warm-500">Filters</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--atlas-muted)] dark:text-[var(--atlas-muted)]">Filters</h3>
         {activeCount > 0 && (
           <button
             onClick={() => setFilters({ types: [], visibility: [], tags: [], sort: 'recent' })}
@@ -111,7 +111,7 @@ export default function FilterSidebar({ filters, setFilters, tagOptions = [] }) 
               className={`flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm transition-all duration-200 ${
                 filters.sort === opt.value
                   ? 'bg-navy-800/10 text-navy-800 font-medium dark:bg-navy-400/15 dark:text-navy-300'
-                  : 'text-warm-600 hover:bg-warm-50 dark:text-warm-400 dark:hover:bg-warm-800/40'
+                  : 'text-[var(--atlas-muted)] hover:bg-[var(--atlas-bg)] dark:text-[var(--atlas-muted)] dark:hover:bg-[var(--atlas-elev)]/40'
               }`}
             >
               <ArrowUpDown size={13} />
@@ -156,7 +156,7 @@ export default function FilterSidebar({ filters, setFilters, tagOptions = [] }) 
                 className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-all duration-200 ${
                   filters.tags.includes(tag)
                     ? 'bg-navy-800 text-white dark:bg-navy-500'
-                    : 'bg-warm-100 text-warm-600 hover:bg-warm-200 dark:bg-warm-800 dark:text-warm-400 dark:hover:bg-warm-700'
+                    : 'bg-[var(--atlas-elev)] text-[var(--atlas-muted)] hover:bg-warm-200 dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)] dark:hover:bg-warm-700'
                 }`}
               >
                 {tag}

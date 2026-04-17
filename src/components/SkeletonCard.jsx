@@ -15,7 +15,7 @@ export default function SkeletonCard() {
         <div className="skeleton h-6 w-18 rounded-full" />
         <div className="skeleton h-6 w-12 rounded-full" />
       </div>
-      <div className="flex items-center justify-between pt-2 border-t border-warm-100 dark:border-warm-800">
+      <div className="flex items-center justify-between border-t border-[var(--atlas-border)] pt-2">
         <div className="skeleton h-4 w-24" />
         <div className="flex gap-3">
           <div className="skeleton h-8 w-16 rounded-lg" />
