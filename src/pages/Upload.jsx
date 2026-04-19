@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Upload as UploadIcon, X, FileText, CheckCircle2, School, MapPin, Map, Globe } from 'lucide-react';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc } from 'firebase/firestore';
 import { FBLA_EVENTS } from '../data/mockEvents';
 import { RESOURCE_TYPES, VISIBILITY_LEVELS } from '../data/mockResources';
 import { useAuth } from '../context/AuthContext';
-import { db, storage } from '../config/firebase';
+import { db } from '../config/firebase';
+import { supabase, STORAGE_BUCKET } from '../config/supabase';
 import SelectDropdown from '../components/SelectDropdown';
 import PageTransition from '../components/PageTransition';
 import PageHeader from '../components/ui/PageHeader';
@@ -65,12 +65,33 @@ export default function Upload() {
 
     setUploading(true);
     try {
+      // ── Step 1: Upload file to Supabase Storage ──
       const extension = file.name.split('.').pop();
-      const filename = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${extension}`;
-      const storageRef = ref(storage, `resources/${user.id}/${filename}`);
-      const snapshot = await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(snapshot.ref);
+      const filename = `${user.id}/${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${extension}`;
+      console.log('⬆️ [UPLOAD] Uploading to Supabase Storage:', filename);
 
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .upload(filename, file, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+
+      if (uploadError) {
+        console.error('🔴 [UPLOAD] Supabase upload error:', uploadError);
+        throw new Error(`Storage upload failed: ${uploadError.message}`);
+      }
+      console.log('⬆️ [UPLOAD] ✅ File uploaded:', uploadData.path);
+
+      // ── Step 2: Get public URL ──
+      const { data: urlData } = supabase.storage
+        .from(STORAGE_BUCKET)
+        .getPublicUrl(uploadData.path);
+
+      const downloadURL = urlData.publicUrl;
+      console.log('⬆️ [UPLOAD] ✅ Public URL:', downloadURL);
+
+      // ── Step 3: Save metadata to Firestore ──
       const newResource = {
         title: form.title,
         description: form.description,
@@ -84,25 +105,19 @@ export default function Upload() {
         fileExtension: `.${extension}`,
         fileSizeBytes: file.size,
         downloadUrl: downloadURL,
+        storagePath: uploadData.path,
         upvoteCount: 0,
         downloadCount: 0,
         viewCount: 0,
         createdAt: new Date().toISOString(),
       };
 
-      await addDoc(collection(db, 'resources'), newResource);
+      const docRef = await addDoc(collection(db, 'resources'), newResource);
+      console.log('⬆️ [UPLOAD] ✅ Firestore doc created:', docRef.id);
       setSubmitted(true);
     } catch (err) {
-      console.error('Upload error details:', err);
-      if (err.code === 'storage/unauthorized') {
-        setError('You do not have permission to upload to storage. Check Firebase rules.');
-      } else if (err.code === 'storage/quota-exceeded') {
-        setError('Storage quota exceeded.');
-      } else if (err.message && err.message.includes('permission-denied')) {
-        setError('Firestore permission denied. Ensure you are logged in correctly.');
-      } else {
-        setError(`Failed to upload: ${err.message || 'Unknown error'}. Please try again.`);
-      }
+      console.error('🔴 [UPLOAD] Error:', err);
+      setError(`Failed to upload: ${err.message || 'Unknown error'}. Please try again.`);
     } finally {
       setUploading(false);
     }
