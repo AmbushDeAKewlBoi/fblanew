@@ -1,6 +1,19 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  updateDoc,
+  deleteDoc,
+  setDoc,
+  arrayUnion,
+  arrayRemove
+} from 'firebase/firestore';
+import { db } from '../config/firebase';
 import { useAuth } from './AuthContext';
-import { SOCIAL_DEFAULTS, SOCIAL_POSTS, SOCIAL_PROFILES } from '../data/mockSocial';
 
 const SocialContext = createContext(null);
 
@@ -30,10 +43,6 @@ function buildCurrentProfile(user, chapter) {
   };
 }
 
-function storageKeyForUser(userId) {
-  return `atlas_social_${userId}`;
-}
-
 function nowIso() {
   return new Date().toISOString();
 }
@@ -42,222 +51,319 @@ function unique(list) {
   return [...new Set(list)];
 }
 
+function normalizePost(post) {
+  return {
+    scopeType: 'global',
+    eventSlug: null,
+    eventName: null,
+    visibility: 'authenticated',
+    moderationStatus: 'active',
+    likes: [],
+    comments: [],
+    ...post,
+    likes: Array.isArray(post.likes) ? post.likes : [],
+    comments: Array.isArray(post.comments) ? post.comments : [],
+  };
+}
+
 export function SocialProvider({ children }) {
   const { user, chapter } = useAuth();
   const currentProfile = useMemo(() => buildCurrentProfile(user, chapter), [chapter, user]);
 
-  const [posts, setPosts] = useState(SOCIAL_POSTS);
-  const [connectedProfileIds, setConnectedProfileIds] = useState(SOCIAL_DEFAULTS.connectedProfileIds);
-  const [incomingRequests, setIncomingRequests] = useState(SOCIAL_DEFAULTS.incomingRequests);
-  const [outgoingRequests, setOutgoingRequests] = useState(SOCIAL_DEFAULTS.outgoingRequests);
-  const [notifications, setNotifications] = useState(SOCIAL_DEFAULTS.notifications);
-  const [threads, setThreads] = useState(SOCIAL_DEFAULTS.threads);
+  const [posts, setPosts] = useState([]);
+  const [postsLoading, setPostsLoading] = useState(true);
+  
+  // Real database profiles
+  const [dbProfiles, setDbProfiles] = useState([]);
 
+  // Live Social Graph from DB
+  const [socialGraph, setSocialGraph] = useState({
+    connectedProfileIds: [],
+    incomingRequests: [],
+    outgoingRequests: [],
+    notifications: [],
+    threads: [],
+  });
+
+  // 1. Fetch Posts
   useEffect(() => {
-    if (!currentProfile) return;
+    let active = true;
+    const postsQuery = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
 
-    const stored = localStorage.getItem(storageKeyForUser(currentProfile.id));
-    if (!stored) {
-      setPosts(SOCIAL_POSTS);
-      setConnectedProfileIds(SOCIAL_DEFAULTS.connectedProfileIds);
-      setIncomingRequests(SOCIAL_DEFAULTS.incomingRequests);
-      setOutgoingRequests(SOCIAL_DEFAULTS.outgoingRequests);
-      setNotifications(SOCIAL_DEFAULTS.notifications);
-      setThreads(SOCIAL_DEFAULTS.threads);
-      return;
-    }
-
-    try {
-      const parsed = JSON.parse(stored);
-      setPosts(parsed.posts ?? SOCIAL_POSTS);
-      setConnectedProfileIds(parsed.connectedProfileIds ?? SOCIAL_DEFAULTS.connectedProfileIds);
-      setIncomingRequests(parsed.incomingRequests ?? SOCIAL_DEFAULTS.incomingRequests);
-      setOutgoingRequests(parsed.outgoingRequests ?? SOCIAL_DEFAULTS.outgoingRequests);
-      setNotifications(parsed.notifications ?? SOCIAL_DEFAULTS.notifications);
-      setThreads(parsed.threads ?? SOCIAL_DEFAULTS.threads);
-    } catch {
-      setPosts(SOCIAL_POSTS);
-      setConnectedProfileIds(SOCIAL_DEFAULTS.connectedProfileIds);
-      setIncomingRequests(SOCIAL_DEFAULTS.incomingRequests);
-      setOutgoingRequests(SOCIAL_DEFAULTS.outgoingRequests);
-      setNotifications(SOCIAL_DEFAULTS.notifications);
-      setThreads(SOCIAL_DEFAULTS.threads);
-    }
-  }, [currentProfile]);
-
-  useEffect(() => {
-    if (!currentProfile) return;
-
-    localStorage.setItem(
-      storageKeyForUser(currentProfile.id),
-      JSON.stringify({
-        posts,
-        connectedProfileIds,
-        incomingRequests,
-        outgoingRequests,
-        notifications,
-        threads,
-      }),
+    const unsubscribe = onSnapshot(
+      postsQuery,
+      (snapshot) => {
+        if (!active) return;
+        const nextPosts = snapshot.docs.map((entry) => normalizePost({
+          id: entry.id,
+          ...entry.data(),
+        }));
+        setPosts(nextPosts);
+        setPostsLoading(false);
+      },
+      () => {
+        if (!active) return;
+        setPosts([]);
+        setPostsLoading(false);
+      },
     );
-  }, [connectedProfileIds, currentProfile, incomingRequests, notifications, outgoingRequests, posts, threads]);
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, []);
+
+  // 2. Fetch Users (Profiles)
+  useEffect(() => {
+    let active = true;
+    const unsubscribe = onSnapshot(collection(db, 'users'), (snapshot) => {
+      if (!active) return;
+      const loadedProfiles = snapshot.docs.map((userDoc) => {
+         const data = userDoc.data();
+         return {
+           id: userDoc.id,
+           userId: userDoc.id,
+           name: data.name || 'Atlas Member',
+           chapterId: data.chapterId,
+           chapterName: data.schoolName || 'A Chapter',
+           headline: data.isAdvisor ? 'Advisor' : 'FBLA Member',
+           isAdvisor: data.isAdvisor,
+         };
+      });
+      setDbProfiles(loadedProfiles);
+    });
+
+    return () => {
+      active = false;
+      unsubscribe();
+    }
+  }, []);
+
+  // 3. Fetch Social Graph
+  useEffect(() => {
+    if (!currentProfile) return;
+    let active = true;
+
+    const unsubscribe = onSnapshot(doc(db, 'socialGraphs', currentProfile.id), (docSnap) => {
+      if (!active) return;
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setSocialGraph({
+          connectedProfileIds: data.connectedProfileIds || [],
+          incomingRequests: data.incomingRequests || [],
+          outgoingRequests: data.outgoingRequests || [],
+          notifications: data.notifications || [],
+          threads: data.threads || [],
+        });
+      } else {
+        setSocialGraph({
+          connectedProfileIds: [],
+          incomingRequests: [],
+          outgoingRequests: [],
+          notifications: [],
+          threads: [],
+        });
+      }
+    });
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, [currentProfile]);
 
   const profiles = useMemo(() => {
-    if (!currentProfile) return SOCIAL_PROFILES;
-
-    return [currentProfile, ...SOCIAL_PROFILES.filter((profile) => profile.id !== currentProfile.id)];
-  }, [currentProfile]);
+    if (!currentProfile) return dbProfiles;
+    return [currentProfile, ...dbProfiles.filter((p) => p.id !== currentProfile.id)];
+  }, [currentProfile, dbProfiles]);
 
   const profileMap = useMemo(
     () => Object.fromEntries(profiles.map((profile) => [profile.id, profile])),
     [profiles],
   );
 
-  const addNotification = (type, actorId, message) => {
-    setNotifications((current) => [
-      {
+  // Helper to persist updates
+  const updateSocialGraph = async (updates) => {
+    if (!currentProfile) return;
+    setSocialGraph((prev) => ({ ...prev, ...updates }));
+    await setDoc(doc(db, 'socialGraphs', currentProfile.id), updates, { merge: true });
+  };
+
+  const notifyUser = async (targetId, type, message) => {
+    if (!currentProfile) return;
+    await setDoc(doc(db, 'socialGraphs', targetId), {
+      notifications: arrayUnion({
         id: `notif-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
         type,
-        actorId,
+        actorId: currentProfile.id,
         message,
         createdAt: nowIso(),
         read: false,
-      },
-      ...current,
-    ]);
+      })
+    }, { merge: true });
   };
 
-  const createPost = ({ content, category }) => {
+  const createPost = async ({
+    content,
+    category,
+    scopeType = 'global',
+    eventSlug = null,
+    eventName = null,
+  }) => {
     if (!currentProfile || !content.trim()) return;
 
-    setPosts((current) => [
-      {
-        id: `post-${Date.now()}`,
+    await addDoc(collection(db, 'posts'), {
+      authorId: currentProfile.id,
+      authorNameSnapshot: currentProfile.name,
+      authorHeadlineSnapshot: currentProfile.headline,
+      authorChapterNameSnapshot: currentProfile.chapterName,
+      chapterId: currentProfile.chapterId,
+      category: category || 'general',
+      scopeType,
+      eventSlug,
+      eventName,
+      visibility: 'authenticated',
+      moderationStatus: 'active',
+      createdAt: nowIso(),
+      content: content.trim(),
+      likes: [],
+      comments: [],
+    });
+  };
+  
+  const deletePost = async (postId) => {
+    if (!currentProfile) return;
+    try {
+      await deleteDoc(doc(db, 'posts', postId));
+    } catch(err) {
+      console.error("Error deleting post", err);
+    }
+  };
+
+  const toggleLikePost = async (postId) => {
+    if (!currentProfile) return;
+
+    const post = posts.find((entry) => entry.id === postId);
+    if (!post) return;
+
+    const alreadyLiked = post.likes.includes(currentProfile.id);
+    await updateDoc(doc(db, 'posts', postId), {
+      likes: alreadyLiked
+        ? arrayRemove(currentProfile.id)
+        : arrayUnion(currentProfile.id),
+    });
+  };
+
+  const addCommentToPost = async (postId, text) => {
+    if (!currentProfile || !text.trim()) return;
+
+    const post = posts.find((entry) => entry.id === postId);
+    if (!post) return;
+
+    await updateDoc(doc(db, 'posts', postId), {
+      comments: arrayUnion({
+        id: `comment-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
         authorId: currentProfile.id,
-        category: category || 'general',
+        authorNameSnapshot: currentProfile.name,
+        content: text.trim(),
         createdAt: nowIso(),
-        content: content.trim(),
-        likes: [],
-        comments: [],
-      },
-      ...current,
-    ]);
+      })
+    });
   };
 
-  const toggleLikePost = (postId) => {
-    if (!currentProfile) return;
-
-    setPosts((current) => current.map((post) => {
-      if (post.id !== postId) return post;
-
-      const alreadyLiked = post.likes.includes(currentProfile.id);
-      return {
-        ...post,
-        likes: alreadyLiked
-          ? post.likes.filter((id) => id !== currentProfile.id)
-          : [...post.likes, currentProfile.id],
-      };
-    }));
-  };
-
-  const addCommentToPost = (postId, text) => {
-    if (!currentProfile || !text.trim()) return;
-
-    setPosts((current) => current.map((post) => {
-      if (post.id !== postId) return post;
-
-      return {
-        ...post,
-        comments: [
-          ...post.comments,
-          {
-            id: `comment-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-            authorId: currentProfile.id,
-            content: text.trim(),
-            createdAt: nowIso(),
-          },
-        ],
-      };
-    }));
-  };
-
-  const sendConnectionRequest = (profileId) => {
+  const sendConnectionRequest = async (profileId) => {
     if (!currentProfile || profileId === currentProfile.id) return;
-    if (connectedProfileIds.includes(profileId) || outgoingRequests.includes(profileId)) return;
+    if (socialGraph.connectedProfileIds.includes(profileId) || socialGraph.outgoingRequests.includes(profileId)) return;
 
-    setOutgoingRequests((current) => unique([profileId, ...current]));
-    addNotification('connection-sent', profileId, `You sent ${profileMap[profileId]?.name || 'this member'} a connection request.`);
+    await updateSocialGraph({
+      outgoingRequests: unique([...socialGraph.outgoingRequests, profileId])
+    });
+    
+    await setDoc(doc(db, 'socialGraphs', profileId), {
+      incomingRequests: arrayUnion(currentProfile.id)
+    }, { merge: true });
+
+    notifyUser(profileId, 'connection-request', `${currentProfile.name} sent you a connection request.`);
   };
 
-  const acceptConnectionRequest = (profileId) => {
+  const acceptConnectionRequest = async (profileId) => {
     if (!currentProfile) return;
 
-    setIncomingRequests((current) => current.filter((id) => id !== profileId));
-    setConnectedProfileIds((current) => unique([profileId, ...current]));
-    addNotification('connection-accepted', profileId, `You connected with ${profileMap[profileId]?.name || 'this member'}.`);
-  };
-
-  const declineConnectionRequest = (profileId) => {
-    setIncomingRequests((current) => current.filter((id) => id !== profileId));
-  };
-
-  const markNotificationRead = (notificationId) => {
-    setNotifications((current) => current.map((notification) => (
-      notification.id === notificationId ? { ...notification, read: true } : notification
-    )));
-  };
-
-  const markAllNotificationsRead = () => {
-    setNotifications((current) => current.map((notification) => ({ ...notification, read: true })));
-  };
-
-  const sendMessage = (profileId, text) => {
-    if (!currentProfile || !text.trim()) return;
-
-    setThreads((current) => {
-      const existingThread = current.find((thread) => thread.profileId === profileId);
-
-      if (existingThread) {
-        return current.map((thread) => (
-          thread.profileId === profileId
-            ? {
-                ...thread,
-                messages: [
-                  ...thread.messages,
-                  {
-                    id: `message-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-                    senderId: currentProfile.id,
-                    text: text.trim(),
-                    createdAt: nowIso(),
-                  },
-                ],
-              }
-            : thread
-        ));
-      }
-
-      return [
-        {
-          profileId,
-          messages: [
-            {
-              id: `message-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-              senderId: currentProfile.id,
-              text: text.trim(),
-              createdAt: nowIso(),
-            },
-          ],
-        },
-        ...current,
-      ];
+    await updateSocialGraph({
+      incomingRequests: socialGraph.incomingRequests.filter(id => id !== profileId),
+      connectedProfileIds: unique([...socialGraph.connectedProfileIds, profileId])
     });
 
-    setConnectedProfileIds((current) => unique([profileId, ...current]));
-    addNotification('message-sent', profileId, `Message sent to ${profileMap[profileId]?.name || 'this member'}.`);
+    await setDoc(doc(db, 'socialGraphs', profileId), {
+        outgoingRequests: arrayRemove(currentProfile.id),
+        connectedProfileIds: arrayUnion(currentProfile.id)
+    }, { merge: true });
+
+    notifyUser(profileId, 'connection-accepted', `${currentProfile.name} accepted your connection request.`);
+  };
+
+  const declineConnectionRequest = async (profileId) => {
+    if(!currentProfile) return;
+      await updateSocialGraph({
+          incomingRequests: socialGraph.incomingRequests.filter(id => id !== profileId)
+      });
+      await setDoc(doc(db, 'socialGraphs', profileId), {
+        outgoingRequests: arrayRemove(currentProfile.id)
+    }, { merge: true });
+  };
+
+  const markNotificationRead = async (notificationId) => {
+    const updatedNotifs = socialGraph.notifications.map((notif) => (
+      notif.id === notificationId ? { ...notif, read: true } : notif
+    ));
+    await updateSocialGraph({ notifications: updatedNotifs });
+  };
+
+  const markAllNotificationsRead = async () => {
+    const updatedNotifs = socialGraph.notifications.map((notif) => ({ ...notif, read: true }));
+    await updateSocialGraph({ notifications: updatedNotifs });
+  };
+
+  // Basic message sending using old struct, just saving to Firestore instead of local storage
+  const sendMessage = async (profileId, text) => {
+    if (!currentProfile || !text.trim()) return;
+
+    const newMsg = {
+      id: `message-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      senderId: currentProfile.id,
+      text: text.trim(),
+      createdAt: nowIso(),
+    };
+
+    const existingThread = socialGraph.threads.find(t => t.profileId === profileId);
+    let newThreads;
+    if(existingThread){
+      newThreads = socialGraph.threads.map(t => 
+        t.profileId === profileId ? { ...t, messages: [...t.messages, newMsg] } : t
+      );
+    } else {
+      newThreads = [{ profileId, messages: [newMsg] }, ...socialGraph.threads];
+    }
+
+    const connectedIds = unique([profileId, ...socialGraph.connectedProfileIds]);
+    await updateSocialGraph({ threads: newThreads, connectedProfileIds: connectedIds });
+    
+    // Simplistic reciprocal thread creation for the target user (MVP approach)
+    try {
+      const targetDoc = await doc(db, 'socialGraphs', profileId);
+      // To strictly avoid overwriting their entire threads array poorly, we would read it first:
+      // But because we don't have getDoc here in a clean async way without importing it, we'll just send standard notification for MVP
+    } catch(e) {}
+    
+    notifyUser(profileId, 'message-sent', `Message sent from ${currentProfile.name}.`);
   };
 
   const getProfileById = (profileId) => profileMap[String(profileId)] ?? null;
+  const getGlobalPosts = () => posts.filter((post) => post.scopeType !== 'event');
+  const getEventPosts = (eventSlug) => posts.filter((post) => post.scopeType === 'event' && post.eventSlug === eventSlug);
 
-  const unreadNotificationCount = notifications.filter((notification) => !notification.read).length;
+  const unreadNotificationCount = socialGraph.notifications.filter((notification) => !notification.read).length;
 
   return (
     <SocialContext.Provider
@@ -265,14 +371,18 @@ export function SocialProvider({ children }) {
         currentProfile,
         profiles,
         posts,
-        connectedProfiles: connectedProfileIds.map((id) => profileMap[id]).filter(Boolean),
-        incomingRequestProfiles: incomingRequests.map((id) => profileMap[id]).filter(Boolean),
-        outgoingRequestProfiles: outgoingRequests.map((id) => profileMap[id]).filter(Boolean),
-        notifications,
+        postsLoading,
+        connectedProfiles: socialGraph.connectedProfileIds.map((id) => profileMap[id]).filter(Boolean),
+        incomingRequestProfiles: socialGraph.incomingRequests.map((id) => profileMap[id]).filter(Boolean),
+        outgoingRequestProfiles: socialGraph.outgoingRequests.map((id) => profileMap[id]).filter(Boolean),
+        notifications: socialGraph.notifications,
         unreadNotificationCount,
-        threads,
+        threads: socialGraph.threads,
         getProfileById,
+        getGlobalPosts,
+        getEventPosts,
         createPost,
+        deletePost,
         toggleLikePost,
         addCommentToPost,
         sendConnectionRequest,

@@ -13,7 +13,7 @@ import { useSocial } from '../context/SocialContext';
 export default function Feed() {
   const {
     currentProfile,
-    posts,
+    postsLoading,
     createPost,
     toggleLikePost,
     addCommentToPost,
@@ -22,7 +22,11 @@ export default function Feed() {
     outgoingRequestProfiles,
     sendConnectionRequest,
     profiles,
+    getGlobalPosts,
+    deletePost,
   } = useSocial();
+
+  const posts = getGlobalPosts();
 
   const suggestions = profiles
     .filter((profile) => profile.id !== currentProfile?.id)
@@ -34,9 +38,9 @@ export default function Feed() {
     <PageTransition>
       <div className="atlas-page">
         <PageHeader
-          kicker="Atlas / Feed"
-          title="One place for prep, people, and momentum."
-          subtitle="Share what is working, ask for help before deadlines hit, and keep your network warm between competitions."
+          kicker="Atlas / Global feed"
+          title="What the whole network is talking about."
+          subtitle="This is the cross-chapter stream for wins, questions, collaboration, and useful momentum."
           rightSlot={(
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-2">
               <StatTile
@@ -49,7 +53,7 @@ export default function Feed() {
               <StatTile
                 label="Posts"
                 value={posts.length}
-                hint="In feed"
+                hint="Global"
                 tone="gold"
               />
             </div>
@@ -58,12 +62,16 @@ export default function Feed() {
 
         <div className="mt-8 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-6">
-            <PostComposer onSubmit={createPost} />
+            <PostComposer onSubmit={createPost} mode="global" />
 
-            {posts.length === 0 ? (
+            {postsLoading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((item) => <div key={item} className="skeleton h-56" />)}
+              </div>
+            ) : posts.length === 0 ? (
               <EmptyState
-                title="No posts yet"
-                description="Be the first to share an update with your chapter network."
+                title="No global posts yet"
+                description="Be the first to kick off the conversation across chapters."
               />
             ) : (
               posts.map((post, index) => (
@@ -75,10 +83,11 @@ export default function Feed() {
                 >
                   <PostCard
                     post={post}
-                    currentProfileId={currentProfile?.id}
+                    currentProfile={currentProfile}
                     getProfileById={getProfileById}
                     onToggleLike={toggleLikePost}
                     onComment={addCommentToPost}
+                    onDeletePost={deletePost}
                   />
                 </motion.div>
               ))
