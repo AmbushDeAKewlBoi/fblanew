@@ -1,61 +1,460 @@
 export const FBLA_EVENTS = [
-  { name: "Accounting I", slug: "accounting-i", category: "Finance", icon: "calculator" },
-  { name: "Accounting II", slug: "accounting-ii", category: "Finance", icon: "calculator" },
-  { name: "Advertising", slug: "advertising", category: "Marketing", icon: "megaphone" },
-  { name: "Agribusiness", slug: "agribusiness", category: "Business", icon: "sprout" },
-  { name: "Banking & Financial Systems", slug: "banking-financial-systems", category: "Finance", icon: "landmark" },
-  { name: "Business Calculations", slug: "business-calculations", category: "Business", icon: "percent" },
-  { name: "Business Communication", slug: "business-communication", category: "Communication", icon: "mail" },
-  { name: "Business Law", slug: "business-law", category: "Business", icon: "scale" },
-  { name: "Business Management", slug: "business-management", category: "Business", icon: "briefcase" },
-  { name: "Business Plan", slug: "business-plan", category: "Business", icon: "file-text" },
-  { name: "Client Service", slug: "client-service", category: "Communication", icon: "headphones" },
-  { name: "Coding & Programming", slug: "coding-programming", category: "Technology", icon: "code" },
-  { name: "Computer Applications", slug: "computer-applications", category: "Technology", icon: "monitor" },
-  { name: "Computer Game & Simulation Programming", slug: "computer-game-simulation", category: "Technology", icon: "gamepad-2" },
-  { name: "Computer Problem Solving", slug: "computer-problem-solving", category: "Technology", icon: "cpu" },
-  { name: "Cyber Security", slug: "cyber-security", category: "Technology", icon: "shield" },
-  { name: "Database Design & Applications", slug: "database-design", category: "Technology", icon: "database" },
-  { name: "Desktop Application Programming", slug: "desktop-app-programming", category: "Technology", icon: "app-window" },
-  { name: "Digital Video Production", slug: "digital-video", category: "Communication", icon: "video" },
-  { name: "E-Business", slug: "e-business", category: "Business", icon: "shopping-cart" },
-  { name: "Economics", slug: "economics", category: "Finance", icon: "trending-up" },
-  { name: "Entrepreneurship", slug: "entrepreneurship", category: "Business", icon: "rocket" },
-  { name: "Event Planning", slug: "event-planning", category: "Business", icon: "calendar" },
-  { name: "Future Business Leader", slug: "future-business-leader", category: "Leadership", icon: "award" },
-  { name: "Global Business", slug: "global-business", category: "Business", icon: "globe" },
-  { name: "Graphic Design", slug: "graphic-design", category: "Technology", icon: "palette" },
-  { name: "Health Care Administration", slug: "health-care-admin", category: "Business", icon: "heart-pulse" },
-  { name: "Hospitality & Event Management", slug: "hospitality-event-mgmt", category: "Business", icon: "hotel" },
-  { name: "Human Resource Management", slug: "human-resource-mgmt", category: "Business", icon: "users" },
-  { name: "Insurance & Risk Management", slug: "insurance-risk", category: "Finance", icon: "shield-check" },
-  { name: "International Business", slug: "international-business", category: "Business", icon: "globe-2" },
-  { name: "Introduction to Business", slug: "intro-business", category: "Business", icon: "book-open" },
-  { name: "Introduction to Business Communication", slug: "intro-business-comm", category: "Communication", icon: "message-square" },
-  { name: "Introduction to Financial Math", slug: "intro-financial-math", category: "Finance", icon: "sigma" },
-  { name: "Introduction to Information Technology", slug: "intro-it", category: "Technology", icon: "laptop" },
-  { name: "Introduction to Public Speaking", slug: "intro-public-speaking", category: "Communication", icon: "mic" },
-  { name: "Job Interview", slug: "job-interview", category: "Communication", icon: "user-check" },
-  { name: "Journalism", slug: "journalism", category: "Communication", icon: "newspaper" },
-  { name: "Management Decision Making", slug: "management-decision", category: "Business", icon: "git-branch" },
-  { name: "Management Information Systems", slug: "management-info-systems", category: "Technology", icon: "server" },
-  { name: "Marketing", slug: "marketing", category: "Marketing", icon: "target" },
-  { name: "Mobile Application Development", slug: "mobile-app-dev", category: "Technology", icon: "smartphone" },
-  { name: "Network Design", slug: "network-design", category: "Technology", icon: "network" },
-  { name: "Networking Concepts", slug: "networking-concepts", category: "Technology", icon: "wifi" },
-  { name: "Organizational Leadership", slug: "organizational-leadership", category: "Leadership", icon: "crown" },
-  { name: "Parliamentary Procedure", slug: "parliamentary-procedure", category: "Leadership", icon: "gavel" },
-  { name: "Personal Finance", slug: "personal-finance", category: "Finance", icon: "wallet" },
-  { name: "Political Science", slug: "political-science", category: "Business", icon: "landmark" },
-  { name: "Public Speaking", slug: "public-speaking", category: "Communication", icon: "mic-2" },
-  { name: "Sales Presentation", slug: "sales-presentation", category: "Marketing", icon: "presentation" },
-  { name: "Securities & Investments", slug: "securities-investments", category: "Finance", icon: "bar-chart-3" },
-  { name: "Social Media Strategies", slug: "social-media", category: "Marketing", icon: "share-2" },
-  { name: "Sports & Entertainment Management", slug: "sports-entertainment", category: "Business", icon: "trophy" },
-  { name: "Spreadsheet Applications", slug: "spreadsheet-apps", category: "Technology", icon: "table" },
-  { name: "UX Design", slug: "ux-design", category: "Technology", icon: "figma" },
-  { name: "Web Site Development", slug: "web-dev", category: "Technology", icon: "chrome" },
-  { name: "Word Processing", slug: "word-processing", category: "Technology", icon: "file-type" },
+  {
+    "name": "Accounting",
+    "slug": "accounting",
+    "category": "Finance",
+    "icon": "calculator"
+  },
+  {
+    "name": "Advanced Accounting",
+    "slug": "advanced-accounting",
+    "category": "Finance",
+    "icon": "calculator"
+  },
+  {
+    "name": "Advertising",
+    "slug": "advertising",
+    "category": "Marketing",
+    "icon": "file-text"
+  },
+  {
+    "name": "Agribusiness",
+    "slug": "agribusiness",
+    "category": "Business",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Banking and Financial Systems",
+    "slug": "banking-and-financial-systems",
+    "category": "Finance",
+    "icon": "file-text"
+  },
+  {
+    "name": "Broadcast Journalism",
+    "slug": "broadcast-journalism",
+    "category": "Communication",
+    "icon": "file-text"
+  },
+  {
+    "name": "Business Communication",
+    "slug": "business-communication",
+    "category": "Communication",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Business Ethics",
+    "slug": "business-ethics",
+    "category": "Business",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Business Law",
+    "slug": "business-law",
+    "category": "Business",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Business Management",
+    "slug": "business-management",
+    "category": "Business",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Business Plan",
+    "slug": "business-plan",
+    "category": "Business",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Career Portfolio",
+    "slug": "career-portfolio",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Coding and Programming",
+    "slug": "coding-and-programming",
+    "category": "Technology",
+    "icon": "code"
+  },
+  {
+    "name": "Community Service Project",
+    "slug": "community-service-project",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Computer Applications",
+    "slug": "computer-applications",
+    "category": "Technology",
+    "icon": "file-text"
+  },
+  {
+    "name": "Computer Game Simulation Programming",
+    "slug": "computer-game-simulation-programming",
+    "category": "Technology",
+    "icon": "code"
+  },
+  {
+    "name": "Computer Problem Solving",
+    "slug": "computer-problem-solving",
+    "category": "Technology",
+    "icon": "file-text"
+  },
+  {
+    "name": "Customer Service",
+    "slug": "customer-service",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Cybersecurity",
+    "slug": "cybersecurity",
+    "category": "Technology",
+    "icon": "shield"
+  },
+  {
+    "name": "Data Analysis",
+    "slug": "data-analysis",
+    "category": "Technology",
+    "icon": "database"
+  },
+  {
+    "name": "Data Science and AI",
+    "slug": "data-science-and-ai",
+    "category": "Technology",
+    "icon": "database"
+  },
+  {
+    "name": "Digital Animation",
+    "slug": "digital-animation",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Digital Video Production",
+    "slug": "digital-video-production",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Economics",
+    "slug": "economics",
+    "category": "Finance",
+    "icon": "trending-up"
+  },
+  {
+    "name": "Entrepreneurship",
+    "slug": "entrepreneurship",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Event Planning",
+    "slug": "event-planning",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Financial Planning",
+    "slug": "financial-planning",
+    "category": "Finance",
+    "icon": "file-text"
+  },
+  {
+    "name": "Financial Statement Analysis",
+    "slug": "financial-statement-analysis",
+    "category": "Finance",
+    "icon": "file-text"
+  },
+  {
+    "name": "Future Business Educator",
+    "slug": "future-business-educator",
+    "category": "Business",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Future Business Leader",
+    "slug": "future-business-leader",
+    "category": "Leadership",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Graphic Design",
+    "slug": "graphic-design",
+    "category": "Technology",
+    "icon": "palette"
+  },
+  {
+    "name": "Healthcare Administration",
+    "slug": "healthcare-administration",
+    "category": "Business",
+    "icon": "heart-pulse"
+  },
+  {
+    "name": "Hospitality and Event Management",
+    "slug": "hospitality-and-event-management",
+    "category": "Business",
+    "icon": "users"
+  },
+  {
+    "name": "Human Resource Management",
+    "slug": "human-resource-management",
+    "category": "Business",
+    "icon": "users"
+  },
+  {
+    "name": "Impromptu Speaking",
+    "slug": "impromptu-speaking",
+    "category": "Communication",
+    "icon": "mic"
+  },
+  {
+    "name": "Insurance and Risk Management",
+    "slug": "insurance-and-risk-management",
+    "category": "Business",
+    "icon": "users"
+  },
+  {
+    "name": "International Business",
+    "slug": "international-business",
+    "category": "Business",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Introduction to Business Communication",
+    "slug": "introduction-to-business-communication",
+    "category": "Communication",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Introduction to Business Concepts",
+    "slug": "introduction-to-business-concepts",
+    "category": "Business",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Introduction to Business Presentation",
+    "slug": "introduction-to-business-presentation",
+    "category": "Business",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Introduction to Business Procedures",
+    "slug": "introduction-to-business-procedures",
+    "category": "Business",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Introduction to FBLA",
+    "slug": "introduction-to-fbla",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Introduction to Information Technology",
+    "slug": "introduction-to-information-technology",
+    "category": "Technology",
+    "icon": "cpu"
+  },
+  {
+    "name": "Introduction to Marketing Concepts",
+    "slug": "introduction-to-marketing-concepts",
+    "category": "Marketing",
+    "icon": "target"
+  },
+  {
+    "name": "Introduction to Parliamentary Procedure",
+    "slug": "introduction-to-parliamentary-procedure",
+    "category": "Leadership",
+    "icon": "file-text"
+  },
+  {
+    "name": "Introduction to Programming",
+    "slug": "introduction-to-programming",
+    "category": "Technology",
+    "icon": "code"
+  },
+  {
+    "name": "Introduction to Public Speaking",
+    "slug": "introduction-to-public-speaking",
+    "category": "Communication",
+    "icon": "mic"
+  },
+  {
+    "name": "Introduction to Retail and Merchandising",
+    "slug": "introduction-to-retail-and-merchandising",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Introduction to Social Media Strategy",
+    "slug": "introduction-to-social-media-strategy",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Introduction to Supply Chain Management",
+    "slug": "introduction-to-supply-chain-management",
+    "category": "Business",
+    "icon": "users"
+  },
+  {
+    "name": "Job Interview",
+    "slug": "job-interview",
+    "category": "Communication",
+    "icon": "file-text"
+  },
+  {
+    "name": "Journalism",
+    "slug": "journalism",
+    "category": "Communication",
+    "icon": "file-text"
+  },
+  {
+    "name": "Local Chapter Annual Business Report",
+    "slug": "local-chapter-annual-business-report",
+    "category": "Business",
+    "icon": "briefcase"
+  },
+  {
+    "name": "Management Information Systems",
+    "slug": "management-information-systems",
+    "category": "Business",
+    "icon": "users"
+  },
+  {
+    "name": "Marketing",
+    "slug": "marketing",
+    "category": "Marketing",
+    "icon": "target"
+  },
+  {
+    "name": "Mobile Application Development",
+    "slug": "mobile-application-development",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Network Design",
+    "slug": "network-design",
+    "category": "Technology",
+    "icon": "palette"
+  },
+  {
+    "name": "Networking Infrastructures",
+    "slug": "networking-infrastructures",
+    "category": "Technology",
+    "icon": "file-text"
+  },
+  {
+    "name": "Organizational Leadership",
+    "slug": "organizational-leadership",
+    "category": "Leadership",
+    "icon": "crown"
+  },
+  {
+    "name": "Parliamentary Procedure",
+    "slug": "parliamentary-procedure",
+    "category": "Leadership",
+    "icon": "file-text"
+  },
+  {
+    "name": "Personal Finance",
+    "slug": "personal-finance",
+    "category": "Finance",
+    "icon": "landmark"
+  },
+  {
+    "name": "Project Management",
+    "slug": "project-management",
+    "category": "Business",
+    "icon": "users"
+  },
+  {
+    "name": "Public Administration and Management",
+    "slug": "public-administration-and-management",
+    "category": "Business",
+    "icon": "users"
+  },
+  {
+    "name": "Public Service Announcement",
+    "slug": "public-service-announcement",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Public Speaking",
+    "slug": "public-speaking",
+    "category": "Communication",
+    "icon": "mic"
+  },
+  {
+    "name": "Real Estate",
+    "slug": "real-estate",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Retail Management",
+    "slug": "retail-management",
+    "category": "Business",
+    "icon": "users"
+  },
+  {
+    "name": "Sales Presentation",
+    "slug": "sales-presentation",
+    "category": "Marketing",
+    "icon": "file-text"
+  },
+  {
+    "name": "Securities and Investments",
+    "slug": "securities-and-investments",
+    "category": "Finance",
+    "icon": "file-text"
+  },
+  {
+    "name": "Social Media Strategies",
+    "slug": "social-media-strategies",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Sports and Entertainment Management",
+    "slug": "sports-and-entertainment-management",
+    "category": "Business",
+    "icon": "users"
+  },
+  {
+    "name": "Supply Chain Management",
+    "slug": "supply-chain-management",
+    "category": "Business",
+    "icon": "users"
+  },
+  {
+    "name": "Technology Support and Services",
+    "slug": "technology-support-and-services",
+    "category": "Technology",
+    "icon": "cpu"
+  },
+  {
+    "name": "Visual Design",
+    "slug": "visual-design",
+    "category": "Technology",
+    "icon": "palette"
+  },
+  {
+    "name": "Website Coding and Development",
+    "slug": "website-coding-and-development",
+    "category": "Business",
+    "icon": "file-text"
+  },
+  {
+    "name": "Website Design",
+    "slug": "website-design",
+    "category": "Technology",
+    "icon": "palette"
+  }
 ];
 
 export const EVENT_CATEGORIES = [

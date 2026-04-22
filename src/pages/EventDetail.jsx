@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, SlidersHorizontal, X, Search, MessagesSquare } from 'lucide-react';
 import { getEventBySlug } from '../data/mockEvents';
+import { EVENT_INFO } from '../data/eventInfo';
 import { useResources } from '../hooks/useResources';
 import { useSocial } from '../context/SocialContext';
 import ResourceCard from '../components/ResourceCard';
@@ -39,7 +40,10 @@ export default function EventDetail() {
     [event, getEventPosts],
   );
 
+  const [activeTab, setActiveTab] = useState('info');
   const [showFilters, setShowFilters] = useState(false);
+  const eventInfoData = event ? EVENT_INFO[event.slug] : null;
+
   const [filters, setFilters] = useState({
     types: [],
     visibility: [],
@@ -101,40 +105,100 @@ export default function EventDetail() {
           )}
         </motion.div>
 
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={() => setShowFilters(!showFilters)}
-          className="mb-4 flex items-center gap-2 rounded-xl border border-[var(--atlas-border)] px-4 py-2.5 text-sm font-medium text-[var(--atlas-fg)] lg:hidden dark:border-warm-700 text-[var(--atlas-muted)] transition-colors hover:border-warm-300"
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          role="tablist"
+          className="atlas-panel mb-8 flex gap-1 p-1 xl:w-2/3"
         >
-          <SlidersHorizontal size={16} /> Filters
-          {activeFilterCount > 0 && (
-            <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-navy-800 text-xs font-semibold text-white dark:bg-navy-500">
-              {activeFilterCount}
-            </span>
-          )}
-        </motion.button>
+          {[
+            { id: 'info', label: 'Overview' },
+            { id: 'resources', label: `Resources (${filtered.length})` },
+            { id: 'discussion', label: `Discussion (${eventPosts.length})` },
+          ].map((tab) => {
+            const active = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                role="tab"
+                aria-selected={active}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 border-2 py-2.5 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-[0.18em] transition ${
+                  active
+                    ? 'border-[var(--atlas-accent)] bg-[rgba(61,109,118,0.10)] text-[var(--atlas-fg)] dark:bg-[rgba(109,158,168,0.14)]'
+                    : 'border-transparent text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)]'
+                }`}
+                style={{ borderRadius: 2 }}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </motion.div>
+
+        {activeTab === 'resources' && (
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setShowFilters(!showFilters)}
+            className="mb-4 flex items-center gap-2 rounded-xl border border-[var(--atlas-border)] px-4 py-2.5 text-sm font-medium text-[var(--atlas-fg)] lg:hidden dark:border-warm-700 text-[var(--atlas-muted)] transition-colors hover:border-warm-300"
+          >
+            <SlidersHorizontal size={16} /> Filters
+            {activeFilterCount > 0 && (
+              <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-navy-800 text-xs font-semibold text-white dark:bg-navy-500">
+                {activeFilterCount}
+              </span>
+            )}
+          </motion.button>
+        )}
 
         <div className="flex gap-8">
-          <div className={`${showFilters ? 'fixed inset-0 z-50 bg-black/30 lg:static lg:bg-transparent' : 'hidden lg:block'}`}>
-            <div className={`${showFilters ? 'absolute right-0 top-0 h-full w-80 overflow-y-auto bg-white p-6 shadow-xl lg:static lg:w-auto lg:shadow-none lg:p-0 dark:bg-[var(--atlas-surface)]' : ''}`}>
-              {showFilters && (
-                <button
-                  onClick={() => setShowFilters(false)}
-                  className="mb-4 flex items-center gap-2 text-sm text-[var(--atlas-muted)] lg:hidden transition-colors hover:text-[var(--atlas-fg)]"
-                >
-                  <X size={16} /> Close
-                </button>
-              )}
-              <FilterSidebar filters={filters} setFilters={setFilters} tagOptions={allTags} />
+          {activeTab === 'resources' && (
+            <div className={`${showFilters ? 'fixed inset-0 z-50 bg-black/30 lg:static lg:bg-transparent' : 'hidden lg:block'}`}>
+              <div className={`${showFilters ? 'absolute right-0 top-0 h-full w-80 overflow-y-auto bg-white p-6 shadow-xl lg:static lg:w-auto lg:shadow-none lg:p-0 dark:bg-[var(--atlas-surface)]' : ''}`}>
+                {showFilters && (
+                  <button
+                    onClick={() => setShowFilters(false)}
+                    className="mb-4 flex items-center gap-2 text-sm text-[var(--atlas-muted)] lg:hidden transition-colors hover:text-[var(--atlas-fg)]"
+                  >
+                    <X size={16} /> Close
+                  </button>
+                )}
+                <FilterSidebar filters={filters} setFilters={setFilters} tagOptions={allTags} />
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="min-w-0 flex-1 space-y-10">
-            <section>
-              <SectionHeader
-                kicker="Resources"
-                title={`Prep material for ${event.name}`}
-              />
+            {activeTab === 'info' && (
+              <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                {eventInfoData ? (
+                  <div className="card-surface p-6 sm:p-8">
+                    <div className="flex flex-wrap gap-6 mb-8 border-b border-[var(--atlas-border)] pb-6">
+                      <div><span className="atlas-kicker mb-1 block">Type</span><span className="font-semibold text-[var(--atlas-fg)]">{eventInfoData.type || 'Unknown'}</span></div>
+                      <div><span className="atlas-kicker mb-1 block">Category</span><span className="font-semibold text-[var(--atlas-fg)]">{eventInfoData.testCategory || 'Unknown'}</span></div>
+                    </div>
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      <p className="text-lg font-medium leading-relaxed mb-8 text-[var(--atlas-fg)]">
+                        {eventInfoData.description}
+                      </p>
+                      <div className="whitespace-pre-wrap text-sm text-[var(--atlas-muted)] leading-relaxed">
+                        {eventInfoData.fullText}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <EmptyState title="No detailed info available" description="This event does not have an attached study guide yet." />
+                )}
+              </motion.section>
+            )}
+
+            {activeTab === 'resources' && (
+              <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <SectionHeader
+                  kicker="Resources"
+                  title={`Prep material for ${event.name}`}
+                />
 
               <div className="mt-5">
                 {loading ? (
@@ -166,11 +230,13 @@ export default function EventDetail() {
                   </motion.div>
                 )}
               </div>
-            </section>
+            </motion.section>
+            )}
 
-            <section>
-              <SectionHeader
-                kicker="Discussion"
+            {activeTab === 'discussion' && (
+              <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <SectionHeader
+                  kicker="Discussion"
                 title={`${event.name} feed`}
                 description="Ask questions, compare strategy, and find people working on the same event."
                 action={<MessagesSquare size={16} className="text-[var(--atlas-accent)]" aria-hidden="true" />}
@@ -203,7 +269,8 @@ export default function EventDetail() {
                   />
                 )}
               </div>
-            </section>
+              </motion.section>
+            )}
           </div>
         </div>
       </div>
