@@ -86,6 +86,42 @@ export default function EventDetail() {
     );
   }
 
+  const renderFormattedText = (text) => {
+    if (!text) return null;
+    return text.split('\n').map((line, idx) => {
+      const trimmed = line.trim();
+      if (!trimmed) return <div key={idx} className="h-4" />;
+      
+      const isBullet = trimmed.startsWith('•');
+      const isNumbered = /^\d+\.\s/.test(trimmed);
+      
+      if (isBullet || isNumbered) {
+        const content = trimmed.replace(/^[•\d.]+\s*/, '');
+        return (
+          <div key={idx} className="ml-4 flex gap-3 mb-2.5">
+            <span className="text-[var(--atlas-accent)] font-bold opacity-80 mt-0.5 select-none text-sm">
+              {isBullet ? '—' : trimmed.match(/^\d+\./)[0]}
+            </span>
+            <span className="leading-relaxed text-[var(--atlas-fg)] opacity-90">{content}</span>
+          </div>
+        );
+      }
+      
+      const isHeader = (trimmed.length < 50 && trimmed.length > 2 && /^[A-Z]/.test(trimmed) && !/[.,;!?]$/.test(trimmed));
+      const isSectionHeader = /^[A-Z]\.\s/.test(trimmed);
+      
+      if (isHeader || isSectionHeader) {
+        return (
+          <h3 key={idx} className="text-xs font-bold text-[var(--atlas-fg)] mt-10 mb-5 tracking-widest uppercase font-[family-name:var(--font-mono)] border-b border-[var(--atlas-border)] pb-2 opacity-70">
+            {trimmed}
+          </h3>
+        );
+      }
+      
+      return <p key={idx} className="mb-4 leading-relaxed text-[var(--atlas-fg)] opacity-80 text-[15px]">{trimmed}</p>;
+    });
+  };
+
   const activeFilterCount = filters.types.length + filters.visibility.length + filters.tags.length;
 
   return (
@@ -173,17 +209,17 @@ export default function EventDetail() {
             {activeTab === 'info' && (
               <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 {eventInfoData ? (
-                  <div className="card-surface p-6 sm:p-8">
-                    <div className="flex flex-wrap gap-6 mb-8 border-b border-[var(--atlas-border)] pb-6">
-                      <div><span className="atlas-kicker mb-1 block">Type</span><span className="font-semibold text-[var(--atlas-fg)]">{eventInfoData.type || 'Unknown'}</span></div>
-                      <div><span className="atlas-kicker mb-1 block">Category</span><span className="font-semibold text-[var(--atlas-fg)]">{eventInfoData.testCategory || 'Unknown'}</span></div>
+                  <div className="card-surface p-6 sm:p-10">
+                    <div className="flex flex-wrap gap-8 mb-10 border-b border-[var(--atlas-border)] pb-8">
+                      <div><span className="atlas-kicker mb-1.5 block">Type</span><span className="text-xl font-serif text-[var(--atlas-fg)]">{eventInfoData.type || 'Unknown'}</span></div>
+                      <div><span className="atlas-kicker mb-1.5 block">Category</span><span className="text-xl font-serif text-[var(--atlas-fg)]">{eventInfoData.testCategory || 'Unknown'}</span></div>
                     </div>
-                    <div className="prose prose-sm dark:prose-invert max-w-none">
-                      <p className="text-lg font-medium leading-relaxed mb-8 text-[var(--atlas-fg)]">
+                    <div className="max-w-none">
+                      <p className="text-xl sm:text-2xl font-serif leading-relaxed mb-12 text-[var(--atlas-fg)] border-l-4 border-[var(--atlas-accent)] pl-6">
                         {eventInfoData.description}
                       </p>
-                      <div className="whitespace-pre-wrap text-sm text-[var(--atlas-muted)] leading-relaxed">
-                        {eventInfoData.fullText}
+                      <div className="mt-8">
+                        {renderFormattedText(eventInfoData.fullText)}
                       </div>
                     </div>
                   </div>
