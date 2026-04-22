@@ -25,12 +25,13 @@ export function useResources() {
           id: doc.id,
           ...doc.data()
         }));
-        setResources(data.length > 0 ? data : RESOURCES);
+        // Do not fallback to mock data if data array is empty; return the empty array from DB.
+        setResources(data);
         setLoading(false);
       }, (error) => {
         clearTimeout(timeout);
         console.error("Error fetching resources:", error);
-        setResources(RESOURCES);
+        setResources([]);
         setLoading(false);
       });
     } catch (error) {
