@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { db } from '../config/firebase';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, doc, deleteDoc } from 'firebase/firestore';
+import { supabase, STORAGE_BUCKET } from '../config/supabase';
 import { RESOURCES } from '../data/mockResources';
 
 export function useResources() {
@@ -45,5 +46,19 @@ export function useResources() {
     };
   }, []);
 
-  return { resources, loading };
+  const deleteResource = async (id, storagePath) => {
+    try {
+      if (storagePath) {
+        const { error } = await supabase.storage.from(STORAGE_BUCKET).remove([storagePath]);
+        if (error) {
+          console.error("Error deleting from Supabase storage:", error);
+        }
+      }
+      await deleteDoc(doc(db, 'resources', id));
+    } catch (err) {
+      console.error("Error deleting document:", err);
+    }
+  };
+
+  return { resources, loading, deleteResource };
 }

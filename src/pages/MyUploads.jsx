@@ -16,7 +16,7 @@ import { RESOURCE_TYPE_LABELS } from '../lib/resources';
 
 export default function MyUploads() {
   const { user } = useAuth();
-  const { resources, loading } = useResources();
+  const { resources, loading, deleteResource } = useResources();
   const myResources = user ? resources.filter((r) => r.uploaderId === user.id) : [];
   const [deletedIds, setDeletedIds] = useState([]);
   const active = myResources.filter((r) => !deletedIds.includes(r.id));
@@ -30,7 +30,10 @@ export default function MyUploads() {
     { upvotes: 0, downloads: 0, views: 0 }
   );
 
-  const handleDelete = (id) => setDeletedIds((prev) => [...prev, id]);
+  const handleDelete = async (id, storagePath) => {
+    setDeletedIds((prev) => [...prev, id]);
+    await deleteResource(id, storagePath);
+  };
 
   if (loading) {
     return (
@@ -116,7 +119,7 @@ export default function MyUploads() {
                     </Link>
                     <motion.button
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => handleDelete(r.id)}
+                      onClick={() => handleDelete(r.id, r.storagePath)}
                       aria-label={`Delete ${r.title}`}
                       className="border-2 border-transparent p-2 text-[var(--atlas-muted)] transition-colors hover:border-red-500/55 hover:text-red-600 dark:hover:text-red-400"
                       style={{ borderRadius: 2 }}

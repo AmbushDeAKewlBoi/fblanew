@@ -25,7 +25,7 @@ export default function AdminDashboard() {
   const [keyCopied, setKeyCopied] = useState(false);
   const [hiddenIds, setHiddenIds] = useState([]);
   const [deletedIds, setDeletedIds] = useState([]);
-  const { resources } = useResources();
+  const { resources, deleteResource } = useResources();
   const [dbUsers, setDbUsers] = useState([]);
 
   useEffect(() => {
@@ -55,6 +55,11 @@ export default function AdminDashboard() {
     navigator.clipboard.writeText(chapter?.masterKey || '');
     setKeyCopied(true);
     setTimeout(() => setKeyCopied(false), 2000);
+  };
+
+  const handleDelete = async (id, storagePath) => {
+    setDeletedIds((prev) => [...prev, id]);
+    await deleteResource(id, storagePath);
   };
 
   if (!user?.isAdvisor) {
@@ -206,7 +211,7 @@ export default function AdminDashboard() {
                         </motion.button>
                         <motion.button
                           whileTap={{ scale: 0.9 }}
-                          onClick={() => setDeletedIds((prev) => [...prev, r.id])}
+                          onClick={() => handleDelete(r.id, r.storagePath)}
                           aria-label="Delete resource"
                           className="border-2 border-transparent p-2 text-[var(--atlas-muted)] transition-colors hover:border-red-500/55 hover:text-red-600 dark:hover:text-red-400"
                           style={{ borderRadius: 2 }}
