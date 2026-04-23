@@ -86,41 +86,6 @@ export default function EventDetail() {
     );
   }
 
-  const renderFormattedText = (text) => {
-    if (!text) return null;
-    return text.split('\n').map((line, idx) => {
-      const trimmed = line.trim();
-      if (!trimmed) return <div key={idx} className="h-4" />;
-      
-      const isBullet = trimmed.startsWith('•');
-      const isNumbered = /^\d+\.\s/.test(trimmed);
-      
-      if (isBullet || isNumbered) {
-        const content = trimmed.replace(/^[•\d.]+\s*/, '');
-        return (
-          <div key={idx} className="ml-4 flex gap-3 mb-2.5">
-            <span className="text-[var(--atlas-accent)] font-bold opacity-80 mt-0.5 select-none text-sm">
-              {isBullet ? '—' : trimmed.match(/^\d+\./)[0]}
-            </span>
-            <span className="leading-relaxed text-[var(--atlas-fg)] opacity-90">{content}</span>
-          </div>
-        );
-      }
-      
-      const isHeader = (trimmed.length < 50 && trimmed.length > 2 && /^[A-Z]/.test(trimmed) && !/[.,;!?]$/.test(trimmed));
-      const isSectionHeader = /^[A-Z]\.\s/.test(trimmed);
-      
-      if (isHeader || isSectionHeader) {
-        return (
-          <h3 key={idx} className="text-xs font-bold text-[var(--atlas-fg)] mt-10 mb-5 tracking-widest uppercase font-[family-name:var(--font-mono)] border-b border-[var(--atlas-border)] pb-2 opacity-70">
-            {trimmed}
-          </h3>
-        );
-      }
-      
-      return <p key={idx} className="mb-4 leading-relaxed text-[var(--atlas-fg)] opacity-80 text-[15px]">{trimmed}</p>;
-    });
-  };
 
   const activeFilterCount = filters.types.length + filters.visibility.length + filters.tags.length;
 
@@ -218,8 +183,12 @@ export default function EventDetail() {
                       <p className="text-xl sm:text-2xl font-serif leading-relaxed mb-12 text-[var(--atlas-fg)] border-l-4 border-[var(--atlas-accent)] pl-6">
                         {eventInfoData.description}
                       </p>
-                      <div className="mt-8">
-                        {renderFormattedText(eventInfoData.fullText)}
+                      <div className="mt-8 rounded-xl overflow-hidden border border-[var(--atlas-border)]">
+                        <iframe
+                          src={`/pdfs/${event.slug}.pdf`}
+                          className="w-full h-[800px] border-none"
+                          title={`${event.name} Study Guide`}
+                        />
                       </div>
                     </div>
                   </div>
