@@ -16,13 +16,17 @@ export default function Events() {
   const [category, setCategory] = useState('All');
   const { resources, loading } = useResources();
 
+  const EVENT_TYPES = ['All Types', 'Objective Test', 'Presentation', 'Role Play', 'Production'];
+  const [eventType, setEventType] = useState('All Types');
+
   const filtered = useMemo(() => {
     return FBLA_EVENTS.filter(e => {
       const matchSearch = e.name.toLowerCase().includes(search.toLowerCase());
       const matchCategory = category === 'All' || e.category === category;
-      return matchSearch && matchCategory;
+      const matchType = eventType === 'All Types' || e.testCategory === eventType;
+      return matchSearch && matchCategory && matchType;
     });
-  }, [search, category]);
+  }, [search, category, eventType]);
 
   return (
     <PageTransition>
@@ -41,30 +45,49 @@ export default function Events() {
         </motion.div>
 
         {/* Search + Filters */}
-        <motion.div {...fadeUp} transition={{ duration: 0.4, delay: 0.1 }} className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center">
-          <div className="relative flex-1 max-w-md group">
-            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)] transition-colors group-focus-within:text-navy-500" />
-            <input
-              type="text"
-              placeholder="Search events..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-[var(--atlas-border)] bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--atlas-fg)] placeholder:text-[var(--atlas-muted)] transition-all duration-200 focus:border-navy-400 focus:outline-none focus:ring-2 focus:ring-navy-400/20 dark:border-[var(--atlas-border)] dark:bg-[var(--atlas-surface)] dark:text-warm-100 dark:focus:border-navy-500"
-            />
+        <motion.div {...fadeUp} transition={{ duration: 0.4, delay: 0.1 }} className="mb-6 flex flex-col gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="relative flex-1 max-w-md group">
+              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)] transition-colors group-focus-within:text-navy-500" />
+              <input
+                type="text"
+                placeholder="Search events..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full rounded-xl border border-[var(--atlas-border)] bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--atlas-fg)] placeholder:text-[var(--atlas-muted)] transition-all duration-200 focus:border-navy-400 focus:outline-none focus:ring-2 focus:ring-navy-400/20 dark:border-[var(--atlas-border)] dark:bg-[var(--atlas-surface)] dark:text-warm-100 dark:focus:border-navy-500"
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {EVENT_CATEGORIES.map(cat => (
+                <motion.button
+                  key={cat}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setCategory(cat)}
+                  className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                    category === cat
+                      ? 'bg-navy-800 text-white shadow-sm dark:bg-navy-600'
+                      : 'bg-[var(--atlas-elev)] text-[var(--atlas-muted)] hover:bg-warm-200 dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)] dark:hover:bg-warm-700'
+                  }`}
+                >
+                  {cat}
+                </motion.button>
+              ))}
+            </div>
           </div>
+          
           <div className="flex flex-wrap gap-2">
-            {EVENT_CATEGORIES.map(cat => (
+            {EVENT_TYPES.map(type => (
               <motion.button
-                key={cat}
+                key={type}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setCategory(cat)}
+                onClick={() => setEventType(type)}
                 className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ${
-                  category === cat
+                  eventType === type
                     ? 'bg-navy-800 text-white shadow-sm dark:bg-navy-600'
                     : 'bg-[var(--atlas-elev)] text-[var(--atlas-muted)] hover:bg-warm-200 dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)] dark:hover:bg-warm-700'
                 }`}
               >
-                {cat}
+                {type}
               </motion.button>
             ))}
           </div>

@@ -136,14 +136,17 @@ for (const [slug, data] of Object.entries(rawData)) {
   const icon = getIcon(name);
   const category = getCategory(name);
   
+  const parsedData = cleanText(infoText, name);
+  eventInfoData[slug] = parsedData;
+
   fblaEvents.push({
     name,
     slug,
     category,
+    testCategory: parsedData.testCategory,
     icon
   });
   
-  eventInfoData[slug] = cleanText(infoText, name);
   i++;
 }
 
