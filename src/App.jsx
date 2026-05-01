@@ -26,6 +26,7 @@ const Notifications     = lazy(() => import('./pages/Notifications'));
 const Profile           = lazy(() => import('./pages/Profile'));
 const Search            = lazy(() => import('./pages/Search'));
 const AdminDashboard    = lazy(() => import('./pages/AdminDashboard'));
+const Changelog         = lazy(() => import('./pages/Changelog'));
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, user, logout } = useAuth();
@@ -62,9 +63,9 @@ function getGearVariant(pathname) {
   if (pathname.includes('events')) return 'events';
   if (pathname.includes('upload') || pathname.includes('my-uploads')) return 'upload';
   if (pathname.includes('leaderboard')) return 'leaderboard';
-  if (
     pathname.includes('dashboard') ||
     pathname.includes('feed') ||
+    pathname.includes('updates') ||
     pathname.includes('connections') ||
     pathname.includes('profile') ||
     pathname.includes('messages') ||
@@ -125,7 +126,7 @@ export default function App() {
           <AnimatePresence mode="wait">
             <Suspense key={location.pathname} fallback={<RouteFallback />}>
               <Routes location={location}>
-                <Route path="/" element={<PublicOnlyRoute><Landing /></PublicOnlyRoute>} />
+                <Route path="/" element={<Landing />} />
                 <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
                 <Route path="/signup/student" element={<PublicOnlyRoute><SignupStudent /></PublicOnlyRoute>} />
                 <Route path="/signup/advisor" element={<PublicOnlyRoute><SignupAdvisor /></PublicOnlyRoute>} />
@@ -144,6 +145,7 @@ export default function App() {
                 <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
                 <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
                 <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+                <Route path="/updates" element={<ProtectedRoute><Changelog /></ProtectedRoute>} />
 
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>

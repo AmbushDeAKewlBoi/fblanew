@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import PageTransition from '../components/PageTransition';
+import { useAuth } from '../context/AuthContext';
 import { CAMPUS_SIGNALS, STUDY_CIRCLES } from '../data/mockCommunity';
 
 /**
@@ -8,6 +9,8 @@ import { CAMPUS_SIGNALS, STUDY_CIRCLES } from '../data/mockCommunity';
  * Bold grid typography, muted accents (steel / sage / gold), FBLA + study + network focus.
  */
 export default function Landing() {
+  const { isAuthenticated } = useAuth();
+
   useEffect(() => {
     document.title = 'Atlas — FBLA study & network';
   }, []);
@@ -40,8 +43,8 @@ export default function Landing() {
           <span className="al-topbar-sep">·</span>
           <span className="al-topbar-muted">Study tool &amp; professional network for FBLA</span>
           <span className="al-topbar-spacer" />
-          <Link to="/login" className="al-topbar-link">
-            Sign in
+          <Link to={isAuthenticated ? "/dashboard" : "/login"} className="al-topbar-link">
+            {isAuthenticated ? "Dashboard" : "Sign in"}
           </Link>
         </header>
 
@@ -63,12 +66,20 @@ export default function Landing() {
             </p>
 
             <div className="al-cta">
-              <Link to="/signup/student" className="al-btn al-btn-primary">
-                Join Atlas
-              </Link>
-              <Link to="/login" className="al-btn al-btn-ghost">
-                I already have an account
-              </Link>
+              {isAuthenticated ? (
+                <Link to="/dashboard" className="al-btn al-btn-primary">
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link to="/signup/student" className="al-btn al-btn-primary">
+                    Join Atlas
+                  </Link>
+                  <Link to="/login" className="al-btn al-btn-ghost">
+                    I already have an account
+                  </Link>
+                </>
+              )}
             </div>
 
             <div className="al-stats">
@@ -231,12 +242,20 @@ export default function Landing() {
               Free for students and advisors. Bring your chapter — or start solo and find your people.
             </p>
             <div className="al-cta">
-              <Link to="/signup/student" className="al-btn al-btn-primary al-btn-lg">
-                Create a student account
-              </Link>
-              <Link to="/signup/advisor" className="al-btn al-btn-ghost al-btn-lg">
-                Advisor onboarding
-              </Link>
+              {isAuthenticated ? (
+                <Link to="/dashboard" className="al-btn al-btn-primary al-btn-lg">
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link to="/signup/student" className="al-btn al-btn-primary al-btn-lg">
+                    Create a student account
+                  </Link>
+                  <Link to="/signup/advisor" className="al-btn al-btn-ghost al-btn-lg">
+                    Advisor onboarding
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </section>

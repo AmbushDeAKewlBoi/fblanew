@@ -6,7 +6,7 @@ import { useSocial } from '../../context/SocialContext';
 import {
   Search, Plus, Trophy, LayoutDashboard,
   LogOut, ChevronDown, Menu, X, Sun, Moon,
-  FolderOpen, Shield, BookOpen, Users2, Bell, MessagesSquare, Newspaper
+  FolderOpen, Shield, BookOpen, Users2, Bell, MessagesSquare, Newspaper, Terminal
 } from 'lucide-react';
 
 export default function Navbar({ darkMode, setDarkMode }) {
@@ -53,7 +53,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
     <nav className="sticky top-0 z-50 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)]/92 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex h-[4.25rem] items-center justify-between gap-4">
-          <Link to={isAuthenticated ? '/dashboard' : '/'} className="flex shrink-0 items-center gap-3 group">
+          <Link to="/" className="flex shrink-0 items-center gap-3 group">
             <div className="flex h-10 w-10 items-center justify-center border-2 border-[var(--atlas-accent)] bg-[var(--atlas-elev)] text-sm font-bold text-[var(--atlas-fg)] font-[family-name:var(--font-mono)] transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5">
               A
             </div>
@@ -87,6 +87,9 @@ export default function Navbar({ darkMode, setDarkMode }) {
                 <div className="hidden items-center gap-0.5 lg:flex">
                   <Link to="/feed" className={navLinkClass('/feed')}>
                     <Newspaper size={15} strokeWidth={2} /> Feed
+                  </Link>
+                  <Link to="/updates" className={navLinkClass('/updates')}>
+                    <Terminal size={15} strokeWidth={2} /> Log
                   </Link>
                   <Link to="/events" className={navLinkClass('/events')}>
                     <BookOpen size={15} strokeWidth={2} /> Events
@@ -282,6 +285,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                 </form>
                 {[
                   ['/feed', <Newspaper size={16} />, 'Feed'],
+                  ['/updates', <Terminal size={16} />, 'System Log'],
                   ['/events', <BookOpen size={16} />, 'Events'],
                   ['/connections', <Users2 size={16} />, 'Network'],
                   ['/leaderboard', <Trophy size={16} />, 'Leaderboard'],
