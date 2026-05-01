@@ -71,13 +71,13 @@ export default function ResourceCard({ resource }) {
 
         {/* Tags */}
         <div className="mb-4 flex flex-wrap gap-1.5">
-          {resource.tags.slice(0, 3).map(tag => (
+          {(resource.tags || []).slice(0, 3).map(tag => (
             <span key={tag} className="border border-[var(--atlas-border)] bg-[var(--atlas-surface)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wide text-[var(--atlas-muted)] transition-colors">
               {tag}
             </span>
           ))}
-          {resource.tags.length > 3 && (
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--atlas-muted)]">+{resource.tags.length - 3}</span>
+          {(resource.tags || []).length > 3 && (
+            <span className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--atlas-muted)]">+{(resource.tags || []).length - 3}</span>
           )}
         </div>
 
@@ -125,7 +125,7 @@ export default function ResourceCard({ resource }) {
         </motion.button>
         <span className="ml-auto flex items-center gap-1.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--atlas-muted)]">
           <FileText size={11} />
-          {resource.fileExtension.replace('.', '').toUpperCase()} · {formatFileSize(resource.fileSizeBytes)}
+          {resource.fileExtension ? resource.fileExtension.replace('.', '').toUpperCase() : 'FILE'} · {formatFileSize(resource.fileSizeBytes || 0)}
         </span>
       </div>
     </motion.div>

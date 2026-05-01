@@ -98,7 +98,7 @@ export default function MyUploads() {
                       {r.title}
                     </Link>
                     <p className="mt-0.5 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-[var(--atlas-muted)]">
-                      {r.event} · {r.fileExtension.replace('.', '').toUpperCase()} · {formatFileSize(r.fileSizeBytes)}
+                      {r.event} · {r.fileExtension ? r.fileExtension.replace('.', '').toUpperCase() : 'FILE'} · {formatFileSize(r.fileSizeBytes || 0)}
                     </p>
                   </div>
 
