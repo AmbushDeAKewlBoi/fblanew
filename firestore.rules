@@ -25,6 +25,15 @@ service cloud.firestore {
       allow update, delete: if isOwner(resource.data.authorId) || isAdvisor();
     }
     
+    match /changelog/{updateId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    match /socialGraphs/{graphId} {
+      allow read, write: if isSignedIn();
+    }
+
     // Default deny for anything else
     match /{document=**} {
       allow read, write: if false;
