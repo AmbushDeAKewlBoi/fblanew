@@ -4,7 +4,7 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDv_VpXYeQ9GiLN5cFObLAzVcr5IFQKEzE",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "fbla-hub-52ec0.firebaseapp.com",
   projectId: "fbla-hub-52ec0",
   storageBucket: "fbla-hub-52ec0.firebasestorage.app",

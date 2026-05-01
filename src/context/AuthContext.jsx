@@ -47,30 +47,12 @@ export function AuthProvider({ children }) {
               email: firebaseUser.email,
               isAdvisor: false,
               chapterId: 1,
-              uploadCount: 0
+              uploadCount: 0,
+              status: 'pending',
+              role: 'student'
             };
           }
 
-          // Aggressively restore from local cache to ensure admin upgrades survive DB rule blocks
-          try {
-            const cached = localStorage.getItem(`fbla_user_${firebaseUser.uid}`);
-            if (cached) {
-              const parsedCache = JSON.parse(cached);
-              // If local cache says they are an advisor but DB doesn't, force upgrade them locally!
-              if (parsedCache.isAdvisor && !mergedData.isAdvisor) {
-                mergedData = { ...mergedData, ...parsedCache, isAdvisor: true };
-                // Attempt an aggressive background sync to heal the database
-                setDoc(doc(db, 'users', firebaseUser.uid), { 
-                  isAdvisor: true, 
-                  chapterId: parsedCache.chapterId,
-                  schoolName: parsedCache.schoolName,
-                  region: parsedCache.region,
-                  state: parsedCache.state,
-                  chapterKey: parsedCache.chapterKey 
-                }, { merge: true }).catch(() => {});
-              }
-            }
-          } catch(e) {}
 
           setUser(mergedData);
           setIsAuthenticated(true);
@@ -110,7 +92,9 @@ export function AuthProvider({ children }) {
             state: metadata?.state || null,
             chapterKey: metadata?.generatedKey || metadata?.chapterKey || null,
             createdAt: new Date().toISOString(),
-            uploadCount: 0
+            uploadCount: 0,
+            status: (metadata && metadata.isAdvisor) ? 'active' : 'pending',
+            role: 'student'
           };
           await setDoc(doc(db, 'users', userCredential.user.uid), newUserData);
           userData = { id: userCredential.user.uid, ...newUserData };
@@ -140,16 +124,11 @@ export function AuthProvider({ children }) {
           email: userCredential.user.email,
           chapterId: metadata?.chapterId || 1,
           isAdvisor: metadata?.isAdvisor || false,
-          uploadCount: 0
+          uploadCount: 0,
+          status: (metadata && metadata.isAdvisor) ? 'active' : 'pending',
+          role: 'student'
         };
 
-        // If doing a regular sign in (no metadata) and DB fails, use cached memory to remember advisor
-        try {
-          const cached = localStorage.getItem(`fbla_user_${userCredential.user.uid}`);
-          if (cached && !metadata) {
-            fallbackData = { ...fallbackData, ...JSON.parse(cached) };
-          }
-        } catch(e) {}
 
         userData = fallbackData;
       }

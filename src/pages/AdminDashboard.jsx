@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Copy, Check, RefreshCw, Shield, Users, FileText, ThumbsUp, Download,
-  Eye, EyeOff, Trash2, ExternalLink,
+  Eye, EyeOff, Trash2, ExternalLink, MoreVertical, Ban, Clock, ArrowUpCircle, ArrowDownCircle, CheckCircle, Play
 } from 'lucide-react';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 import { useResources } from '../hooks/useResources';
 import { db } from '../config/firebase';
@@ -27,6 +27,43 @@ export default function AdminDashboard() {
   const [deletedIds, setDeletedIds] = useState([]);
   const { resources, deleteResource } = useResources();
   const [dbUsers, setDbUsers] = useState([]);
+  const [openMenuId, setOpenMenuId] = useState(null);
+
+  const handleStudentAction = async (studentId, actionType) => {
+    setOpenMenuId(null);
+    try {
+      const userRef = doc(db, 'users', studentId);
+      switch(actionType) {
+        case 'accept':
+          await updateDoc(userRef, { status: 'active' });
+          break;
+        case 'promote':
+          await updateDoc(userRef, { role: 'officer' });
+          break;
+        case 'demote':
+          await updateDoc(userRef, { role: 'student' });
+          break;
+        case 'timeout':
+          const t = new Date();
+          t.setHours(t.getHours() + 24);
+          await updateDoc(userRef, { timeoutUntil: t.toISOString() });
+          break;
+        case 'untimeout':
+          await updateDoc(userRef, { timeoutUntil: null });
+          break;
+        case 'ban':
+          await updateDoc(userRef, { status: 'banned' });
+          break;
+        case 'kick':
+          await updateDoc(userRef, { chapterId: null });
+          break;
+        default:
+          break;
+      }
+    } catch(err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     if (!chapter?.id) return;
@@ -62,14 +99,14 @@ export default function AdminDashboard() {
     await deleteResource(id, storagePath);
   };
 
-  if (!user?.isAdvisor) {
+  if (!user?.isAdvisor && user?.role !== 'officer') {
     return (
       <PageTransition>
         <div className="atlas-page">
           <EmptyState
             icon={<Shield size={20} />}
-            title="Advisor access only"
-            description="This page is restricted to chapter advisors. If you believe this is a mistake, contact support."
+            title="Management access only"
+            description="This page is restricted to chapter advisors and officers. If you believe this is a mistake, contact your advisor."
           />
         </div>
       </PageTransition>
@@ -231,32 +268,103 @@ export default function AdminDashboard() {
                 description="Share your chapter key to invite the first members."
               />
             ) : (
-              <div className="card-surface overflow-hidden p-0">
+              <div className="card-surface overflow-hidden p-0 pb-20">
                 <div className="grid grid-cols-12 gap-4 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)] px-5 py-3 font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--atlas-muted)]">
                   <div className="col-span-4">Student</div>
-                  <div className="col-span-4">Email</div>
+                  <div className="col-span-3">Email</div>
                   <div className="col-span-2 text-right">Uploads</div>
-                  <div className="col-span-2 text-right">Joined</div>
+                  <div className="col-span-2">Status</div>
+                  <div className="col-span-1 text-right"></div>
                 </div>
-                {chapterStudents.map((s, i) => (
-                  <motion.div
-                    key={s.id}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: Math.min(i * 0.04, 0.3) }}
-                    className="grid grid-cols-12 items-center gap-4 border-b border-[var(--atlas-border)]/80 px-5 py-3 text-sm transition-colors last:border-0 hover:bg-[var(--atlas-surface)]"
-                  >
-                    <div className="col-span-4 flex items-center gap-2 font-semibold text-[var(--atlas-fg)]">
-                      <Avatar name={s.name} size="sm" />
-                      <span className="truncate">{s.name}</span>
-                    </div>
-                    <div className="col-span-4 truncate text-[var(--atlas-muted)]">{s.email}</div>
-                    <div className="col-span-2 text-right font-[family-name:var(--font-mono)] text-[12px] tabular-nums text-[var(--atlas-fg)]">{s.uploadCount}</div>
-                    <div className="col-span-2 text-right font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-[var(--atlas-muted)]">
-                      {s.createdAt ? new Date(s.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Unknown'}
-                    </div>
-                  </motion.div>
-                ))}
+                {chapterStudents.map((s, i) => {
+                  const isBanned = s.status === 'banned';
+                  const isPending = s.status === 'pending';
+                  const isTimedOut = s.timeoutUntil && new Date(s.timeoutUntil) > new Date();
+                  const menuOpen = openMenuId === s.id;
+                  
+                  return (
+                    <motion.div
+                      key={s.id}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: Math.min(i * 0.04, 0.3) }}
+                      className="grid grid-cols-12 items-center gap-4 border-b border-[var(--atlas-border)]/80 px-5 py-3 text-sm transition-colors last:border-0 hover:bg-[var(--atlas-surface)] relative"
+                    >
+                      <div className="col-span-4 flex items-center gap-2 font-semibold text-[var(--atlas-fg)]">
+                        <Avatar name={s.name} size="sm" />
+                        <div className="min-w-0 flex flex-col">
+                          <span className="truncate">{s.name}</span>
+                          {s.role === 'officer' && <span className="text-[10px] uppercase font-[family-name:var(--font-mono)] tracking-wider mt-0.5 text-[var(--atlas-accent)] font-bold mb-0">Officer</span>}
+                        </div>
+                      </div>
+                      <div className="col-span-3 truncate text-[var(--atlas-muted)]">{s.email}</div>
+                      <div className="col-span-2 text-right font-[family-name:var(--font-mono)] text-[12px] tabular-nums text-[var(--atlas-fg)]">{s.uploadCount}</div>
+                      <div className="col-span-2">
+                        {isBanned ? <Badge tone="danger">Banned</Badge> :
+                         isPending ? <Badge tone="warn">Pending</Badge> :
+                         isTimedOut ? <Badge tone="danger">Timeout</Badge> :
+                         <Badge>Active</Badge>}
+                      </div>
+                      <div className="col-span-1 text-right">
+                          <button onClick={() => setOpenMenuId(menuOpen ? null : s.id)} className="p-1.5 text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] transition-colors">
+                            <MoreVertical size={16} />
+                          </button>
+                          <AnimatePresence>
+                            {menuOpen && (
+                                <motion.div 
+                                  initial={{ opacity: 0, scale: 0.95, y: -4 }} 
+                                  animate={{ opacity: 1, scale: 1, y: 0 }} 
+                                  exit={{ opacity: 0, scale: 0.95, y: -4 }} 
+                                  className="absolute right-6 top-10 mt-1 w-48 rounded bg-[var(--atlas-elev)] p-1 shadow-lg border border-[var(--atlas-border)] z-10 text-left"
+                                >
+                                  {isPending && (
+                                    <button onClick={() => handleStudentAction(s.id, 'accept')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
+                                      <CheckCircle size={14} className="text-emerald-500" /> Accept
+                                    </button>
+                                  )}
+                                  
+                                  {user?.isAdvisor && !isPending && s.role !== 'officer' && (
+                                    <button onClick={() => handleStudentAction(s.id, 'promote')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
+                                      <ArrowUpCircle size={14} className="text-[var(--atlas-accent)]" /> Promote to Officer
+                                    </button>
+                                  )}
+                                  
+                                  {user?.isAdvisor && s.role === 'officer' && (
+                                    <button onClick={() => handleStudentAction(s.id, 'demote')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
+                                      <ArrowDownCircle size={14} className="text-amber-500" /> Demote to Student
+                                    </button>
+                                  )}
+                                  
+                                  {isTimedOut ? (
+                                    <button onClick={() => handleStudentAction(s.id, 'untimeout')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
+                                      <Play size={14} className="text-emerald-500" /> Remove Timeout
+                                    </button>
+                                  ) : !isPending && (
+                                    <button onClick={() => handleStudentAction(s.id, 'timeout')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
+                                      <Clock size={14} className="text-amber-500" /> Timeout (24h)
+                                    </button>
+                                  )}
+                                  
+                                  <div className="border-t border-[var(--atlas-border)] my-1"></div>
+                                  
+                                  {user?.isAdvisor && !isBanned && (
+                                    <button onClick={() => handleStudentAction(s.id, 'ban')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-danger hover:bg-[var(--atlas-surface)]">
+                                      <Ban size={14} /> Ban
+                                    </button>
+                                  )}
+                                  
+                                  {user?.isAdvisor && (
+                                    <button onClick={() => handleStudentAction(s.id, 'kick')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-danger hover:bg-[var(--atlas-surface)]">
+                                      <Trash2 size={14} /> Kick
+                                    </button>
+                                  )}
+                                </motion.div>
+                            )}
+                          </AnimatePresence>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             )
           )}

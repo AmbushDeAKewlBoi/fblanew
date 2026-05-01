@@ -28,8 +28,26 @@ const Search            = lazy(() => import('./pages/Search'));
 const AdminDashboard    = lazy(() => import('./pages/AdminDashboard'));
 
 function ProtectedRoute({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (user?.status === 'banned') {
+    return (
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
+        <div className="card-surface mx-auto max-w-lg p-10 text-center">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-danger/10">
+            <svg className="h-8 w-8 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h1 className="mb-4 font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--atlas-fg)]">Account Suspended</h1>
+          <p className="mb-8 text-sm leading-relaxed text-[var(--atlas-muted)]">
+            Your access to this chapter has been revoked by an administrator due to a violation of community guidelines. You can no longer access the platform.
+          </p>
+          <button onClick={logout} className="atlas-btn atlas-btn-ghost w-full">Sign Out</button>
+        </div>
+      </div>
+    );
+  }
   return children;
 }
 

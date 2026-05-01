@@ -1,0 +1,13 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return request.auth.uid == userId; }
+    
+    match /{userId}/{allPaths=**} {
+      allow read: if isSignedIn();
+      // Users can only upload to their own folder path
+      allow write: if isSignedIn() && isOwner(userId);
+    }
+  }
+}

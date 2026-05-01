@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isSignedIn() { return request.auth != null; }
+    function isAdvisor() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdvisor == true; }
+    function isOwner(userId) { return request.auth.uid == userId; }
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      // Only users can edit their own basic profile, but cannot self-promote to advisor
+      allow update: if isOwner(userId) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['isAdvisor', 'role', 'status']);
+      allow write: if isAdvisor(); 
+    }
+
+    match /resources/{resourceId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isOwner(resource.data.uploaderId) || isAdvisor();
+    }
+    
+    match /posts/{postId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isOwner(resource.data.authorId) || isAdvisor();
+    }
+    
+    // Default deny for anything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Send } from 'lucide-react';
 import { FBLA_EVENTS } from '../../data/mockEvents';
+import { useAuth } from '../../context/AuthContext';
 const SOCIAL_POST_CATEGORIES = [
   { value: 'general', label: 'General update' },
   { value: 'study-win', label: 'Study win' },
@@ -18,6 +19,12 @@ export default function PostComposer({
   const [category, setCategory] = useState(SOCIAL_POST_CATEGORIES[0].value);
   const [scopeType, setScopeType] = useState(event ? 'event' : 'global');
   const [selectedEventSlug, setSelectedEventSlug] = useState(event?.slug || '');
+  const { user } = useAuth();
+  
+  const isRestricted = user?.status === 'pending' || (user?.timeoutUntil && new Date(user.timeoutUntil) > new Date());
+  const restrictionMessage = user?.status === 'pending' 
+    ? 'Post disabled: Awaiting officer approval' 
+    : 'Post disabled: Account on timeout';
 
   const selectedEvent = useMemo(
     () => FBLA_EVENTS.find((entry) => entry.slug === selectedEventSlug) || null,
@@ -114,32 +121,37 @@ export default function PostComposer({
       </div>
 
       <label htmlFor="post-composer-textarea" className="sr-only">Post content</label>
-      <textarea
-        id="post-composer-textarea"
-        value={content}
-        onChange={(submitEvent) => setContent(submitEvent.target.value)}
-        placeholder={
-          scopeType === 'event'
-            ? 'Ask a question, share a prep tactic, or find people working on this event...'
-            : 'Share a win, ask for help, post a study resource, or invite people into a practice session...'
-        }
-        className="atlas-textarea mt-4 min-h-32"
-      />
+        <textarea
+          id="post-composer-textarea"
+          value={content}
+          onChange={(submitEvent) => setContent(submitEvent.target.value)}
+          placeholder={
+            isRestricted 
+              ? restrictionMessage
+              : scopeType === 'event'
+              ? 'Ask a question, share a prep tactic, or find people working on this event...'
+              : 'Share a win, ask for help, post a study resource, or invite people into a practice session...'
+          }
+          disabled={isRestricted}
+          className="atlas-textarea mt-4 min-h-32 disabled:opacity-60 disabled:cursor-not-allowed"
+        />
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <p className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.14em] text-[var(--atlas-muted)]">
-          {scopeType === 'event' ? 'Specific to the event feed' : 'Practical · Specific · Inviting'}
-        </p>
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          type="submit"
-          disabled={!content.trim() || (scopeType === 'event' && !event && !selectedEventSlug)}
-          className="atlas-btn atlas-btn-primary disabled:opacity-50 disabled:hover:translate-x-0 disabled:hover:translate-y-0"
-        >
-          <Send size={13} />
-          Post
-        </motion.button>
-      </div>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.14em] text-[var(--atlas-muted)]">
+            {isRestricted ? (
+               <span className="text-amber-500 font-semibold">{restrictionMessage}</span>
+            ) : scopeType === 'event' ? 'Specific to the event feed' : 'Practical · Specific · Inviting'}
+          </p>
+          <motion.button
+            whileTap={isRestricted ? undefined : { scale: 0.97 }}
+            type="submit"
+            disabled={isRestricted || !content.trim() || (scopeType === 'event' && !event && !selectedEventSlug)}
+            className="atlas-btn atlas-btn-primary disabled:opacity-50 disabled:hover:translate-x-0 disabled:hover:translate-y-0"
+          >
+            <Send size={13} />
+            Post
+          </motion.button>
+        </div>
     </form>
   );
 }

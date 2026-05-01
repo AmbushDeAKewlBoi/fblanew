@@ -30,6 +30,7 @@ function buildCurrentProfile(user, chapter) {
     state: chapter?.state || 'State',
     school: chapter?.name || user.schoolName || 'Your FBLA Chapter',
     year: 'Chapter Member',
+    isAdvisor: user.isAdvisor || false,
     headline: user.isAdvisor
       ? 'Advisor helping students build stronger resources, stronger presentations, and stronger networks.'
       : 'FBLA member building skills, sharing resources, and looking for collaborators across chapters.',
@@ -234,6 +235,12 @@ export function SocialProvider({ children }) {
   
   const deletePost = async (postId) => {
     if (!currentProfile) return;
+    const post = posts.find((entry) => entry.id === postId);
+    if (!post) return;
+    if (post.authorId !== currentProfile.id && !currentProfile.isAdvisor) {
+      console.error("Unauthorized to delete post");
+      return;
+    }
     try {
       await deleteDoc(doc(db, 'posts', postId));
     } catch(err) {

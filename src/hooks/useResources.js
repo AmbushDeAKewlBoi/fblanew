@@ -3,8 +3,10 @@ import { db } from '../config/firebase';
 import { collection, onSnapshot, query, orderBy, doc, deleteDoc } from 'firebase/firestore';
 import { supabase, STORAGE_BUCKET } from '../config/supabase';
 import { RESOURCES } from '../data/mockResources';
+import { useAuth } from '../context/AuthContext';
 
 export function useResources() {
+  const { user } = useAuth();
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -49,6 +51,13 @@ export function useResources() {
 
   const deleteResource = async (id, storagePath) => {
     try {
+      const resourceToDel = resources.find(r => r.id === id);
+      if (!resourceToDel) throw new Error("Resource not found");
+      
+      if (resourceToDel.uploaderId !== user?.id && !user?.isAdvisor) {
+        throw new Error("Unauthorized: You do not have permission to delete this resource.");
+      }
+
       if (storagePath) {
         const { error } = await supabase.storage.from(STORAGE_BUCKET).remove([storagePath]);
         if (error) {
@@ -58,6 +67,7 @@ export function useResources() {
       await deleteDoc(doc(db, 'resources', id));
     } catch (err) {
       console.error("Error deleting document:", err);
+      throw err;
     }
   };
 

@@ -169,11 +169,15 @@ export default function Navbar({ darkMode, setDarkMode }) {
                           <div className="mb-2 px-3 py-2">
                             <p className="text-sm font-semibold text-[var(--atlas-fg)]">{user?.name}</p>
                             <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.14em] text-[var(--atlas-muted)]">{chapter?.name}</p>
-                            {user?.isAdvisor && (
+                            {user?.isAdvisor ? (
                               <span className="mt-2 inline-block border border-[var(--atlas-gold)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--atlas-gold)]">
                                 Advisor
                               </span>
-                            )}
+                            ) : user?.role === 'officer' ? (
+                              <span className="mt-2 inline-block border border-[var(--atlas-accent)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--atlas-accent)]">
+                                Officer
+                              </span>
+                            ) : null}
                           </div>
                           <div className="my-2 border-t border-[var(--atlas-border)]" />
                           {[
@@ -194,13 +198,13 @@ export default function Navbar({ darkMode, setDarkMode }) {
                               {icon} {label}
                             </Link>
                           ))}
-                          {user?.isAdvisor && (
+                          {(user?.isAdvisor || user?.role === 'officer') && (
                             <Link
                               to="/admin"
                               onClick={() => setUserMenuOpen(false)}
                               className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-[var(--atlas-fg)] transition-colors hover:bg-[rgba(109,158,168,0.1)]"
                             >
-                              <Shield size={16} /> Admin
+                              <Shield size={16} /> Management
                             </Link>
                           )}
                           <div className="my-2 border-t border-[var(--atlas-border)]" />

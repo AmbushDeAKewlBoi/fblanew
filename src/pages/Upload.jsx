@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Upload as UploadIcon, X, FileText, CheckCircle2, School, MapPin, Map, Globe } from 'lucide-react';
+import { Upload as UploadIcon, X, FileText, CheckCircle2, School, MapPin, Map, Globe, Shield } from 'lucide-react';
 import { collection, addDoc } from 'firebase/firestore';
 import { FBLA_EVENTS } from '../data/mockEvents';
 import { RESOURCE_TYPES, VISIBILITY_LEVELS } from '../data/mockResources';
@@ -13,6 +13,7 @@ import PageTransition from '../components/PageTransition';
 import PageHeader from '../components/ui/PageHeader';
 import EmptyState from '../components/ui/EmptyState';
 import { formatFileSize } from '../lib/formatters';
+import DOMPurify from 'dompurify';
 
 const VIS_ICONS = { school: School, mapPin: MapPin, map: Map, globe: Globe };
 
@@ -29,6 +30,7 @@ export default function Upload() {
   const [submitted, setSubmitted] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+  const [lastUploadTime, setLastUploadTime] = useState(0);
 
   const handleAddTag = (e) => {
     if (e.key === 'Enter' && tagInput.trim()) {
@@ -62,13 +64,47 @@ export default function Upload() {
       setError('You must be logged in to upload.');
       return;
     }
+    if (user?.status === 'pending') {
+      setError('You cannot upload resources until an officer approves your account.');
+      return;
+    }
+    if (user?.timeoutUntil && new Date(user.timeoutUntil) > new Date()) {
+      setError(`You are currently on timeout until ${new Date(user.timeoutUntil).toLocaleString()}. Uploads are disabled.`);
+      return;
+    }
+
+    if (Date.now() - lastUploadTime < 30000) {
+      setError('Please wait 30 seconds before uploading another file.');
+      return;
+    }
+
+    const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
+    const ALLOWED_TYPES = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/msword',
+      'image/png',
+      'image/jpeg',
+      'text/plain'
+    ];
+
+    if (!ALLOWED_TYPES.includes(file.type) && !file.name.match(/\.(pdf|pptx?|docx?|png|jpe?g|txt)$/i)) {
+      setError('Invalid file type. Please upload a supported document or image format.');
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      setError('File is too large. Maximum size is 25MB.');
+      return;
+    }
 
     setUploading(true);
     try {
       // ── Step 1: Upload file to Supabase Storage ──
       const extension = file.name.split('.').pop();
       const filename = `${user.id}/${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${extension}`;
-      console.log('⬆️ [UPLOAD] Uploading to Supabase Storage:', filename);
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from(STORAGE_BUCKET)
@@ -81,7 +117,6 @@ export default function Upload() {
         console.error('🔴 [UPLOAD] Supabase upload error:', uploadError);
         throw new Error(`Storage upload failed: ${uploadError.message}`);
       }
-      console.log('⬆️ [UPLOAD] ✅ File uploaded:', uploadData.path);
 
       // ── Step 2: Get public URL ──
       const { data: urlData } = supabase.storage
@@ -89,12 +124,11 @@ export default function Upload() {
         .getPublicUrl(uploadData.path);
 
       const downloadURL = urlData.publicUrl;
-      console.log('⬆️ [UPLOAD] ✅ Public URL:', downloadURL);
 
       // ── Step 3: Save metadata to Firestore ──
       const newResource = {
-        title: form.title,
-        description: form.description,
+        title: DOMPurify.sanitize(form.title),
+        description: DOMPurify.sanitize(form.description),
         event: form.event,
         resourceType: form.resourceType,
         tags: form.tags,
@@ -113,13 +147,13 @@ export default function Upload() {
       };
 
       const docRef = await addDoc(collection(db, 'resources'), newResource);
-      console.log('⬆️ [UPLOAD] ✅ Firestore doc created:', docRef.id);
       setSubmitted(true);
     } catch (err) {
       console.error('🔴 [UPLOAD] Error:', err);
-      setError(`Failed to upload: ${err.message || 'Unknown error'}. Please try again.`);
+      setError('Failed to upload the resource due to a network or server error. Please try again later.');
     } finally {
       setUploading(false);
+      setLastUploadTime(Date.now());
     }
   };
 
@@ -151,6 +185,34 @@ export default function Upload() {
                 </button>
               </div>
             )}
+          />
+        </div>
+      </PageTransition>
+    );
+  }
+
+  if (user?.status === 'pending') {
+    return (
+      <PageTransition>
+        <div className="atlas-page mx-auto max-w-lg">
+          <EmptyState
+            icon={<Shield size={20} className="text-amber-500" />}
+            title="Awaiting Approval"
+            description="Your account is currently waiting for approval from a chapter officer. You can browse resources, but uploading is disabled until your account is activated."
+          />
+        </div>
+      </PageTransition>
+    );
+  }
+
+  if (user?.timeoutUntil && new Date(user.timeoutUntil) > new Date()) {
+    return (
+      <PageTransition>
+        <div className="atlas-page mx-auto max-w-lg">
+          <EmptyState
+            icon={<Shield size={20} className="text-danger" />}
+            title="Account Time Out"
+            description={`You have been placed on a temporary timeout until ${new Date(user.timeoutUntil).toLocaleString()}. You cannot upload files at this time.`}
           />
         </div>
       </PageTransition>
