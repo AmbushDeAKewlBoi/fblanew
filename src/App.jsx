@@ -63,6 +63,7 @@ function getGearVariant(pathname) {
   if (pathname.includes('events')) return 'events';
   if (pathname.includes('upload') || pathname.includes('my-uploads')) return 'upload';
   if (pathname.includes('leaderboard')) return 'leaderboard';
+  if (
     pathname.includes('dashboard') ||
     pathname.includes('feed') ||
     pathname.includes('updates') ||
