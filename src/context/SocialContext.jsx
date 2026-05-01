@@ -130,6 +130,10 @@ export function SocialProvider({ children }) {
            chapterName: data.schoolName || 'A Chapter',
            headline: data.isAdvisor ? 'Advisor' : 'FBLA Member',
            isAdvisor: data.isAdvisor,
+           skills: data.isAdvisor ? ['advising', 'chapter growth', 'competition coaching'] : ['collaboration', 'study planning', 'event prep'],
+           region: data.region || 'Region',
+           state: data.state || 'State',
+           year: 'Chapter Member'
          };
       });
       setDbProfiles(loadedProfiles);

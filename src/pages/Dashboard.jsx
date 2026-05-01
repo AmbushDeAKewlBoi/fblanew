@@ -156,7 +156,7 @@ export default function Dashboard() {
                       </div>
                       <p className="mt-4 line-clamp-2 text-sm leading-6 text-[var(--atlas-fg)]">{profile.headline}</p>
                       <div className="mt-4 flex flex-wrap gap-1.5">
-                        {profile.skills.slice(0, 3).map((skill) => (
+                        {profile.skills?.slice(0, 3).map((skill) => (
                           <span key={skill} className="atlas-chip">{skill}</span>
                         ))}
                       </div>
