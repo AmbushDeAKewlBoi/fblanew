@@ -22,7 +22,6 @@ import SectionHeader from '../components/ui/SectionHeader';
 import EmptyState from '../components/ui/EmptyState';
 import Avatar from '../components/ui/Avatar';
 import Badge from '../components/ui/Badge';
-import { STUDY_CIRCLES } from '../data/mockCommunity';
 import { useSocial } from '../context/SocialContext';
 
 const fadeUp = {
@@ -187,30 +186,7 @@ export default function Dashboard() {
           </div>
 
           <div className="space-y-8">
-            <motion.section {...fadeUp} transition={{ duration: 0.4, delay: 0.12 }} className="card-surface p-5">
-              <SectionHeader
-                kicker="Study circles"
-                title="Find your accountability crew"
-                action={<Users2 size={16} className="text-[var(--atlas-accent)]" aria-hidden="true" />}
-              />
-              <ul className="mt-5 space-y-3">
-                {STUDY_CIRCLES.map((circle) => (
-                  <li key={circle.id} className="atlas-panel border-l-2 border-l-[var(--atlas-accent)]/55 px-4 py-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <h3 className="font-semibold text-[var(--atlas-fg)]">{circle.name}</h3>
-                        <p className="text-xs text-[var(--atlas-muted)]">{circle.event}</p>
-                      </div>
-                      <Badge>{circle.members} mem</Badge>
-                    </div>
-                    <p className="mt-2 text-sm leading-6 text-[var(--atlas-fg)]">{circle.focus}</p>
-                    <p className="mt-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-[var(--atlas-muted)]">
-                      {circle.cadence}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </motion.section>
+
 
             <motion.section {...fadeUp} transition={{ duration: 0.4, delay: 0.18 }}>
               <SectionHeader

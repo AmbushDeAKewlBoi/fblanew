@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import PageTransition from '../components/PageTransition';
 import { useAuth } from '../context/AuthContext';
-import { CAMPUS_SIGNALS, STUDY_CIRCLES } from '../data/mockCommunity';
+import { CAMPUS_SIGNALS } from '../data/mockCommunity';
 
 /**
  * Brutalist landing — professional, not financial-terminal.
@@ -19,17 +19,16 @@ export default function Landing() {
     `${CAMPUS_SIGNALS[0].value} chapters active this week`,
     `${CAMPUS_SIGNALS[3].value} resources exchanged`,
     `${CAMPUS_SIGNALS[1].value} peer intros sent`,
-    `${CAMPUS_SIGNALS[2].value} study circles running`,
     'Built for competitors who take preparation seriously',
   ];
 
   const focusRows = [
-    ['Intro to Business', '186', '3', '22'],
-    ['Entrepreneurship', '141', '2', '18'],
-    ['Marketing / Roleplay', '122', '2', '15'],
-    ['Accounting I', '98', '1', '12'],
-    ['Database Design', '64', '1', '9'],
-    ['Public Speaking', '59', '1', '11'],
+    ['Intro to Business', '186', '22'],
+    ['Entrepreneurship', '141', '18'],
+    ['Marketing / Roleplay', '122', '15'],
+    ['Accounting I', '98', '12'],
+    ['Database Design', '64', '9'],
+    ['Public Speaking', '59', '11'],
   ];
 
   return (
@@ -92,10 +91,6 @@ export default function Landing() {
                 <span className="al-stat-v">840+</span>
               </div>
               <div className="al-stat">
-                <span className="al-stat-k">Study circles</span>
-                <span className="al-stat-v">9</span>
-              </div>
-              <div className="al-stat">
                 <span className="al-stat-k">Chapters this week</span>
                 <span className="al-stat-v">38</span>
               </div>
@@ -149,20 +144,8 @@ export default function Landing() {
 
             <article className="al-mod">
               <div className="al-mod-top">
-                <span>Circles</span>
-                <span className="al-mod-id">03</span>
-              </div>
-              <h3 className="al-mod-h">Small groups, real cadence</h3>
-              <p className="al-mod-p">
-                Study circles that meet on a schedule: drills, critiques, accountability. The hour that turns prep into progress.
-              </p>
-              <p className="al-mod-foot">Live &amp; async</p>
-            </article>
-
-            <article className="al-mod">
-              <div className="al-mod-top">
                 <span>Beyond regionals</span>
-                <span className="al-mod-id">04</span>
+                <span className="al-mod-id">03</span>
               </div>
               <h3 className="al-mod-h">Career-ready habits</h3>
               <p className="al-mod-p">
@@ -202,36 +185,19 @@ export default function Landing() {
             <div className="al-table-head">
               <span>Competitive area</span>
               <span>Study files</span>
-              <span>Circles</span>
               <span>Chapters</span>
             </div>
-            {focusRows.map(([name, files, circles, chapters]) => (
+            {focusRows.map(([name, files, chapters]) => (
               <div key={name} className="al-table-row">
                 <span className="al-table-name">{name}</span>
                 <span>{files}</span>
-                <span>{circles}</span>
                 <span>{chapters}</span>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="al-section al-circles">
-          <header className="al-sec-head">
-            <span className="al-sec-num">04</span>
-            <h2 className="al-sec-title">Study circles on Atlas</h2>
-            <p className="al-sec-sub">Examples of how members group up — yours will look like your chapter.</p>
-          </header>
-          <div className="al-circle-cards">
-            {STUDY_CIRCLES.map((c) => (
-              <article key={c.id} className="al-circle-card">
-                <h3 className="al-circle-name">{c.name}</h3>
-                <p className="al-circle-meta">{c.event} · {c.cadence}</p>
-                <p className="al-circle-focus">{c.focus}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+
 
         <section className="al-cta-block">
           <div className="al-cta-inner">
@@ -436,7 +402,7 @@ const css = `
   background: var(--al-bg-elev);
 }
 @media (max-width: 800px) {
-  .al-stats { grid-template-columns: repeat(2, 1fr); }
+  .al-stats { grid-template-columns: repeat(1, 1fr); }
 }
 .al-stat {
   padding: 20px 22px;
@@ -649,38 +615,6 @@ const css = `
 .al-table-row:hover { background: rgba(255,255,255,0.03); }
 .al-table-name { color: var(--al-fg); font-weight: 600; letter-spacing: 0.04em; }
 
-.al-circles .al-circle-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-@media (max-width: 900px) { .al-circles .al-circle-cards { grid-template-columns: 1fr; } }
-.al-circle-card {
-  border: 1px solid var(--al-line);
-  padding: 20px 18px;
-  background: var(--al-bg-elev);
-}
-.al-circle-name {
-  font-family: 'Anton', sans-serif;
-  font-size: 20px;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-  margin: 0 0 6px;
-}
-.al-circle-meta {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--al-accent-2);
-  margin: 0 0 10px;
-}
-.al-circle-focus {
-  font-size: 14px;
-  line-height: 1.5;
-  color: #b8b4ac;
-  margin: 0;
-}
 
 .al-cta-block {
   border-bottom: 1px solid var(--al-line);

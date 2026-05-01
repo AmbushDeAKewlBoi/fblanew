@@ -38,7 +38,7 @@ function buildCurrentProfile(user, chapter) {
       ? 'I use Atlas to help students find better prep systems, stronger collaboration habits, and more meaningful professional connections.'
       : 'I am using Atlas to meet other FBLA competitors, share resources, and get more deliberate about how I prepare.',
     skills: user.isAdvisor ? ['advising', 'chapter growth', 'competition coaching'] : ['collaboration', 'study planning', 'event prep'],
-    interests: user.isAdvisor ? ['chapter leadership', 'resource quality', 'mentoring'] : ['networking', 'study circles', 'peer feedback'],
+    interests: user.isAdvisor ? ['chapter leadership', 'resource quality', 'mentoring'] : ['networking', 'competition prep', 'peer feedback'],
     goals: user.isAdvisor ? ['Support stronger chapters', 'Scale student collaboration'] : ['Meet more competitors', 'Improve event prep'],
     experience: user.isAdvisor ? 'Supports chapter strategy and student development.' : 'Active student member on Atlas.',
   };
