@@ -88,6 +88,10 @@ export function SocialProvider({ children }) {
 
   // 1. Fetch Posts
   useEffect(() => {
+    if (!user) {
+      setPostsLoading(false);
+      return;
+    }
     let active = true;
     const postsQuery = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
 
@@ -117,6 +121,7 @@ export function SocialProvider({ children }) {
 
   // 2. Fetch Users (Profiles)
   useEffect(() => {
+    if (!user) return;
     let active = true;
     const unsubscribe = onSnapshot(collection(db, 'users'), (snapshot) => {
       if (!active) return;
