@@ -1,9 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, SlidersHorizontal, X, Search, MessagesSquare } from 'lucide-react';
 import { getEventBySlug } from '../data/mockEvents';
-import { EVENT_INFO } from '../data/eventInfo';
 import { useResources } from '../hooks/useResources';
 import { useSocial } from '../context/SocialContext';
 import ResourceCard from '../components/ResourceCard';
@@ -42,7 +41,8 @@ export default function EventDetail() {
 
   const [activeTab, setActiveTab] = useState('info');
   const [showFilters, setShowFilters] = useState(false);
-  const eventInfoData = event ? EVENT_INFO[event.slug] : null;
+  const [eventInfoData, setEventInfoData] = useState(null);
+  const [eventInfoLoading, setEventInfoLoading] = useState(false);
 
   const [filters, setFilters] = useState({
     types: [],
@@ -69,6 +69,28 @@ export default function EventDetail() {
     else if (filters.sort === 'downloads') result.sort((a, b) => b.downloadCount - a.downloadCount);
     return result;
   }, [allResources, filters]);
+
+  useEffect(() => {
+    if (!event) {
+      setEventInfoData(null);
+      setEventInfoLoading(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    setEventInfoData(null);
+    setEventInfoLoading(true);
+
+    import('../data/eventInfo').then(({ EVENT_INFO }) => {
+      if (!cancelled) setEventInfoData(EVENT_INFO[event.slug] ?? null);
+    }).finally(() => {
+      if (!cancelled) setEventInfoLoading(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [event?.slug]);
 
   if (!event) {
     return (
@@ -208,7 +230,20 @@ export default function EventDetail() {
           <div className="min-w-0 flex-1 space-y-10">
             {activeTab === 'info' && (
               <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                {eventInfoData ? (
+                {eventInfoLoading ? (
+                  <div className="card-surface p-6 sm:p-10">
+                    <div className="mb-10 flex flex-wrap gap-8 border-b border-[var(--atlas-border)] pb-8">
+                      <div className="skeleton h-14 w-40" />
+                      <div className="skeleton h-14 w-44" />
+                    </div>
+                    <div className="space-y-4">
+                      <div className="skeleton h-8 w-full max-w-2xl" />
+                      <div className="skeleton h-4 w-full" />
+                      <div className="skeleton h-4 w-11/12" />
+                      <div className="skeleton h-4 w-10/12" />
+                    </div>
+                  </div>
+                ) : eventInfoData ? (
                   <div className="card-surface p-6 sm:p-10">
                     <div className="flex flex-wrap gap-8 mb-10 border-b border-[var(--atlas-border)] pb-8">
                       <div><span className="atlas-kicker mb-1.5 block">Type</span><span className="text-xl font-serif text-[var(--atlas-fg)]">{eventInfoData.type || 'Unknown'}</span></div>

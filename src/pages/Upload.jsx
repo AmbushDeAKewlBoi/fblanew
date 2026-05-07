@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Upload as UploadIcon, X, FileText, CheckCircle2, School, MapPin, Map, Globe, Shield } from 'lucide-react';
 import { collection, addDoc } from 'firebase/firestore';
 import { FBLA_EVENTS } from '../data/mockEvents';
-import { RESOURCE_TYPES, VISIBILITY_LEVELS } from '../data/mockResources';
+import { RESOURCE_TYPES, VISIBILITY_LEVELS } from '../data/resourceOptions';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../config/firebase';
 import { supabase, STORAGE_BUCKET } from '../config/supabase';

@@ -1,27 +1,49 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useSpring, useTransform } from 'framer-motion';
 
 export default function AnimatedCounter({ value, duration = 1.2, className = '' }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-40px' });
-  const spring = useSpring(0, { duration: duration * 1000, bounce: 0 });
-  const display = useTransform(spring, (v) => Math.round(v).toLocaleString());
   const [displayValue, setDisplayValue] = useState('0');
 
   useEffect(() => {
-    if (isInView) {
-      spring.set(value);
-    }
-  }, [isInView, value, spring]);
+    const element = ref.current;
+    if (!element) return undefined;
 
-  useEffect(() => {
-    const unsubscribe = display.on('change', (v) => setDisplayValue(v));
-    return unsubscribe;
-  }, [display]);
+    let frame = 0;
+    let hasAnimated = false;
+
+    const animate = () => {
+      const start = performance.now();
+      const durationMs = duration * 1000;
+
+      const tick = (now) => {
+        const progress = Math.min((now - start) / durationMs, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setDisplayValue(Math.round(value * eased).toLocaleString());
+        if (progress < 1) frame = requestAnimationFrame(tick);
+      };
+
+      frame = requestAnimationFrame(tick);
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !hasAnimated) {
+        hasAnimated = true;
+        animate();
+        observer.disconnect();
+      }
+    }, { rootMargin: '-40px' });
+
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, [duration, value]);
 
   return (
-    <motion.span ref={ref} className={`tabular-nums ${className}`}>
+    <span ref={ref} className={`tabular-nums ${className}`}>
       {displayValue}
-    </motion.span>
+    </span>
   );
 }

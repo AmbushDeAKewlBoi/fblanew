@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { db } from '../config/firebase';
 import { collection, onSnapshot, query, orderBy, doc, deleteDoc } from 'firebase/firestore';
 import { supabase, STORAGE_BUCKET } from '../config/supabase';
-import { RESOURCES } from '../data/mockResources';
 import { useAuth } from '../context/AuthContext';
 
 export function useResources() {
@@ -11,11 +10,12 @@ export function useResources() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
     let unsubscribe = () => {};
     
     // Safety timeout — if Firestore doesn't respond in 8 seconds, stop waiting
     const timeout = setTimeout(() => {
-      setLoading(false);
+      if (mounted) setLoading(false);
     }, 8000);
 
     try {
@@ -23,6 +23,7 @@ export function useResources() {
       
       unsubscribe = onSnapshot(q, (snapshot) => {
         clearTimeout(timeout);
+        if (!mounted) return;
         const data = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
@@ -33,17 +34,22 @@ export function useResources() {
       }, (error) => {
         clearTimeout(timeout);
         console.error("Error fetching resources:", error);
+        if (!mounted) return;
         setResources([]);
         setLoading(false);
       });
     } catch (error) {
       clearTimeout(timeout);
       console.error("Error setting up resources listener:", error);
-      setResources(RESOURCES);
-      setLoading(false);
+      import('../data/mockResources').then(({ RESOURCES }) => {
+        if (!mounted) return;
+        setResources(RESOURCES);
+        setLoading(false);
+      });
     }
 
     return () => {
+      mounted = false;
       clearTimeout(timeout);
       unsubscribe();
     };

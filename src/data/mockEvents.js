@@ -543,6 +543,8 @@ export const EVENT_CATEGORIES = [
   "Leadership",
 ];
 
+const EVENTS_BY_SLUG = new Map(FBLA_EVENTS.map((event) => [event.slug, event]));
+
 export function getEventBySlug(slug) {
-  return FBLA_EVENTS.find(e => e.slug === slug);
+  return EVENTS_BY_SLUG.get(slug);
 }

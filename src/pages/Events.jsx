@@ -20,13 +20,22 @@ export default function Events() {
   const [eventType, setEventType] = useState('All Types');
 
   const filtered = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
     return FBLA_EVENTS.filter(e => {
-      const matchSearch = e.name.toLowerCase().includes(search.toLowerCase());
+      const matchSearch = e.name.toLowerCase().includes(normalizedSearch);
       const matchCategory = category === 'All' || e.category === category;
       const matchType = eventType === 'All Types' || e.testCategory === eventType;
       return matchSearch && matchCategory && matchType;
     });
   }, [search, category, eventType]);
+
+  const resourceCountsByEvent = useMemo(() => {
+    const counts = new Map();
+    resources.forEach((resource) => {
+      counts.set(resource.event, (counts.get(resource.event) || 0) + 1);
+    });
+    return counts;
+  }, [resources]);
 
   return (
     <PageTransition>
@@ -101,7 +110,7 @@ export default function Events() {
         {/* Events Grid */}
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filtered.map((event, i) => {
-            const count = resources.filter(r => r.event === event.name).length;
+            const count = resourceCountsByEvent.get(event.name) || 0;
             return (
               <motion.div
                 key={event.slug}
