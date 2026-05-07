@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Check, Clock3, UserPlus } from 'lucide-react';
+import { Check, Clock, UserPlus } from '@phosphor-icons/react';
 import Avatar from '../ui/Avatar';
 import Badge from '../ui/Badge';
 
@@ -44,15 +44,15 @@ export default function ProfilePreviewCard({
           {profile.region}{profile.region && profile.state ? ' · ' : ''}{profile.state}
         </div>
         {connected ? (
-          <Badge tone="success" icon={<Check size={11} />}>Connected</Badge>
+          <Badge tone="success" icon={<Check size={11} weight="bold" />}>Connected</Badge>
         ) : pending ? (
-          <Badge tone="warn" icon={<Clock3 size={11} />}>Pending</Badge>
+          <Badge tone="warn" icon={<Clock size={11} weight="regular" />}>Pending</Badge>
         ) : (
           <button
             onClick={onAction}
             className="atlas-btn atlas-btn-primary px-3 py-1.5 text-[11px]"
           >
-            <UserPlus size={13} />
+            <UserPlus size={13} weight="regular" />
             {actionLabel}
           </button>
         )}

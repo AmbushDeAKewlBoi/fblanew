@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, Grid3X3, BookOpen } from 'lucide-react';
+import { MagnifyingGlass, GridFour, BookOpen } from '@phosphor-icons/react';
 import { FBLA_EVENTS, EVENT_CATEGORIES } from '../data/mockEvents';
 import { useResources } from '../hooks/useResources';
 import PageTransition from '../components/PageTransition';
@@ -44,7 +44,7 @@ export default function Events() {
         <motion.div {...fadeUp} transition={{ duration: 0.4 }} className="mb-8">
           <div className="flex items-center gap-3 mb-1">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-navy-600 to-navy-800 text-white shadow-lg">
-              <BookOpen size={20} />
+              <BookOpen size={20} weight="regular" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-[var(--atlas-fg)]">Events</h1>
@@ -57,7 +57,7 @@ export default function Events() {
         <motion.div {...fadeUp} transition={{ duration: 0.4, delay: 0.1 }} className="mb-6 flex flex-col gap-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <div className="relative flex-1 max-w-md group">
-              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)] transition-colors group-focus-within:text-navy-500" />
+              <MagnifyingGlass size={15} weight="regular" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)] transition-colors group-focus-within:text-navy-500" />
               <input
                 type="text"
                 placeholder="Search events..."
@@ -123,7 +123,7 @@ export default function Events() {
                   className="card-surface group flex items-start gap-3 p-4"
                 >
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-500/10 text-navy-700 transition-colors group-hover:bg-navy-500/15 dark:bg-navy-400/10 dark:text-navy-300">
-                    <Grid3X3 size={18} />
+                    <GridFour size={18} weight="regular" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <h3 className="text-sm font-semibold text-[var(--atlas-fg)] leading-snug transition-colors group-hover:text-navy-700 dark:text-warm-100 dark:group-hover:text-navy-300">
@@ -153,7 +153,7 @@ export default function Events() {
             className="py-20 text-center"
           >
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]">
-              <Search size={24} className="text-[var(--atlas-muted)]" />
+              <MagnifyingGlass size={24} weight="regular" className="text-[var(--atlas-muted)]" />
             </div>
             <p className="text-[var(--atlas-muted)]">No events match your search.</p>
           </motion.div>

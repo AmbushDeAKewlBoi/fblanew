@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Send } from 'lucide-react';
+import { PaperPlaneTilt } from '@phosphor-icons/react';
 import PageTransition from '../components/PageTransition';
 import PageHeader from '../components/ui/PageHeader';
 import EmptyState from '../components/ui/EmptyState';
@@ -147,7 +147,7 @@ export default function Messages() {
                     className="atlas-input"
                   />
                   <button type="submit" disabled={!draft.trim()} className="atlas-btn atlas-btn-primary shrink-0 disabled:opacity-50">
-                    <Send size={13} />
+                    <PaperPlaneTilt size={13} weight="regular" />
                     Send
                   </button>
                 </form>

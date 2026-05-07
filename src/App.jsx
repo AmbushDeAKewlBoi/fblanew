@@ -33,7 +33,7 @@ function ProtectedRoute({ children }) {
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (user?.status === 'banned') {
     return (
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
+      <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4 py-12">
         <div className="card-surface mx-auto max-w-lg p-10 text-center">
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-danger/10">
             <svg className="h-8 w-8 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -112,7 +112,7 @@ export default function App() {
   const gearVariant = useMemo(() => getGearVariant(location.pathname), [location.pathname]);
 
   return (
-    <div className="min-h-screen text-[var(--atlas-fg)] transition-colors duration-300">
+    <div className="min-h-[100dvh] text-[var(--atlas-fg)] transition-colors duration-300">
       <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-[var(--atlas-elev)] focus:px-3 focus:py-2 focus:font-[family-name:var(--font-mono)] focus:text-xs focus:font-semibold focus:uppercase focus:tracking-[0.18em] focus:text-[var(--atlas-fg)] focus:shadow">
         Skip to content
       </a>

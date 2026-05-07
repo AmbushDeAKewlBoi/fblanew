@@ -128,9 +128,9 @@
   --color-atlas-accent-dim: rgba(61, 109, 118, 0.2);
   --color-atlas-gold: #8a7038;
 
-  --font-sans: 'Archivo', 'Avenir Next', system-ui, sans-serif;
-  --font-display: 'Anton', 'Archivo', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-sans: 'Geist', system-ui, sans-serif;
+  --font-display: 'Geist', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
 }
 
 @layer base {
@@ -191,9 +191,9 @@
 
   h1, h2 {
     font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-transform: none;
   }
   h3, h4, h5, h6 {
     font-family: var(--font-sans);
@@ -212,40 +212,52 @@
   .dark ::-webkit-scrollbar-thumb:hover { background: rgba(109, 158, 168, 0.45); }
 
   .glass {
-    background: rgba(255,255,255,0.70);
+    background: rgba(255,255,255,0.72);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255,255,255,0.25);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.10),
+      0 12px 40px -18px rgba(0,0,0,0.12);
   }
   .dark .glass {
-    background: rgba(24,24,27,0.70);
-    border-color: rgba(63,63,70,0.40);
+    background: rgba(24,24,27,0.72);
+    border-color: rgba(255,255,255,0.08);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      0 12px 40px -12px rgba(0,0,0,0.45);
   }
 
   .glass-subtle {
-    background: rgba(255,255,255,0.50);
+    background: rgba(255,255,255,0.52);
     backdrop-filter: blur(12px) saturate(150%);
     -webkit-backdrop-filter: blur(12px) saturate(150%);
-    border: 1px solid rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
   }
   .dark .glass-subtle {
-    background: rgba(24,24,27,0.50);
-    border-color: rgba(63,63,70,0.30);
+    background: rgba(24,24,27,0.52);
+    border-color: rgba(255,255,255,0.06);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
   }
 
   .card-surface {
     background: var(--atlas-elev);
     border: 1px solid var(--atlas-border);
-    border-radius: 2px;
-    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    border-radius: 1rem;
+    transition:
+      border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 16px 48px -24px rgba(15, 23, 42, 0.12);
   }
   .card-surface:hover {
     border-color: rgba(109, 158, 168, 0.45);
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.12);
+    box-shadow: 0 20px 50px -20px rgba(15, 23, 42, 0.14);
   }
   .dark .card-surface:hover {
     border-color: rgba(109, 158, 168, 0.35);
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.45);
+    box-shadow: 0 24px 56px -22px rgba(0, 0, 0, 0.55);
   }
 
   @keyframes upvote-pop {

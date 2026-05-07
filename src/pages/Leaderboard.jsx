@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Upload, ThumbsUp, Download } from 'lucide-react';
+import { Trophy, UploadSimple, ThumbsUp, Download } from '@phosphor-icons/react';
 import { useAuth } from '../context/AuthContext';
 import { useResources } from '../hooks/useResources';
 import { CHAPTERS } from '../data/mockUsers';
@@ -9,7 +9,7 @@ import PageTransition from '../components/PageTransition';
 
 const TABS = ['Schools', 'Regions', 'States'];
 const METRICS = ['uploads', 'upvotes', 'downloads'];
-const METRIC_ICONS = { uploads: Upload, upvotes: ThumbsUp, downloads: Download };
+const METRIC_ICONS = { uploads: UploadSimple, upvotes: ThumbsUp, downloads: Download };
 const TIME_FILTERS = ['All Time', 'This Month'];
 
 function RankBadge({ rank }) {
@@ -70,7 +70,7 @@ export default function Leaderboard() {
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="mb-8 flex items-start gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 text-white shadow-lg shadow-amber-200/30">
-            <Trophy size={22} />
+            <Trophy size={22} weight="regular" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[var(--atlas-fg)]">Leaderboard</h1>
@@ -101,7 +101,7 @@ export default function Leaderboard() {
                     className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold capitalize transition-all duration-200 ${
                       metric === m ? 'bg-navy-800 text-white shadow-sm dark:bg-navy-600' : 'bg-white text-[var(--atlas-muted)] hover:bg-[var(--atlas-bg)] border border-[var(--atlas-border)] dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)] dark:border-warm-700'
                     }`}
-                  ><Icon size={13} /> {m}</motion.button>
+                  ><Icon size={13} weight="regular" /> {m}</motion.button>
                 );
               })}
             </div>

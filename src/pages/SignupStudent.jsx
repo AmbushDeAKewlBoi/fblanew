@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { KeyRound, CheckCircle2, XCircle, Lightbulb } from 'lucide-react';
+import { Key, CheckCircle, XCircle, Lightbulb } from '@phosphor-icons/react';
 import PageTransition from '../components/PageTransition';
 
 export default function SignupStudent() {
@@ -73,7 +73,7 @@ export default function SignupStudent() {
             <div className="mb-6">
               <label className="mb-2 block text-sm font-medium text-[var(--atlas-fg)]">Chapter Key</label>
               <div className="relative">
-                <KeyRound size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)]" />
+                <Key size={16} weight="regular" className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)]" />
                 <input
                   type="text"
                   placeholder="e.g. VA-CENT-A1B2"
@@ -90,9 +90,9 @@ export default function SignupStudent() {
                 {keyValid !== null && (
                   <div className="absolute right-4 top-1/2 -translate-y-1/2">
                     {keyValid ? (
-                      <CheckCircle2 size={18} className="text-emerald-500" />
+                      <CheckCircle size={18} weight="regular" className="text-emerald-500" />
                     ) : (
-                      <XCircle size={18} className="text-danger" />
+                      <XCircle size={18} weight="regular" className="text-danger" />
                     )}
                   </div>
                 )}
@@ -112,7 +112,7 @@ export default function SignupStudent() {
               onClick={fillDemo}
               className="mb-6 flex w-full items-center gap-2 rounded-xl border border-gold-300/40 bg-gold-100/40 px-4 py-3 text-sm text-gold-500 transition-colors hover:bg-gold-100/60 dark:border-gold-400/20 dark:bg-gold-400/10 dark:text-gold-400"
             >
-              <Lightbulb size={14} />
+              <Lightbulb size={14} weight="regular" />
               <span>Demo: Click to use <code className="font-mono font-semibold">VA-CENT-A1B2</code></span>
             </button>
 

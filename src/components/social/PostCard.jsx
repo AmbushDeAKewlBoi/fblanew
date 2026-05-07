@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MessageSquare, ThumbsUp, Trash2 } from 'lucide-react';
+import { ChatText, ThumbsUp, Trash } from '@phosphor-icons/react';
 import Avatar from '../ui/Avatar';
 import Badge from '../ui/Badge';
 import { timeAgoShort } from '../../lib/formatters';
@@ -69,7 +69,7 @@ export default function PostCard({ post, currentProfile, getProfileById, onToggl
                 className="text-[var(--atlas-muted)] hover:text-red-500 transition-colors"
                 title={isAuthor ? 'Delete your post' : 'Delete as Advisor'}
               >
-                <Trash2 size={12} />
+                <Trash size={12} weight="regular" />
               </button>
             )}
           </span>
@@ -92,11 +92,11 @@ export default function PostCard({ post, currentProfile, getProfileById, onToggl
           }`}
           style={{ borderRadius: 2 }}
         >
-          <ThumbsUp size={13} className={likedByCurrentUser ? 'fill-current' : ''} />
+          <ThumbsUp size={13} weight={likedByCurrentUser ? 'fill' : 'regular'} className={likedByCurrentUser ? 'text-[var(--atlas-accent)]' : ''} />
           {post.likes.length}
         </motion.button>
         <span className="inline-flex items-center gap-2 px-2 py-1.5 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.14em] text-[var(--atlas-muted)]">
-          <MessageSquare size={13} />
+          <ChatText size={13} weight="regular" />
           {post.comments.length} comments
         </span>
       </div>

@@ -1,4 +1,4 @@
-import { Check, UserPlus, X } from 'lucide-react';
+import { Check, UserPlus, X } from '@phosphor-icons/react';
 import PageTransition from '../components/PageTransition';
 import ProfilePreviewCard from '../components/social/ProfilePreviewCard';
 import PageHeader from '../components/ui/PageHeader';
@@ -93,14 +93,14 @@ export default function Connections() {
                         onClick={() => acceptConnectionRequest(profile.id)}
                         className="atlas-btn atlas-btn-primary px-3 py-1.5 text-[11px]"
                       >
-                        <Check size={13} />
+                        <Check size={13} weight="bold" />
                         Accept
                       </button>
                       <button
                         onClick={() => declineConnectionRequest(profile.id)}
                         className="atlas-btn atlas-btn-ghost px-3 py-1.5 text-[11px]"
                       >
-                        <X size={13} />
+                        <X size={13} weight="regular" />
                         Decline
                       </button>
                     </div>
@@ -132,7 +132,7 @@ export default function Connections() {
                         <p className="truncate text-xs text-[var(--atlas-muted)]">{profile.chapterName}</p>
                       </div>
                     </div>
-                    <Badge tone="success" icon={<Check size={11} />}>Active</Badge>
+                    <Badge tone="success" icon={<Check size={11} weight="bold" />}>Active</Badge>
                   </li>
                 ))}
               </ul>
@@ -153,7 +153,7 @@ export default function Connections() {
                         <p className="truncate text-xs text-[var(--atlas-muted)]">{profile.chapterName}</p>
                       </div>
                     </div>
-                    <Badge tone="warn" icon={<UserPlus size={11} />}>Pending</Badge>
+                    <Badge tone="warn" icon={<UserPlus size={11} weight="regular" />}>Pending</Badge>
                   </li>
                 )) : (
                   <li className="atlas-panel px-4 py-5 text-sm text-[var(--atlas-muted)]">

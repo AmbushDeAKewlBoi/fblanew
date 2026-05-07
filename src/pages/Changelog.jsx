@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { db } from '../config/firebase';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
-import { Shield, Sparkles, Bug, Calendar, Clock, Terminal } from 'lucide-react';
+import { Shield, Sparkle, Bug, Calendar, Clock, Terminal } from '@phosphor-icons/react';
 import PageTransition from '../components/PageTransition';
 import PageHeader from '../components/ui/PageHeader';
 import SkeletonCard from '../components/SkeletonCard';
@@ -25,7 +25,7 @@ function timeAgo(dateString) {
 
 const TYPE_CONFIG = {
   security: { icon: Shield, tone: 'danger', label: 'Security' },
-  feature: { icon: Sparkles, tone: 'accent', label: 'Feature' },
+  feature: { icon: Sparkle, tone: 'accent', label: 'Feature' },
   bugfix: { icon: Bug, tone: 'gold', label: 'Bug Fix' },
   event: { icon: Calendar, tone: 'neutral', label: 'Event' },
   system: { icon: Terminal, tone: 'accent', label: 'System' }

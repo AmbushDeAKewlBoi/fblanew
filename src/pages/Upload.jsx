@@ -1,7 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Upload as UploadIcon, X, FileText, CheckCircle2, School, MapPin, Map, Globe, Shield } from 'lucide-react';
+import {
+  UploadSimple as UploadIcon,
+  X,
+  FileText,
+  CheckCircle,
+  GraduationCap,
+  MapPin,
+  MapTrifold,
+  Globe,
+  Shield,
+} from '@phosphor-icons/react';
 import { collection, addDoc } from 'firebase/firestore';
 import { FBLA_EVENTS } from '../data/mockEvents';
 import { RESOURCE_TYPES, VISIBILITY_LEVELS } from '../data/resourceOptions';
@@ -15,7 +25,7 @@ import EmptyState from '../components/ui/EmptyState';
 import { formatFileSize } from '../lib/formatters';
 import DOMPurify from 'dompurify';
 
-const VIS_ICONS = { school: School, mapPin: MapPin, map: Map, globe: Globe };
+const VIS_ICONS = { school: GraduationCap, mapPin: MapPin, map: MapTrifold, globe: Globe };
 
 export default function Upload() {
   const navigate = useNavigate();
@@ -162,7 +172,7 @@ export default function Upload() {
       <PageTransition>
         <div className="atlas-page mx-auto max-w-lg">
           <EmptyState
-            icon={<CheckCircle2 size={20} className="text-emerald-500" />}
+            icon={<CheckCircle size={20} weight="regular" className="text-emerald-500" />}
             title="Resource uploaded"
             description={`"${form.title}" is now available to your ${form.visibilityLevel === 'school' ? 'chapter' : form.visibilityLevel}.`}
             action={(
@@ -196,7 +206,7 @@ export default function Upload() {
       <PageTransition>
         <div className="atlas-page mx-auto max-w-lg">
           <EmptyState
-            icon={<Shield size={20} className="text-amber-500" />}
+            icon={<Shield size={20} weight="regular" className="text-amber-500" />}
             title="Awaiting Approval"
             description="Your account is currently waiting for approval from a chapter officer. You can browse resources, but uploading is disabled until your account is activated."
           />
@@ -210,7 +220,7 @@ export default function Upload() {
       <PageTransition>
         <div className="atlas-page mx-auto max-w-lg">
           <EmptyState
-            icon={<Shield size={20} className="text-danger" />}
+            icon={<Shield size={20} weight="regular" className="text-danger" />}
             title="Account Time Out"
             description={`You have been placed on a temporary timeout until ${new Date(user.timeoutUntil).toLocaleString()}. You cannot upload files at this time.`}
           />
@@ -260,7 +270,7 @@ export default function Upload() {
             {file ? (
               <div className="flex items-center justify-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center border-2 border-emerald-500/55 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" style={{ borderRadius: 2 }}>
-                  <FileText size={18} />
+                  <FileText size={18} weight="regular" />
                 </div>
                 <div className="text-left">
                   <p className="text-sm font-semibold text-[var(--atlas-fg)]">{file.name}</p>
@@ -275,13 +285,13 @@ export default function Upload() {
                   className="ml-2 border-2 border-transparent p-1.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]"
                   style={{ borderRadius: 2 }}
                 >
-                  <X size={14} />
+                  <X size={14} weight="regular" />
                 </button>
               </div>
             ) : (
               <>
                 <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center border-2 border-[var(--atlas-border)] text-[var(--atlas-accent)]" style={{ borderRadius: 2 }}>
-                  <UploadIcon size={20} />
+                  <UploadIcon size={20} weight="regular" />
                 </div>
                 <p className="text-sm font-semibold text-[var(--atlas-fg)]">Drag and drop your file here</p>
                 <p className="mt-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-[var(--atlas-muted)]">
@@ -380,7 +390,7 @@ export default function Upload() {
                       aria-label={`Remove ${tag}`}
                       className="ml-1 text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)]"
                     >
-                      <X size={11} />
+                      <X size={11} weight="regular" />
                     </button>
                   </motion.span>
                 ))}
@@ -429,7 +439,7 @@ export default function Upload() {
                       }`}
                       style={{ borderRadius: 2 }}
                     >
-                      <Icon size={16} />
+                      <Icon size={16} weight="regular" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-[var(--atlas-fg)]">{vis.label}</p>

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Sparkles, Users2 } from 'lucide-react';
+import { Sparkle, UsersThree } from '@phosphor-icons/react';
 import PageTransition from '../components/PageTransition';
 import PostComposer from '../components/social/PostComposer';
 import PostCard from '../components/social/PostCard';
@@ -47,7 +47,7 @@ export default function Feed() {
                 label="Connections"
                 value={connectedProfiles.length}
                 hint="Active"
-                icon={<Users2 size={14} />}
+                icon={<UsersThree size={14} weight="regular" />}
                 tone="accent"
               />
               <StatTile
@@ -102,7 +102,7 @@ export default function Feed() {
             />
             {suggestions.length === 0 ? (
               <EmptyState
-                icon={<Sparkles size={18} />}
+                icon={<Sparkle size={18} weight="regular" />}
                 title="You're well-connected"
                 description="No new suggestions right now. Check back after the next round of events."
               />

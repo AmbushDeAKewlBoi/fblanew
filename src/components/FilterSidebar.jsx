@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ArrowUpDown } from 'lucide-react';
+import { CaretDown, ArrowsDownUp } from '@phosphor-icons/react';
 
 const SORT_OPTIONS = [
   { value: 'recent', label: 'Most Recent' },
@@ -33,7 +33,7 @@ function FilterSection({ title, children, defaultOpen = true }) {
       >
         {title}
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronDown size={14} className="text-[var(--atlas-muted)]" />
+          <CaretDown size={14} weight="regular" className="text-[var(--atlas-muted)]" />
         </motion.div>
       </button>
       <AnimatePresence>
@@ -114,7 +114,7 @@ export default function FilterSidebar({ filters, setFilters, tagOptions = [] }) 
                   : 'text-[var(--atlas-muted)] hover:bg-[var(--atlas-bg)] dark:text-[var(--atlas-muted)] dark:hover:bg-[var(--atlas-elev)]/40'
               }`}
             >
-              <ArrowUpDown size={13} />
+              <ArrowsDownUp size={13} weight="regular" />
               {opt.label}
             </button>
           ))}

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { Shield } from 'lucide-react';
+import { Shield } from '@phosphor-icons/react';
 import SelectDropdown from '../components/SelectDropdown';
 import PageTransition from '../components/PageTransition';
 
@@ -55,7 +55,7 @@ export default function SignupAdvisor() {
           <div className="card-surface p-8 sm:p-10">
             <div className="mb-8 text-center">
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-gold-400/20 to-gold-300/20">
-                <Shield size={28} className="text-gold-500" />
+                <Shield size={28} weight="regular" className="text-gold-500" />
               </div>
               <h1 className="text-2xl font-bold text-[var(--atlas-fg)]">Register Your Chapter</h1>
               <p className="mt-2 text-sm text-[var(--atlas-muted)]">Set up your chapter inside Atlas</p>

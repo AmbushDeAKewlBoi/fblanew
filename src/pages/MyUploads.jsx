@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ThumbsUp, Download, Eye, Trash2, ExternalLink, Upload } from 'lucide-react';
+import { ThumbsUp, Download, Eye, Trash, ArrowSquareOut, UploadSimple } from '@phosphor-icons/react';
 import { useAuth } from '../context/AuthContext';
 import { useResources } from '../hooks/useResources';
 import VisibilityBadge from '../components/VisibilityBadge';
@@ -62,15 +62,15 @@ export default function MyUploads() {
           meta={`${active.length} resource${active.length === 1 ? '' : 's'} live`}
           actions={(
             <Link to="/upload" className="atlas-btn atlas-btn-primary">
-              <Upload size={13} />
+              <UploadSimple size={13} weight="regular" />
               Upload resource
             </Link>
           )}
           rightSlot={(
             <div className="grid grid-cols-3 gap-2">
-              <StatTile label="Upvotes" value={<AnimatedCounter value={totals.upvotes} />} icon={<ThumbsUp size={14} />} tone="accent" />
-              <StatTile label="Downloads" value={<AnimatedCounter value={totals.downloads} />} icon={<Download size={14} />} tone="gold" />
-              <StatTile label="Views" value={<AnimatedCounter value={totals.views} />} icon={<Eye size={14} />} />
+              <StatTile label="Upvotes" value={<AnimatedCounter value={totals.upvotes} />} icon={<ThumbsUp size={14} weight="regular" />} tone="accent" />
+              <StatTile label="Downloads" value={<AnimatedCounter value={totals.downloads} />} icon={<Download size={14} weight="regular" />} tone="gold" />
+              <StatTile label="Views" value={<AnimatedCounter value={totals.views} />} icon={<Eye size={14} weight="regular" />} />
             </div>
           )}
         />
@@ -103,9 +103,9 @@ export default function MyUploads() {
                   </div>
 
                   <div className="flex items-center gap-4 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.14em] text-[var(--atlas-muted)] tabular-nums">
-                    <span className="flex items-center gap-1"><ThumbsUp size={12} /> {r.upvoteCount}</span>
-                    <span className="flex items-center gap-1"><Download size={12} /> {r.downloadCount}</span>
-                    <span className="flex items-center gap-1"><Eye size={12} /> {r.viewCount}</span>
+                    <span className="flex items-center gap-1"><ThumbsUp size={12} weight="regular" /> {r.upvoteCount}</span>
+                    <span className="flex items-center gap-1"><Download size={12} weight="regular" /> {r.downloadCount}</span>
+                    <span className="flex items-center gap-1"><Eye size={12} weight="regular" /> {r.viewCount}</span>
                   </div>
 
                   <div className="flex shrink-0 items-center gap-1.5">
@@ -115,7 +115,7 @@ export default function MyUploads() {
                       className="border-2 border-transparent p-2 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]"
                       style={{ borderRadius: 2 }}
                     >
-                      <ExternalLink size={15} />
+                      <ArrowSquareOut size={15} weight="regular" />
                     </Link>
                     <motion.button
                       whileTap={{ scale: 0.9 }}
@@ -124,7 +124,7 @@ export default function MyUploads() {
                       className="border-2 border-transparent p-2 text-[var(--atlas-muted)] transition-colors hover:border-red-500/55 hover:text-red-600 dark:hover:text-red-400"
                       style={{ borderRadius: 2 }}
                     >
-                      <Trash2 size={15} />
+                      <Trash size={15} weight="regular" />
                     </motion.button>
                   </div>
                 </motion.li>
@@ -132,7 +132,7 @@ export default function MyUploads() {
             </ul>
           ) : (
             <EmptyState
-              icon={<Upload size={20} />}
+              icon={<UploadSimple size={20} weight="regular" />}
               title="No uploads yet"
               description="Share a resource to help your chapter and grow your reputation."
               action={

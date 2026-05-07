@@ -1,4 +1,4 @@
-import { Bell, CheckCheck } from 'lucide-react';
+import { Bell, Checks } from '@phosphor-icons/react';
 import PageTransition from '../components/PageTransition';
 import PageHeader from '../components/ui/PageHeader';
 import StatTile from '../components/ui/StatTile';
@@ -27,7 +27,7 @@ export default function Notifications() {
             <StatTile
               label="Unread"
               value={unreadNotificationCount}
-              icon={<Bell size={14} />}
+              icon={<Bell size={14} weight="regular" />}
               tone="gold"
             />
           )}
@@ -37,7 +37,7 @@ export default function Notifications() {
               disabled={unreadNotificationCount === 0}
               className="atlas-btn atlas-btn-ghost disabled:opacity-50"
             >
-              <CheckCheck size={13} />
+              <Checks size={13} weight="bold" />
               Mark all read
             </button>
           )}
@@ -46,7 +46,7 @@ export default function Notifications() {
         <section className="mt-8">
           {notifications.length === 0 ? (
             <EmptyState
-              icon={<Bell size={18} />}
+              icon={<Bell size={18} weight="regular" />}
               title="You're all caught up"
               description="When someone connects, comments, or messages you, it'll show up here."
             />

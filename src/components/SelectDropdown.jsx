@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Check, Search } from 'lucide-react';
+import { CaretDown, Check, MagnifyingGlass } from '@phosphor-icons/react';
 
 export default function SelectDropdown({ value, onChange, options, placeholder = 'Select...', searchable = false }) {
   const [open, setOpen] = useState(false);
@@ -57,7 +57,7 @@ export default function SelectDropdown({ value, onChange, options, placeholder =
           {selectedLabel}
         </span>
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
-          <ChevronDown size={16} className="text-[var(--atlas-muted)] shrink-0" />
+          <CaretDown size={16} weight="regular" className="text-[var(--atlas-muted)] shrink-0" />
         </motion.div>
       </button>
 
@@ -73,7 +73,7 @@ export default function SelectDropdown({ value, onChange, options, placeholder =
             {searchable && (
               <div className="sticky top-0 z-10 px-2 pt-2 pb-2 mb-1 border-b border-[var(--atlas-border)] dark:border-[var(--atlas-border)]">
                 <div className="relative">
-                  <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)]" />
+                  <MagnifyingGlass size={14} weight="regular" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)]" />
                   <input
                     type="text"
                     value={searchTerm}

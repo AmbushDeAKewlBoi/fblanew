@@ -4,10 +4,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useSocial } from '../../context/SocialContext';
 import {
-  Search, Plus, Trophy, LayoutDashboard,
-  LogOut, ChevronDown, Menu, X, Sun, Moon,
-  FolderOpen, Shield, BookOpen, Users2, Bell, MessagesSquare, Newspaper, Terminal
-} from 'lucide-react';
+  MagnifyingGlass,
+  Plus,
+  Trophy,
+  SquaresFour,
+  SignOut,
+  CaretDown,
+  List,
+  X,
+  Sun,
+  Moon,
+  FolderOpen,
+  Shield,
+  BookOpen,
+  UsersThree,
+  Bell,
+  ChatCircle,
+  Newspaper,
+  Terminal,
+} from '@phosphor-icons/react';
 
 export default function Navbar({ darkMode, setDarkMode }) {
   const { user, isAuthenticated, logout, chapter } = useAuth();
@@ -66,7 +81,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
           {isAuthenticated && (
             <form onSubmit={handleSearch} className="hidden max-w-md flex-1 md:block">
               <div className="relative">
-                <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)]" />
+                <MagnifyingGlass size={15} weight="regular" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)]" />
                 <input
                   type="text"
                   placeholder="Search resources, people, chapters…"
@@ -86,27 +101,27 @@ export default function Navbar({ darkMode, setDarkMode }) {
               <>
                 <div className="hidden items-center gap-0.5 lg:flex">
                   <Link to="/feed" className={navLinkClass('/feed')}>
-                    <Newspaper size={15} strokeWidth={2} /> Feed
+                    <Newspaper size={15} weight="regular" /> Feed
                   </Link>
                   <Link to="/updates" className={navLinkClass('/updates')}>
-                    <Terminal size={15} strokeWidth={2} /> Log
+                    <Terminal size={15} weight="regular" /> Log
                   </Link>
                   <Link to="/events" className={navLinkClass('/events')}>
-                    <BookOpen size={15} strokeWidth={2} /> Events
+                    <BookOpen size={15} weight="regular" /> Events
                   </Link>
                   <Link to="/connections" className={navLinkClass('/connections')}>
-                    <Users2 size={15} strokeWidth={2} /> Network
+                    <UsersThree size={15} weight="regular" /> Network
                   </Link>
                   <Link to="/leaderboard" className={navLinkClass('/leaderboard')}>
-                    <Trophy size={15} strokeWidth={2} /> Board
+                    <Trophy size={15} weight="regular" /> Board
                   </Link>
                 </div>
 
                 <Link to="/messages" className={iconBtn('/messages')} aria-label="Messages">
-                  <MessagesSquare size={18} strokeWidth={2} />
+                  <ChatCircle size={18} weight="regular" />
                 </Link>
                 <Link to="/notifications" className={iconBtn('/notifications')} aria-label="Notifications">
-                  <Bell size={18} strokeWidth={2} />
+                  <Bell size={18} weight="regular" />
                   {unreadNotificationCount > 0 && (
                     <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center border border-[var(--atlas-bg)] bg-red-600 px-1 font-[family-name:var(--font-mono)] text-[10px] font-bold text-white">
                       {unreadNotificationCount}
@@ -119,7 +134,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                     to="/upload"
                     className="ml-1 flex items-center gap-2 border-2 border-[var(--atlas-accent)] bg-[rgba(109,158,168,0.12)] px-4 py-2.5 font-[family-name:var(--font-mono)] text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--atlas-fg)] transition-colors hover:bg-[rgba(109,158,168,0.2)]"
                   >
-                    <Plus size={16} strokeWidth={2.5} />
+                    <Plus size={16} weight="bold" />
                     <span className="hidden sm:inline">Upload</span>
                   </Link>
                 </motion.div>
@@ -139,7 +154,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                       exit={{ rotate: 90, opacity: 0 }}
                       transition={{ duration: 0.15 }}
                     >
-                      {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                      {darkMode ? <Sun size={18} weight="regular" /> : <Moon size={18} weight="regular" />}
                     </motion.div>
                   </AnimatePresence>
                 </motion.button>
@@ -154,7 +169,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                       {user?.name?.charAt(0)}
                     </div>
                     <motion.div animate={{ rotate: userMenuOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                      <ChevronDown size={14} className="text-[var(--atlas-muted)]" />
+                      <CaretDown size={14} weight="bold" className="text-[var(--atlas-muted)]" />
                     </motion.div>
                   </button>
 
@@ -184,13 +199,13 @@ export default function Navbar({ darkMode, setDarkMode }) {
                           </div>
                           <div className="my-2 border-t border-[var(--atlas-border)]" />
                           {[
-                            ['/dashboard', <LayoutDashboard size={16} />, 'Dashboard'],
-                            [`/profile/${currentProfile?.id ?? 'me'}`, <Users2 size={16} />, 'My profile'],
-                            ['/feed', <Newspaper size={16} />, 'Feed'],
-                            ['/connections', <Users2 size={16} />, 'My network'],
-                            ['/messages', <MessagesSquare size={16} />, 'Messages'],
-                            ['/notifications', <Bell size={16} />, 'Notifications'],
-                            ['/my-uploads', <FolderOpen size={16} />, 'My uploads'],
+                            ['/dashboard', <SquaresFour size={16} weight="regular" />, 'Dashboard'],
+                            [`/profile/${currentProfile?.id ?? 'me'}`, <UsersThree size={16} weight="regular" />, 'My profile'],
+                            ['/feed', <Newspaper size={16} weight="regular" />, 'Feed'],
+                            ['/connections', <UsersThree size={16} weight="regular" />, 'My network'],
+                            ['/messages', <ChatCircle size={16} weight="regular" />, 'Messages'],
+                            ['/notifications', <Bell size={16} weight="regular" />, 'Notifications'],
+                            ['/my-uploads', <FolderOpen size={16} weight="regular" />, 'My uploads'],
                           ].map(([to, icon, label]) => (
                             <Link
                               key={to}
@@ -207,7 +222,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                               onClick={() => setUserMenuOpen(false)}
                               className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-[var(--atlas-fg)] transition-colors hover:bg-[rgba(109,158,168,0.1)]"
                             >
-                              <Shield size={16} /> Management
+                              <Shield size={16} weight="regular" /> Management
                             </Link>
                           )}
                           <div className="my-2 border-t border-[var(--atlas-border)]" />
@@ -216,7 +231,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                             onClick={handleLogout}
                             className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm text-red-600 transition-colors hover:bg-red-500/10"
                           >
-                            <LogOut size={16} /> Sign out
+                            <SignOut size={16} weight="regular" /> Sign out
                           </button>
                         </motion.div>
                       </>
@@ -230,7 +245,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                   className="border border-transparent p-2.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] lg:hidden"
                 >
-                  {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                  {mobileMenuOpen ? <X size={20} weight="regular" /> : <List size={20} weight="regular" />}
                 </motion.button>
               </>
             ) : (
@@ -242,7 +257,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   className="border border-transparent p-2.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)]"
                   aria-label="Toggle theme"
                 >
-                  {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+                  {darkMode ? <Sun size={18} weight="regular" /> : <Moon size={18} weight="regular" />}
                 </motion.button>
                 <Link
                   to="/login"
@@ -273,7 +288,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
               <div className="space-y-1 border-t border-[var(--atlas-border)] py-3">
                 <form onSubmit={handleSearch} className="mb-3 md:hidden">
                   <div className="relative">
-                    <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)]" />
+                    <MagnifyingGlass size={15} weight="regular" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)]" />
                     <input
                       type="text"
                       placeholder="Search…"
@@ -284,13 +299,13 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   </div>
                 </form>
                 {[
-                  ['/feed', <Newspaper size={16} />, 'Feed'],
-                  ['/updates', <Terminal size={16} />, 'System Log'],
-                  ['/events', <BookOpen size={16} />, 'Events'],
-                  ['/connections', <Users2 size={16} />, 'Network'],
-                  ['/leaderboard', <Trophy size={16} />, 'Leaderboard'],
-                  ['/messages', <MessagesSquare size={16} />, 'Messages'],
-                  ['/notifications', <Bell size={16} />, 'Notifications'],
+                  ['/feed', <Newspaper size={16} weight="regular" />, 'Feed'],
+                  ['/updates', <Terminal size={16} weight="regular" />, 'System Log'],
+                  ['/events', <BookOpen size={16} weight="regular" />, 'Events'],
+                  ['/connections', <UsersThree size={16} weight="regular" />, 'Network'],
+                  ['/leaderboard', <Trophy size={16} weight="regular" />, 'Leaderboard'],
+                  ['/messages', <ChatCircle size={16} weight="regular" />, 'Messages'],
+                  ['/notifications', <Bell size={16} weight="regular" />, 'Notifications'],
                 ].map(([to, icon, label]) => (
                   <Link
                     key={to}

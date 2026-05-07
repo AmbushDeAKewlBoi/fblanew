@@ -7,9 +7,8 @@ import {
   Flame,
   Handshake,
   ThumbsUp,
-  Upload,
-  Users2,
-} from 'lucide-react';
+  UploadSimple,
+} from '@phosphor-icons/react';
 import { useAuth } from '../context/AuthContext';
 import ResourceCard from '../components/ResourceCard';
 import { useResources } from '../hooks/useResources';
@@ -79,11 +78,11 @@ export default function Dashboard() {
           actions={(
             <>
               <Link to="/upload" className="atlas-btn atlas-btn-primary">
-                <Upload size={13} />
+                <UploadSimple size={13} weight="bold" />
                 Upload resource
               </Link>
               <Link to="/connections" className="atlas-btn atlas-btn-ghost">
-                <Handshake size={13} />
+                <Handshake size={13} weight="regular" />
                 Grow your network
               </Link>
             </>
@@ -94,21 +93,21 @@ export default function Dashboard() {
                 label="Shared"
                 value={<AnimatedCounter value={myStats.uploads} />}
                 hint="Resources"
-                icon={<Upload size={14} />}
+                icon={<UploadSimple size={14} weight="regular" />}
                 tone="accent"
               />
               <StatTile
                 label="Upvotes"
                 value={<AnimatedCounter value={myStats.upvotes} />}
                 hint="Earned"
-                icon={<ThumbsUp size={14} />}
+                icon={<ThumbsUp size={14} weight="regular" />}
                 tone="gold"
               />
               <StatTile
                 label="Downloads"
                 value={<AnimatedCounter value={myStats.downloads} />}
                 hint="Driven"
-                icon={<Download size={14} />}
+                icon={<Download size={14} weight="regular" />}
               />
             </div>
           )}
@@ -126,7 +125,7 @@ export default function Dashboard() {
                     className="group inline-flex items-center gap-1 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--atlas-accent)] hover:text-[var(--atlas-fg)]"
                   >
                     View network
-                    <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+                    <ArrowRight size={12} weight="bold" className="transition-transform group-hover:translate-x-0.5" />
                   </Link>
                 )}
               />
@@ -173,9 +172,9 @@ export default function Dashboard() {
               <SectionHeader
                 kicker="Trending"
                 title="What the network is studying"
-                action={<Flame size={16} className="text-[var(--atlas-gold)]" aria-hidden="true" />}
+                action={<Flame size={16} weight="regular" className="text-[var(--atlas-gold)]" aria-hidden="true" />}
               />
-              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
                 {popularResources.length === 0
                   ? [1, 2, 3].map((item) => <SkeletonCard key={item} />)
                   : popularResources.map((resource) => (
@@ -197,9 +196,9 @@ export default function Dashboard() {
                     to="/events"
                     className="group inline-flex items-center gap-1 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--atlas-accent)] hover:text-[var(--atlas-fg)]"
                   >
-                    <BookOpen size={12} />
+                    <BookOpen size={12} weight="regular" />
                     Browse all
-                    <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+                    <ArrowRight size={12} weight="bold" className="transition-transform group-hover:translate-x-0.5" />
                   </Link>
                 )}
               />

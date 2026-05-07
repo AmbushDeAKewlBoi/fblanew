@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send } from 'lucide-react';
+import { PaperPlaneTilt } from '@phosphor-icons/react';
 import { FBLA_EVENTS } from '../../data/mockEvents';
 import { useAuth } from '../../context/AuthContext';
 const SOCIAL_POST_CATEGORIES = [
@@ -148,7 +148,7 @@ export default function PostComposer({
             disabled={isRestricted || !content.trim() || (scopeType === 'event' && !event && !selectedEventSlug)}
             className="atlas-btn atlas-btn-primary disabled:opacity-50 disabled:hover:translate-x-0 disabled:hover:translate-y-0"
           >
-            <Send size={13} />
+            <PaperPlaneTilt size={13} weight="regular" />
             Post
           </motion.button>
         </div>

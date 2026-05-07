@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, SlidersHorizontal, X, Search, MessagesSquare } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, X, MagnifyingGlass, ChatCircle } from '@phosphor-icons/react';
 import { getEventBySlug } from '../data/mockEvents';
 import { useResources } from '../hooks/useResources';
 import { useSocial } from '../context/SocialContext';
@@ -97,11 +97,11 @@ export default function EventDetail() {
       <PageTransition>
         <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]">
-            <Search size={24} className="text-[var(--atlas-muted)]" />
+            <MagnifyingGlass size={24} weight="regular" className="text-[var(--atlas-muted)]" />
           </div>
           <h1 className="text-xl font-bold text-[var(--atlas-fg)]">Event not found</h1>
           <Link to="/events" className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-navy-700 dark:text-navy-400 transition-colors hover:text-navy-600">
-            <ArrowLeft size={14} /> Back to Events
+            <ArrowLeft size={14} weight="regular" /> Back to Events
           </Link>
         </div>
       </PageTransition>
@@ -151,7 +151,7 @@ export default function EventDetail() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="mb-6">
           <Link to="/events" className="mb-3 inline-flex items-center gap-1.5 text-sm text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] dark:text-[var(--atlas-muted)] dark:hover:text-warm-200 transition-colors">
-            <ArrowLeft size={14} /> Events
+            <ArrowLeft size={14} weight="regular" /> Events
           </Link>
           <h1 className="text-2xl font-bold text-[var(--atlas-fg)]">{event.name}</h1>
           {loading ? (
@@ -201,7 +201,7 @@ export default function EventDetail() {
             onClick={() => setShowFilters(!showFilters)}
             className="mb-4 flex items-center gap-2 rounded-xl border border-[var(--atlas-border)] px-4 py-2.5 text-sm font-medium text-[var(--atlas-fg)] lg:hidden dark:border-warm-700 text-[var(--atlas-muted)] transition-colors hover:border-warm-300"
           >
-            <SlidersHorizontal size={16} /> Filters
+            <SlidersHorizontal size={16} weight="regular" /> Filters
             {activeFilterCount > 0 && (
               <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-navy-800 text-xs font-semibold text-white dark:bg-navy-500">
                 {activeFilterCount}
@@ -219,7 +219,7 @@ export default function EventDetail() {
                     onClick={() => setShowFilters(false)}
                     className="mb-4 flex items-center gap-2 text-sm text-[var(--atlas-muted)] lg:hidden transition-colors hover:text-[var(--atlas-fg)]"
                   >
-                    <X size={16} /> Close
+                    <X size={16} weight="regular" /> Close
                   </button>
                 )}
                 <FilterSidebar filters={filters} setFilters={setFilters} tagOptions={allTags} />
@@ -289,7 +289,7 @@ export default function EventDetail() {
                     className="card-surface py-20 text-center"
                   >
                     <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]">
-                      <Search size={22} className="text-[var(--atlas-muted)]" />
+                      <MagnifyingGlass size={22} weight="regular" className="text-[var(--atlas-muted)]" />
                     </div>
                     <p className="text-[var(--atlas-muted)]">No resources match your filters.</p>
                     <button
@@ -310,7 +310,7 @@ export default function EventDetail() {
                   kicker="Discussion"
                 title={`${event.name} feed`}
                 description="Ask questions, compare strategy, and find people working on the same event."
-                action={<MessagesSquare size={16} className="text-[var(--atlas-accent)]" aria-hidden="true" />}
+                action={<ChatCircle size={16} weight="regular" className="text-[var(--atlas-accent)]" aria-hidden="true" />}
               />
 
               <div className="mt-5 space-y-5">
@@ -334,7 +334,7 @@ export default function EventDetail() {
                   ))
                 ) : (
                   <EmptyState
-                    icon={<MessagesSquare size={18} />}
+                    icon={<ChatCircle size={18} weight="regular" />}
                     title={`No ${event.name} discussion yet`}
                     description="Kick things off with a question, a prep tactic, or an open invite for practice."
                   />

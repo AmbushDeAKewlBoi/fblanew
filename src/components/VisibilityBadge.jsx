@@ -1,9 +1,9 @@
-import { School, MapPin, Map, Globe } from 'lucide-react';
+import { GraduationCap, MapPin, MapTrifold, Globe } from '@phosphor-icons/react';
 
 const badgeConfig = {
   school: {
     label: 'School',
-    icon: School,
+    icon: GraduationCap,
     classes: 'bg-blue-500/10 text-blue-500 dark:bg-blue-400/15 dark:text-blue-400 ring-blue-500/20',
     dotColor: 'bg-blue-500',
   },
@@ -15,7 +15,7 @@ const badgeConfig = {
   },
   state: {
     label: 'State',
-    icon: Map,
+    icon: MapTrifold,
     classes: 'bg-orange-500/10 text-orange-600 dark:bg-orange-400/15 dark:text-orange-400 ring-orange-500/20',
     dotColor: 'bg-orange-500',
   },
@@ -42,7 +42,7 @@ export default function VisibilityBadge({ level, size = 'sm' }) {
         <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${c.dotColor} opacity-50`} />
         <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${c.dotColor}`} />
       </span>
-      <Icon size={isSmall ? 12 : 14} />
+      <Icon size={isSmall ? 12 : 14} weight="regular" />
       {c.label}
     </span>
   );

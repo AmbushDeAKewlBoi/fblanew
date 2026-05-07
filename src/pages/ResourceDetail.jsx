@@ -1,7 +1,16 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ThumbsUp, Download, FileText, Clock, User as UserIcon, Eye, Tag } from 'lucide-react';
+import {
+  ArrowLeft,
+  ThumbsUp,
+  Download,
+  FileText,
+  Clock,
+  User as UserIcon,
+  Eye,
+  Tag,
+} from '@phosphor-icons/react';
 import { doc, updateDoc, increment } from 'firebase/firestore';
 import { useResources } from '../hooks/useResources';
 import { db } from '../config/firebase';
@@ -41,11 +50,11 @@ export default function ResourceDetail() {
       <PageTransition>
         <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]">
-            <FileText size={24} className="text-[var(--atlas-muted)]" />
+            <FileText size={24} weight="regular" className="text-[var(--atlas-muted)]" />
           </div>
           <h1 className="text-xl font-bold text-[var(--atlas-fg)]">Resource not found</h1>
           <Link to="/dashboard" className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-navy-700 dark:text-navy-400 transition-colors hover:text-navy-600">
-            <ArrowLeft size={14} /> Back to Dashboard
+            <ArrowLeft size={14} weight="regular" /> Back to Dashboard
           </Link>
         </div>
       </PageTransition>
@@ -72,7 +81,7 @@ export default function ResourceDetail() {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Link to={`/events/${resource.eventSlug}`} className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] dark:text-[var(--atlas-muted)] dark:hover:text-warm-200 transition-colors">
-            <ArrowLeft size={14} /> {resource.event}
+            <ArrowLeft size={14} weight="regular" /> {resource.event}
           </Link>
         </motion.div>
 
@@ -96,7 +105,7 @@ export default function ResourceDetail() {
               {/* Meta */}
               <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-[var(--atlas-muted)]">
                 <span className="flex items-center gap-1.5">
-                  <UserIcon size={14} />
+                  <UserIcon size={14} weight="regular" />
                   {resource.isAnonymous ? 'Anonymous' : (
                     <Link to={`/profile/${resource.uploaderId}`} className="hover:text-navy-700 dark:hover:text-navy-300 transition-colors">
                       {uploader?.name || 'Community Member'}
@@ -104,7 +113,7 @@ export default function ResourceDetail() {
                   )}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Clock size={14} />
+                  <Clock size={14} weight="regular" />
                   {formatDateLong(resource.createdAt)}
                 </span>
               </div>
@@ -118,7 +127,7 @@ export default function ResourceDetail() {
               <div className="mt-6 flex flex-wrap gap-2">
                 {resource.tags.map(tag => (
                   <span key={tag} className="inline-flex items-center gap-1 rounded-lg bg-[var(--atlas-elev)] px-2.5 py-1 text-xs font-medium text-[var(--atlas-muted)] dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)]">
-                    <Tag size={10} /> {tag}
+                    <Tag size={10} weight="regular" /> {tag}
                   </span>
                 ))}
               </div>
@@ -126,13 +135,13 @@ export default function ResourceDetail() {
               {/* Stats */}
               <div className="mt-6 flex items-center gap-6 border-t border-[var(--atlas-border)] pt-6 dark:border-[var(--atlas-border)]">
                 <div className="flex items-center gap-1.5 text-sm text-[var(--atlas-muted)]">
-                  <ThumbsUp size={16} /> {resource.upvoteCount || 0} upvotes
+                  <ThumbsUp size={16} weight="regular" /> {resource.upvoteCount || 0} upvotes
                 </div>
                 <div className="flex items-center gap-1.5 text-sm text-[var(--atlas-muted)]">
-                  <Download size={16} /> {resource.downloadCount || 0} downloads
+                  <Download size={16} weight="regular" /> {resource.downloadCount || 0} downloads
                 </div>
                 <div className="flex items-center gap-1.5 text-sm text-[var(--atlas-muted)]">
-                  <Eye size={16} /> {resource.viewCount || 0} views
+                  <Eye size={16} weight="regular" /> {resource.viewCount || 0} views
                 </div>
               </div>
 
@@ -145,14 +154,13 @@ export default function ResourceDetail() {
                       : 'border border-[var(--atlas-border)] text-[var(--atlas-fg)] hover:border-warm-300 hover:shadow-sm dark:border-warm-700 text-[var(--atlas-muted)]'
                   }`}
                 >
-                  <ThumbsUp size={16} className={upvoted ? 'fill-current' : ''} />
+                  <ThumbsUp size={16} weight={upvoted ? 'fill' : 'regular'} className={upvoted ? 'text-white' : ''} />
                   {upvoted ? 'Upvoted' : 'Upvote'}
                 </motion.button>
                 <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={handleDownload}
                   className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-navy-800 to-navy-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-md dark:from-navy-600 dark:to-navy-500"
                 >
-                  <Download size={16} />
-                  Download {(resource.fileExtension || '').replace('.', '').toUpperCase()} {resource.fileSizeBytes ? `(${formatFileSize(resource.fileSizeBytes)})` : ''}
+                  <Download size={16} weight="regular" /> Download {(resource.fileExtension || '').replace('.', '').toUpperCase()} {resource.fileSizeBytes ? `(${formatFileSize(resource.fileSizeBytes)})` : ''}
                 </motion.button>
               </div>
             </div>
@@ -173,8 +181,8 @@ export default function ResourceDetail() {
                       {r.title}
                     </h4>
                     <div className="mt-2 flex items-center gap-3 text-xs text-[var(--atlas-muted)] dark:text-[var(--atlas-muted)]">
-                      <span className="flex items-center gap-1"><ThumbsUp size={10} /> {r.upvoteCount || 0}</span>
-                      <span className="flex items-center gap-1"><Download size={10} /> {r.downloadCount || 0}</span>
+                      <span className="flex items-center gap-1"><ThumbsUp size={10} weight="regular" /> {r.upvoteCount || 0}</span>
+                      <span className="flex items-center gap-1"><Download size={10} weight="regular" /> {r.downloadCount || 0}</span>
                     </div>
                   </Link>
                 ))}

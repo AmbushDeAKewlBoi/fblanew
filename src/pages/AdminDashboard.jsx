@@ -2,9 +2,26 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  Copy, Check, RefreshCw, Shield, Users, FileText, ThumbsUp, Download,
-  Eye, EyeOff, Trash2, ExternalLink, MoreVertical, Ban, Clock, ArrowUpCircle, ArrowDownCircle, CheckCircle, Play
-} from 'lucide-react';
+  Copy,
+  Check,
+  ArrowsClockwise,
+  Shield,
+  Users,
+  FileText,
+  ThumbsUp,
+  Download,
+  Eye,
+  EyeSlash,
+  Trash,
+  ArrowSquareOut,
+  DotsThreeVertical,
+  Prohibit,
+  Clock,
+  ArrowCircleUp,
+  ArrowCircleDown,
+  CheckCircle,
+  Play,
+} from '@phosphor-icons/react';
 import { collection, query, where, onSnapshot, doc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 import { useResources } from '../hooks/useResources';
@@ -104,7 +121,7 @@ export default function AdminDashboard() {
       <PageTransition>
         <div className="atlas-page">
           <EmptyState
-            icon={<Shield size={20} />}
+            icon={<Shield size={20} weight="regular" />}
             title="Management access only"
             description="This page is restricted to chapter advisors and officers. If you believe this is a mistake, contact your advisor."
           />
@@ -123,9 +140,9 @@ export default function AdminDashboard() {
           meta={chapter?.name}
           rightSlot={(
             <div className="grid grid-cols-3 gap-2">
-              <StatTile label="Students" value={<AnimatedCounter value={chapterStudents.length} />} icon={<Users size={14} />} tone="accent" />
-              <StatTile label="Uploads" value={<AnimatedCounter value={totalStats.uploads} />} icon={<FileText size={14} />} tone="gold" />
-              <StatTile label="Upvotes" value={<AnimatedCounter value={totalStats.upvotes} />} icon={<ThumbsUp size={14} />} />
+              <StatTile label="Students" value={<AnimatedCounter value={chapterStudents.length} />} icon={<Users size={14} weight="regular" />} tone="accent" />
+              <StatTile label="Uploads" value={<AnimatedCounter value={totalStats.uploads} />} icon={<FileText size={14} weight="regular" />} tone="gold" />
+              <StatTile label="Upvotes" value={<AnimatedCounter value={totalStats.upvotes} />} icon={<ThumbsUp size={14} weight="regular" />} />
             </div>
           )}
         />
@@ -150,12 +167,12 @@ export default function AdminDashboard() {
                   className="border-2 border-transparent p-2 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]"
                   style={{ borderRadius: 2 }}
                 >
-                  {keyCopied ? <Check size={15} className="text-emerald-500" /> : <Copy size={15} />}
+                  {keyCopied ? <Check size={15} weight="bold" className="text-emerald-500" /> : <Copy size={15} weight="regular" />}
                 </motion.button>
               </div>
             </div>
             <button className="atlas-btn atlas-btn-ghost">
-              <RefreshCw size={13} /> Regenerate
+              <ArrowsClockwise size={13} weight="regular" /> Regenerate
             </button>
           </div>
         </motion.div>
@@ -225,8 +242,8 @@ export default function AdminDashboard() {
                         </p>
                       </div>
                       <div className="flex items-center gap-4 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.14em] text-[var(--atlas-muted)] tabular-nums">
-                        <span className="flex items-center gap-1"><ThumbsUp size={12} /> {r.upvoteCount || 0}</span>
-                        <span className="flex items-center gap-1"><Download size={12} /> {r.downloadCount || 0}</span>
+                        <span className="flex items-center gap-1"><ThumbsUp size={12} weight="regular" /> {r.upvoteCount || 0}</span>
+                        <span className="flex items-center gap-1"><Download size={12} weight="regular" /> {r.downloadCount || 0}</span>
                       </div>
                       <div className="flex shrink-0 items-center gap-1.5">
                         <Link
@@ -235,7 +252,7 @@ export default function AdminDashboard() {
                           className="border-2 border-transparent p-2 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]"
                           style={{ borderRadius: 2 }}
                         >
-                          <ExternalLink size={15} />
+                          <ArrowSquareOut size={15} weight="regular" />
                         </Link>
                         <motion.button
                           whileTap={{ scale: 0.9 }}
@@ -244,7 +261,7 @@ export default function AdminDashboard() {
                           className="border-2 border-transparent p-2 text-[var(--atlas-muted)] transition-colors hover:border-amber-500/55 hover:text-amber-600 dark:hover:text-amber-400"
                           style={{ borderRadius: 2 }}
                         >
-                          {hidden ? <Eye size={15} /> : <EyeOff size={15} />}
+                          {hidden ? <Eye size={15} weight="regular" /> : <EyeSlash size={15} weight="regular" />}
                         </motion.button>
                         <motion.button
                           whileTap={{ scale: 0.9 }}
@@ -253,7 +270,7 @@ export default function AdminDashboard() {
                           className="border-2 border-transparent p-2 text-[var(--atlas-muted)] transition-colors hover:border-red-500/55 hover:text-red-600 dark:hover:text-red-400"
                           style={{ borderRadius: 2 }}
                         >
-                          <Trash2 size={15} />
+                          <Trash size={15} weight="regular" />
                         </motion.button>
                       </div>
                     </motion.li>
@@ -307,7 +324,7 @@ export default function AdminDashboard() {
                       </div>
                       <div className="col-span-1 text-right">
                           <button onClick={() => setOpenMenuId(menuOpen ? null : s.id)} className="p-1.5 text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] transition-colors">
-                            <MoreVertical size={16} />
+                            <DotsThreeVertical size={16} weight="bold" />
                           </button>
                           <AnimatePresence>
                             {menuOpen && (
@@ -319,29 +336,29 @@ export default function AdminDashboard() {
                                 >
                                   {isPending && (
                                     <button onClick={() => handleStudentAction(s.id, 'accept')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
-                                      <CheckCircle size={14} className="text-emerald-500" /> Accept
+                                      <CheckCircle size={14} weight="regular" className="text-emerald-500" /> Accept
                                     </button>
                                   )}
                                   
                                   {user?.isAdvisor && !isPending && s.role !== 'officer' && (
                                     <button onClick={() => handleStudentAction(s.id, 'promote')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
-                                      <ArrowUpCircle size={14} className="text-[var(--atlas-accent)]" /> Promote to Officer
+                                      <ArrowCircleUp size={14} weight="regular" className="text-[var(--atlas-accent)]" /> Promote to Officer
                                     </button>
                                   )}
                                   
                                   {user?.isAdvisor && s.role === 'officer' && (
                                     <button onClick={() => handleStudentAction(s.id, 'demote')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
-                                      <ArrowDownCircle size={14} className="text-amber-500" /> Demote to Student
+                                      <ArrowCircleDown size={14} weight="regular" className="text-amber-500" /> Demote to Student
                                     </button>
                                   )}
                                   
                                   {isTimedOut ? (
                                     <button onClick={() => handleStudentAction(s.id, 'untimeout')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
-                                      <Play size={14} className="text-emerald-500" /> Remove Timeout
+                                      <Play size={14} weight="regular" className="text-emerald-500" /> Remove Timeout
                                     </button>
                                   ) : !isPending && (
                                     <button onClick={() => handleStudentAction(s.id, 'timeout')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
-                                      <Clock size={14} className="text-amber-500" /> Timeout (24h)
+                                      <Clock size={14} weight="regular" className="text-amber-500" /> Timeout (24h)
                                     </button>
                                   )}
                                   
@@ -349,13 +366,13 @@ export default function AdminDashboard() {
                                   
                                   {user?.isAdvisor && !isBanned && (
                                     <button onClick={() => handleStudentAction(s.id, 'ban')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-danger hover:bg-[var(--atlas-surface)]">
-                                      <Ban size={14} /> Ban
+                                      <Prohibit size={14} weight="regular" /> Ban
                                     </button>
                                   )}
                                   
                                   {user?.isAdvisor && (
                                     <button onClick={() => handleStudentAction(s.id, 'kick')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-danger hover:bg-[var(--atlas-surface)]">
-                                      <Trash2 size={14} /> Kick
+                                      <Trash size={14} weight="regular" /> Kick
                                     </button>
                                   )}
                                 </motion.div>

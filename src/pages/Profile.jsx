@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { ArrowRight, BriefcaseBusiness, MessageSquare, UserPlus } from 'lucide-react';
+import { ArrowRight, Briefcase, ChatText, UserPlus } from '@phosphor-icons/react';
 import PageTransition from '../components/PageTransition';
 import PostCard from '../components/social/PostCard';
 import PageHeader from '../components/ui/PageHeader';
@@ -64,11 +64,11 @@ export default function Profile() {
                   disabled={isConnected || pending}
                   className="atlas-btn atlas-btn-primary disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  <UserPlus size={13} />
+                  <UserPlus size={13} weight="regular" />
                   {isConnected ? 'Connected' : pending ? 'Request sent' : 'Connect'}
                 </button>
                 <Link to={`/messages?profile=${profile.id}`} className="atlas-btn atlas-btn-ghost">
-                  <MessageSquare size={13} />
+                  <ChatText size={13} weight="regular" />
                   Message
                 </Link>
               </>
@@ -119,7 +119,7 @@ export default function Profile() {
               {profile.experience ? (
                 <div className="atlas-panel mt-5 px-4 py-4">
                   <div className="atlas-kicker mb-2 flex items-center gap-2">
-                    <BriefcaseBusiness size={12} />
+                    <Briefcase size={12} weight="regular" />
                     Experience
                   </div>
                   <p className="text-sm leading-6 text-[var(--atlas-fg)]">{profile.experience}</p>
@@ -144,7 +144,7 @@ export default function Profile() {
                   className="group inline-flex items-center gap-1 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--atlas-accent)] hover:text-[var(--atlas-fg)]"
                 >
                   Start conversation
-                  <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+                  <ArrowRight size={12} weight="bold" className="transition-transform group-hover:translate-x-0.5" />
                 </Link>
               )}
             />

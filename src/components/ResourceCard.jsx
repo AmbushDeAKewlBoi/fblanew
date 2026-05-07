@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ThumbsUp, Download, FileText, Clock, User as UserIcon } from 'lucide-react';
+import { ThumbsUp, Download, FileText, Clock, User as UserIcon } from '@phosphor-icons/react';
 import VisibilityBadge from './VisibilityBadge';
 import { getUserById, getChapterById } from '../data/mockUsers';
 import { formatFileSize, timeAgo } from '../lib/formatters';
@@ -84,7 +84,7 @@ export default function ResourceCard({ resource }) {
         {/* Meta row */}
         <div className="mb-3 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wide text-[var(--atlas-muted)]">
           <span className="flex items-center gap-1">
-            <UserIcon size={11} />
+            <UserIcon size={11} weight="regular" />
             {resource.isAnonymous ? 'Anonymous' : (
               <Link to={`/profile/${resource.uploaderId}`} className="text-[var(--atlas-fg)] transition-colors hover:text-[var(--atlas-accent)]">
                 {uploader?.name}
@@ -95,7 +95,7 @@ export default function ResourceCard({ resource }) {
           <span className="truncate">{chapter?.name}</span>
           <span className="text-[var(--atlas-border)]">·</span>
           <span className="flex items-center gap-1">
-            <Clock size={11} />
+            <Clock size={11} weight="regular" />
             {timeAgo(resource.createdAt)}
           </span>
         </div>
@@ -112,7 +112,7 @@ export default function ResourceCard({ resource }) {
               : 'border-transparent text-[var(--atlas-muted)] hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]'
           }`}
         >
-          <ThumbsUp size={13} className={upvoted ? 'fill-current' : ''} />
+          <ThumbsUp size={13} weight={upvoted ? 'fill' : 'regular'} className={upvoted ? 'text-emerald-600 dark:text-emerald-400' : ''} />
           {upvoteCount}
         </motion.button>
         <motion.button
@@ -120,11 +120,11 @@ export default function ResourceCard({ resource }) {
           whileTap={{ scale: 1.1 }}
           className="flex items-center gap-1.5 border border-transparent px-3 py-1.5 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-wide text-[var(--atlas-muted)] transition-all duration-200 hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]"
         >
-          <Download size={13} />
+          <Download size={13} weight="regular" />
           {downloadCount}
         </motion.button>
         <span className="ml-auto flex items-center gap-1.5 font-[family-name:var(--font-mono)] text-[10px] text-[var(--atlas-muted)]">
-          <FileText size={11} />
+          <FileText size={11} weight="regular" />
           {resource.fileExtension ? resource.fileExtension.replace('.', '').toUpperCase() : 'FILE'} · {formatFileSize(resource.fileSizeBytes || 0)}
         </span>
       </div>

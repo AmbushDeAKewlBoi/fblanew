@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search as SearchIcon, Users2 } from 'lucide-react';
+import { MagnifyingGlass as SearchIcon, UsersThree } from '@phosphor-icons/react';
 import { useResources } from '../hooks/useResources';
 import ResourceCard from '../components/ResourceCard';
 import FilterSidebar from '../components/FilterSidebar';
@@ -84,6 +84,7 @@ export default function Search() {
           <div className="relative max-w-3xl">
             <SearchIcon
               size={18}
+              weight="regular"
               className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)]"
               aria-hidden="true"
             />
@@ -126,7 +127,7 @@ export default function Search() {
                     <SectionHeader
                       kicker="Resources"
                       title="Study guides, roleplays, and templates"
-                      action={<SearchIcon size={16} className="text-[var(--atlas-accent)]" aria-hidden="true" />}
+                      action={<SearchIcon size={16} weight="regular" className="text-[var(--atlas-accent)]" aria-hidden="true" />}
                     />
                     <div className="mt-5">
                       {resourceResults.length > 0 ? (
@@ -148,7 +149,7 @@ export default function Search() {
                     <SectionHeader
                       kicker="People"
                       title="Members you could study with"
-                      action={<Users2 size={16} className="text-[var(--atlas-gold)]" aria-hidden="true" />}
+                      action={<UsersThree size={16} weight="regular" className="text-[var(--atlas-gold)]" aria-hidden="true" />}
                     />
                     <div className="mt-5">
                       {peopleResults.length > 0 ? (
@@ -188,7 +189,7 @@ export default function Search() {
           </>
         ) : (
           <EmptyState
-            icon={<SearchIcon size={20} />}
+            icon={<SearchIcon size={20} weight="regular" />}
             title="Search resources and people"
             description='Try "database", "marketing", "graphic design", or "roleplay".'
           />
