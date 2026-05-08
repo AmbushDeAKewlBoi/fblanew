@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -26,7 +26,16 @@ export default function ResourceDetail() {
   const resource = resources.find(r => String(r.id) === String(id));
   const related = resource ? resources.filter(r => r.event === resource.event && r.id !== resource.id).slice(0, 3) : [];
   const [upvoted, setUpvoted] = useState(false);
+  const [upvoteCount, setUpvoteCount] = useState(resource?.upvoteCount || 0);
+  const [downloadCount, setDownloadCount] = useState(resource?.downloadCount || 0);
   const uploader = resource ? getUserById(resource.uploaderId) : null;
+
+  useEffect(() => {
+    if (!resource) return;
+    setUpvoteCount(resource.upvoteCount || 0);
+    setDownloadCount(resource.downloadCount || 0);
+    setUpvoted(false);
+  }, [resource?.id, resource?.upvoteCount, resource?.downloadCount]);
 
   if (loading) {
     return (
@@ -34,11 +43,11 @@ export default function ResourceDetail() {
         <div className="skeleton h-4 w-32 mb-6" />
         <div className="flex flex-col gap-8 lg:flex-row">
           <div className="flex-1 space-y-4">
-            <div className="skeleton h-64 rounded-2xl" />
+            <div className="skeleton h-64" style={{ borderRadius: 12 }} />
           </div>
           <div className="w-full lg:w-80 space-y-3">
             <div className="skeleton h-4 w-40" />
-            {[1, 2, 3].map(i => <div key={i} className="skeleton h-24 rounded-2xl" />)}
+            {[1, 2, 3].map(i => <div key={i} className="skeleton h-24" style={{ borderRadius: 12 }} />)}
           </div>
         </div>
       </div>
@@ -49,12 +58,12 @@ export default function ResourceDetail() {
     return (
       <PageTransition>
         <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border border-[var(--atlas-border)] bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]" style={{ borderRadius: 12 }}>
             <FileText size={24} weight="regular" className="text-[var(--atlas-muted)]" />
           </div>
           <h1 className="text-xl font-bold text-[var(--atlas-fg)]">Resource not found</h1>
-          <Link to="/dashboard" className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-navy-700 dark:text-navy-400 transition-colors hover:text-navy-600">
-            <ArrowLeft size={14} weight="regular" /> Back to Dashboard
+          <Link to="/dashboard" className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-[var(--atlas-accent)] transition-colors hover:text-[var(--atlas-fg)]">
+            <ArrowLeft size={14} weight="regular" /> Back to dashboard
           </Link>
         </div>
       </PageTransition>
@@ -65,22 +74,32 @@ export default function ResourceDetail() {
     try {
       const modifier = upvoted ? -1 : 1;
       setUpvoted(!upvoted);
+      setUpvoteCount((prev) => Math.max(0, prev + modifier));
       await updateDoc(doc(db, 'resources', resource.id), { upvoteCount: increment(modifier) });
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      setUpvoted((prev) => !prev);
+      setUpvoteCount(resource.upvoteCount || 0);
+      console.error(err);
+    }
   };
 
   const handleDownload = async () => {
+    if (!resource.downloadUrl) return;
+    setDownloadCount((prev) => prev + 1);
     try {
       await updateDoc(doc(db, 'resources', resource.id), { downloadCount: increment(1) });
-      if (resource.downloadUrl) window.open(resource.downloadUrl, '_blank');
-    } catch (err) { console.error(err); }
+      window.open(resource.downloadUrl, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      setDownloadCount(resource.downloadCount || 0);
+      console.error(err);
+    }
   };
 
   return (
     <PageTransition>
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <Link to={`/events/${resource.eventSlug}`} className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] dark:text-[var(--atlas-muted)] dark:hover:text-warm-200 transition-colors">
+          <Link to={`/events/${resource.eventSlug}`} className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--atlas-muted)] transition-colors hover:text-[var(--atlas-fg)]">
             <ArrowLeft size={14} weight="regular" /> {resource.event}
           </Link>
         </motion.div>
@@ -91,14 +110,14 @@ export default function ResourceDetail() {
             <div className="card-surface p-6 sm:p-8">
               {/* Badges */}
               <div className="flex flex-wrap items-center gap-2 mb-4">
-                <span className="rounded-lg bg-navy-500/10 px-3 py-1 text-xs font-semibold text-navy-700 dark:bg-navy-400/15 dark:text-navy-300">
+                <span className="atlas-chip atlas-chip-active">
                   {RESOURCE_TYPE_LABELS_LONG[resource.resourceType] || RESOURCE_TYPE_LABELS_LONG.other}
                 </span>
                 <VisibilityBadge level={resource.visibilityLevel} size="md" />
               </div>
 
               {/* Title */}
-              <h1 className="text-xl font-bold text-[var(--atlas-fg)] leading-snug sm:text-2xl dark:text-white">
+              <h1 className="text-xl font-bold text-[var(--atlas-fg)] leading-snug sm:text-2xl">
                 {resource.title}
               </h1>
 
@@ -107,7 +126,7 @@ export default function ResourceDetail() {
                 <span className="flex items-center gap-1.5">
                   <UserIcon size={14} weight="regular" />
                   {resource.isAnonymous ? 'Anonymous' : (
-                    <Link to={`/profile/${resource.uploaderId}`} className="hover:text-navy-700 dark:hover:text-navy-300 transition-colors">
+                    <Link to={`/profile/${resource.uploaderId}`} className="transition-colors hover:text-[var(--atlas-accent)]">
                       {uploader?.name || 'Community Member'}
                     </Link>
                   )}
@@ -135,10 +154,10 @@ export default function ResourceDetail() {
               {/* Stats */}
               <div className="mt-6 flex items-center gap-6 border-t border-[var(--atlas-border)] pt-6 dark:border-[var(--atlas-border)]">
                 <div className="flex items-center gap-1.5 text-sm text-[var(--atlas-muted)]">
-                  <ThumbsUp size={16} weight="regular" /> {resource.upvoteCount || 0} upvotes
+                  <ThumbsUp size={16} weight="regular" /> {upvoteCount} upvotes
                 </div>
                 <div className="flex items-center gap-1.5 text-sm text-[var(--atlas-muted)]">
-                  <Download size={16} weight="regular" /> {resource.downloadCount || 0} downloads
+                  <Download size={16} weight="regular" /> {downloadCount} downloads
                 </div>
                 <div className="flex items-center gap-1.5 text-sm text-[var(--atlas-muted)]">
                   <Eye size={16} weight="regular" /> {resource.viewCount || 0} views
@@ -147,18 +166,23 @@ export default function ResourceDetail() {
 
               {/* Actions */}
               <div className="mt-6 flex gap-3">
-                <motion.button whileTap={{ scale: 1.05 }} onClick={handleUpvote}
-                  className={`flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all duration-200 ${
+                <motion.button type="button" whileTap={{ scale: 0.98 }} onClick={handleUpvote}
+                  className={`atlas-btn ${
                     upvoted
-                      ? 'bg-emerald-500 text-white shadow-sm'
-                      : 'border border-[var(--atlas-border)] text-[var(--atlas-fg)] hover:border-warm-300 hover:shadow-sm dark:border-warm-700 text-[var(--atlas-muted)]'
+                      ? 'atlas-btn-primary'
+                      : 'atlas-btn-ghost'
                   }`}
                 >
-                  <ThumbsUp size={16} weight={upvoted ? 'fill' : 'regular'} className={upvoted ? 'text-white' : ''} />
+                  <ThumbsUp size={16} weight={upvoted ? 'fill' : 'regular'} />
                   {upvoted ? 'Upvoted' : 'Upvote'}
                 </motion.button>
-                <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={handleDownload}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-navy-800 to-navy-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-md dark:from-navy-600 dark:to-navy-500"
+                <motion.button
+                  type="button"
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleDownload}
+                  disabled={!resource.downloadUrl}
+                  className="atlas-btn atlas-btn-primary flex-1 disabled:cursor-not-allowed disabled:opacity-50"
+                  title={resource.downloadUrl ? 'Download resource' : 'File preview unavailable'}
                 >
                   <Download size={16} weight="regular" /> Download {(resource.fileExtension || '').replace('.', '').toUpperCase()} {resource.fileSizeBytes ? `(${formatFileSize(resource.fileSizeBytes)})` : ''}
                 </motion.button>
@@ -177,10 +201,10 @@ export default function ResourceDetail() {
                   <Link key={r.id} to={`/resource/${r.id}`}
                     className="card-surface block p-4 group"
                   >
-                    <h4 className="text-sm font-medium text-[var(--atlas-fg)] leading-snug transition-colors group-hover:text-navy-700 dark:text-warm-100 dark:group-hover:text-navy-300">
+                    <h4 className="text-sm font-medium text-[var(--atlas-fg)] leading-snug transition-colors group-hover:text-[var(--atlas-accent)]">
                       {r.title}
                     </h4>
-                    <div className="mt-2 flex items-center gap-3 text-xs text-[var(--atlas-muted)] dark:text-[var(--atlas-muted)]">
+                    <div className="mt-2 flex items-center gap-3 text-xs text-[var(--atlas-muted)]">
                       <span className="flex items-center gap-1"><ThumbsUp size={10} weight="regular" /> {r.upvoteCount || 0}</span>
                       <span className="flex items-center gap-1"><Download size={10} weight="regular" /> {r.downloadCount || 0}</span>
                     </div>
@@ -188,7 +212,7 @@ export default function ResourceDetail() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-[var(--atlas-muted)] dark:text-[var(--atlas-muted)]">No related resources yet.</p>
+              <p className="text-sm text-[var(--atlas-muted)]">No related resources yet.</p>
             )}
           </motion.div>
         </div>

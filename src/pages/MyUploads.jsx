@@ -118,6 +118,7 @@ export default function MyUploads() {
                       <ArrowSquareOut size={15} weight="regular" />
                     </Link>
                     <motion.button
+                      type="button"
                       whileTap={{ scale: 0.9 }}
                       onClick={() => handleDelete(r.id, r.storagePath)}
                       aria-label={`Delete ${r.title}`}

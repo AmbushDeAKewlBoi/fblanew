@@ -65,6 +65,7 @@ export default function PostCard({ post, currentProfile, getProfileById, onToggl
             {timeAgoShort(post.createdAt)}
             {canDelete && (
               <button 
+                type="button"
                 onClick={() => onDeletePost(post.id)}
                 className="text-[var(--atlas-muted)] hover:text-red-500 transition-colors"
                 title={isAuthor ? 'Delete your post' : 'Delete as Advisor'}
@@ -81,6 +82,7 @@ export default function PostCard({ post, currentProfile, getProfileById, onToggl
       <div className="atlas-divider mt-5" />
       <div className="mt-4 flex items-center gap-2">
         <motion.button
+          type="button"
           whileTap={{ scale: 0.96 }}
           onClick={() => onToggleLike(post.id)}
           aria-pressed={likedByCurrentUser}

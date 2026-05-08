@@ -12,15 +12,18 @@ const STATES = ['Virginia'];
 export default function SignupAdvisor() {
   const [form, setForm] = useState({ schoolName: '', region: '', state: '' });
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const { loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleGoogleSignup = async () => {
+    if (submitting) return;
     setError('');
     if (!form.schoolName || !form.region || !form.state) {
       setError('Please fill in all fields.');
       return;
     }
+    setSubmitting(true);
     const stateCode = form.state.substring(0, 2).toUpperCase();
     const regionCode = form.region.substring(0, 4).toUpperCase();
     const random = Math.random().toString(36).substring(2, 10).toUpperCase();
@@ -35,7 +38,10 @@ export default function SignupAdvisor() {
       generatedKey: key,
     });
     if (result.success) navigate('/dashboard');
-    else setError(result.error);
+    else {
+      setError(result.error || 'Chapter registration failed. Please try again.');
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -59,7 +65,9 @@ export default function SignupAdvisor() {
 
             {error && (
               <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                className="mb-6 rounded-xl bg-danger-light p-4 text-sm text-danger dark:bg-danger/10"
+                role="alert"
+                className="mb-6 border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-600 dark:text-red-400"
+                style={{ borderRadius: 10 }}
               >{error}</motion.div>
             )}
 
@@ -104,7 +112,8 @@ export default function SignupAdvisor() {
                 whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={handleGoogleSignup}
-                className="mt-2 flex w-full items-center justify-center gap-3 rounded-lg border border-[var(--atlas-border)] bg-[var(--atlas-elev)] px-6 py-3.5 text-sm font-semibold text-[var(--atlas-fg)] shadow-sm transition-all duration-200 hover:border-[var(--atlas-accent)] hover:shadow-md"
+                disabled={submitting}
+                className="mt-2 flex w-full items-center justify-center gap-3 rounded-lg border border-[var(--atlas-border)] bg-[var(--atlas-elev)] px-6 py-3.5 text-sm font-semibold text-[var(--atlas-fg)] shadow-sm transition-all duration-200 hover:border-[var(--atlas-accent)] hover:shadow-md disabled:cursor-wait disabled:opacity-60"
               >
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                   <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
@@ -112,15 +121,15 @@ export default function SignupAdvisor() {
                   <path d="M3.964 10.706A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.038l3.007-2.332z" fill="#FBBC05"/>
                   <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.962L3.964 7.294C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
                 </svg>
-                Sign in with Google to Register
+                {submitting ? 'Registering chapter...' : 'Continue with Google'}
               </motion.button>
             </div>
 
             <div className="mt-8 text-center">
               <p className="text-sm text-[var(--atlas-muted)]">
-                <Link to="/login" className="font-semibold text-navy-700 hover:text-navy-600 dark:text-navy-400 transition-colors">Sign in</Link>
+                <Link to="/login" className="font-semibold text-[var(--atlas-accent)] transition-colors hover:text-[var(--atlas-fg)]">Sign in</Link>
                 {' · '}
-                <Link to="/signup/student" className="font-semibold text-navy-700 hover:text-navy-600 dark:text-navy-400 transition-colors">Join as student</Link>
+                <Link to="/signup/student" className="font-semibold text-[var(--atlas-accent)] transition-colors hover:text-[var(--atlas-fg)]">Join as student</Link>
               </p>
             </div>
           </div>

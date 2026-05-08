@@ -96,12 +96,12 @@ export default function EventDetail() {
     return (
       <PageTransition>
         <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border border-[var(--atlas-border)] bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]" style={{ borderRadius: 12 }}>
             <MagnifyingGlass size={24} weight="regular" className="text-[var(--atlas-muted)]" />
           </div>
           <h1 className="text-xl font-bold text-[var(--atlas-fg)]">Event not found</h1>
-          <Link to="/events" className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-navy-700 dark:text-navy-400 transition-colors hover:text-navy-600">
-            <ArrowLeft size={14} weight="regular" /> Back to Events
+          <Link to="/events" className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-[var(--atlas-accent)] transition-colors hover:text-[var(--atlas-fg)]">
+            <ArrowLeft size={14} weight="regular" /> Back to events
           </Link>
         </div>
       </PageTransition>
@@ -178,6 +178,7 @@ export default function EventDetail() {
             const active = activeTab === tab.id;
             return (
               <button
+                type="button"
                 key={tab.id}
                 role="tab"
                 aria-selected={active}
@@ -197,13 +198,15 @@ export default function EventDetail() {
 
         {activeTab === 'resources' && (
           <motion.button
+            type="button"
             whileTap={{ scale: 0.97 }}
             onClick={() => setShowFilters(!showFilters)}
-            className="mb-4 flex items-center gap-2 rounded-xl border border-[var(--atlas-border)] px-4 py-2.5 text-sm font-medium text-[var(--atlas-fg)] lg:hidden dark:border-warm-700 text-[var(--atlas-muted)] transition-colors hover:border-warm-300"
+            className="mb-4 flex items-center gap-2 border border-[var(--atlas-border)] px-4 py-2.5 text-sm font-medium text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-accent)]/55 hover:text-[var(--atlas-fg)] lg:hidden"
+            style={{ borderRadius: 10 }}
           >
             <SlidersHorizontal size={16} weight="regular" /> Filters
             {activeFilterCount > 0 && (
-              <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-navy-800 text-xs font-semibold text-white dark:bg-navy-500">
+              <span className="ml-1 flex h-5 w-5 items-center justify-center bg-[var(--atlas-accent)] font-[family-name:var(--font-mono)] text-xs font-semibold text-white" style={{ borderRadius: 6 }}>
                 {activeFilterCount}
               </span>
             )}
@@ -212,10 +215,11 @@ export default function EventDetail() {
 
         <div className="flex gap-8">
           {activeTab === 'resources' && (
-            <div className={`${showFilters ? 'fixed inset-0 z-50 bg-black/30 lg:static lg:bg-transparent' : 'hidden lg:block'}`}>
-              <div className={`${showFilters ? 'absolute right-0 top-0 h-full w-80 overflow-y-auto bg-white p-6 shadow-xl lg:static lg:w-auto lg:shadow-none lg:p-0 dark:bg-[var(--atlas-surface)]' : ''}`}>
+            <div className={`${showFilters ? 'fixed inset-0 z-50 bg-[rgba(10,11,13,0.48)] lg:static lg:bg-transparent' : 'hidden lg:block'}`}>
+              <div className={`${showFilters ? 'absolute right-0 top-0 h-full w-80 overflow-y-auto bg-[var(--atlas-surface)] p-6 shadow-[0_24px_70px_-42px_rgba(61,109,118,0.7)] lg:static lg:w-auto lg:p-0 lg:shadow-none' : ''}`}>
                 {showFilters && (
                   <button
+                    type="button"
                     onClick={() => setShowFilters(false)}
                     className="mb-4 flex items-center gap-2 text-sm text-[var(--atlas-muted)] lg:hidden transition-colors hover:text-[var(--atlas-fg)]"
                   >
@@ -288,13 +292,14 @@ export default function EventDetail() {
                     animate={{ opacity: 1 }}
                     className="card-surface py-20 text-center"
                   >
-                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]">
+                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center border border-[var(--atlas-border)] bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]" style={{ borderRadius: 12 }}>
                       <MagnifyingGlass size={22} weight="regular" className="text-[var(--atlas-muted)]" />
                     </div>
                     <p className="text-[var(--atlas-muted)]">No resources match your filters.</p>
                     <button
+                      type="button"
                       onClick={() => setFilters({ types: [], visibility: [], tags: [], sort: 'recent' })}
-                      className="mt-3 text-sm font-semibold text-navy-700 hover:text-navy-600 dark:text-navy-400 transition-colors"
+                      className="mt-3 text-sm font-semibold text-[var(--atlas-accent)] transition-colors hover:text-[var(--atlas-fg)]"
                     >
                       Clear filters
                     </button>

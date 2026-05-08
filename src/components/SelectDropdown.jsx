@@ -47,13 +47,15 @@ export default function SelectDropdown({ value, onChange, options, placeholder =
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className={`flex w-full items-center justify-between rounded-xl border bg-white px-4 py-3 text-sm transition-all duration-200 ${
+        aria-expanded={open}
+        className={`flex w-full items-center justify-between border bg-[var(--atlas-surface)] px-4 py-3 text-sm text-[var(--atlas-fg)] transition-all duration-200 ${
           open
-            ? 'border-navy-400 ring-2 ring-navy-400/20 dark:border-navy-500 dark:ring-navy-500/20'
-            : 'border-[var(--atlas-border)] hover:border-warm-300 dark:border-warm-700 dark:hover:border-warm-600'
-        } dark:bg-[var(--atlas-surface)] dark:text-warm-100`}
+            ? 'border-[var(--atlas-accent)] ring-2 ring-[rgba(109,158,168,0.18)]'
+            : 'border-[var(--atlas-border)] hover:border-[var(--atlas-accent)]/55'
+        }`}
+        style={{ borderRadius: 8 }}
       >
-        <span className={value ? 'text-[var(--atlas-fg)] font-medium dark:text-warm-100 truncate max-w-[90%] text-left' : 'text-[var(--atlas-muted)] dark:text-[var(--atlas-muted)]'}>
+        <span className={value ? 'max-w-[90%] truncate text-left font-medium text-[var(--atlas-fg)]' : 'text-[var(--atlas-muted)]'}>
           {selectedLabel}
         </span>
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
@@ -68,10 +70,11 @@ export default function SelectDropdown({ value, onChange, options, placeholder =
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ type: 'spring', bounce: 0, duration: 0.2 }}
-            className="absolute z-50 mt-2 max-h-80 w-full overflow-hidden rounded-xl border border-[var(--atlas-border)] bg-white/95 p-1 backdrop-blur-xl shadow-xl dark:border-[var(--atlas-border)] dark:bg-[var(--atlas-surface)]/95 flex flex-col"
+            className="absolute z-50 mt-2 flex max-h-80 w-full flex-col overflow-hidden border border-[var(--atlas-border)] bg-[var(--atlas-surface)]/95 p-1 shadow-[0_18px_48px_-28px_rgba(36,50,51,0.7)] backdrop-blur-xl"
+            style={{ borderRadius: 12 }}
           >
             {searchable && (
-              <div className="sticky top-0 z-10 px-2 pt-2 pb-2 mb-1 border-b border-[var(--atlas-border)] dark:border-[var(--atlas-border)]">
+              <div className="sticky top-0 z-10 mb-1 border-b border-[var(--atlas-border)] px-2 pb-2 pt-2">
                 <div className="relative">
                   <MagnifyingGlass size={14} weight="regular" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)]" />
                   <input
@@ -79,7 +82,7 @@ export default function SelectDropdown({ value, onChange, options, placeholder =
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search..."
-                    className="w-full rounded-lg border border-[var(--atlas-border)] bg-[var(--atlas-bg)] py-1.5 pl-8 pr-3 text-sm text-[var(--atlas-fg)] placeholder:text-[var(--atlas-muted)] focus:border-navy-400 focus:bg-white focus:outline-none dark:border-warm-700 dark:bg-warm-950 dark:text-warm-100 dark:placeholder:text-[var(--atlas-muted)]"
+                    className="atlas-input py-1.5 pl-8 pr-3"
                     onClick={(e) => e.stopPropagation()}
                     autoFocus
                   />
@@ -100,14 +103,15 @@ export default function SelectDropdown({ value, onChange, options, placeholder =
                         onChange(optValue);
                         setOpen(false);
                       }}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm transition-all text-left ${
+                      className={`flex w-full items-center justify-between px-3 py-2.5 text-left text-sm transition-all ${
                         isSelected
-                          ? 'bg-navy-50 text-navy-700 font-semibold dark:bg-navy-900/40 dark:text-navy-300'
-                          : 'text-[var(--atlas-fg)] hover:bg-[var(--atlas-elev)] hover:text-[var(--atlas-fg)] text-[var(--atlas-muted)] dark:hover:bg-[var(--atlas-elev)] dark:hover:text-warm-100'
+                          ? 'bg-[rgba(61,109,118,0.14)] font-semibold text-[var(--atlas-fg)]'
+                          : 'text-[var(--atlas-muted)] hover:bg-[var(--atlas-elev)] hover:text-[var(--atlas-fg)]'
                       }`}
+                      style={{ borderRadius: 8 }}
                     >
                       <span className="truncate pr-4">{optLabel}</span>
-                      {isSelected && <Check size={14} className="text-navy-600 dark:text-navy-400 shrink-0" />}
+                      {isSelected && <Check size={14} className="shrink-0 text-[var(--atlas-accent)]" />}
                     </button>
                   );
                 })

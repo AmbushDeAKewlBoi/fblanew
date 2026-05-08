@@ -14,14 +14,14 @@ const TIME_FILTERS = ['All Time', 'This Month'];
 
 function RankBadge({ rank }) {
   const medalColors = {
-    1: 'bg-gradient-to-br from-amber-300 to-amber-500 text-amber-900 shadow-sm shadow-amber-200/50',
-    2: 'bg-gradient-to-br from-warm-300 to-warm-400 text-[var(--atlas-fg)] shadow-sm shadow-warm-200/50',
-    3: 'bg-gradient-to-br from-amber-600 to-amber-700 text-amber-100 shadow-sm shadow-amber-300/30',
+    1: 'border-[var(--atlas-gold)] bg-[rgba(184,154,82,0.16)] text-[var(--atlas-gold)]',
+    2: 'border-[var(--atlas-accent)]/55 bg-[rgba(61,109,118,0.12)] text-[var(--atlas-accent)] dark:bg-[rgba(109,158,168,0.16)]',
+    3: 'border-amber-500/55 bg-amber-500/10 text-amber-700 dark:text-amber-300',
   };
   if (rank <= 3) {
-    return <span className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs font-bold ${medalColors[rank]}`}>{rank}</span>;
+    return <span className={`flex h-8 w-8 items-center justify-center border font-[family-name:var(--font-mono)] text-xs font-bold ${medalColors[rank]}`} style={{ borderRadius: 8 }}>{rank}</span>;
   }
-  return <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--atlas-elev)] text-xs font-bold text-[var(--atlas-muted)] dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)]">{rank}</span>;
+  return <span className="flex h-8 w-8 items-center justify-center border border-[var(--atlas-border)] bg-[var(--atlas-elev)] font-[family-name:var(--font-mono)] text-xs font-bold text-[var(--atlas-muted)] dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)]" style={{ borderRadius: 8 }}>{rank}</span>;
 }
 
 export default function Leaderboard() {
@@ -69,8 +69,8 @@ export default function Leaderboard() {
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="mb-8 flex items-start gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 text-white shadow-lg shadow-amber-200/30">
-            <Trophy size={22} weight="regular" />
+          <div className="flex h-11 w-11 items-center justify-center border border-[var(--atlas-gold)]/55 bg-[rgba(184,154,82,0.12)] text-[var(--atlas-gold)]" style={{ borderRadius: 12 }}>
+            <Trophy size={22} weight="duotone" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[var(--atlas-fg)]">Leaderboard</h1>
@@ -81,12 +81,13 @@ export default function Leaderboard() {
         {/* Controls */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="mb-6 space-y-4">
           {/* Tabs */}
-          <div className="flex gap-1 rounded-2xl bg-[var(--atlas-elev)] p-1 dark:bg-[var(--atlas-elev)]">
+          <div className="atlas-panel flex gap-1 p-1">
             {TABS.map(t => (
-              <button key={t} onClick={() => setTab(t)}
-                className={`flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all duration-200 ${
-                  tab === t ? 'bg-white text-[var(--atlas-fg)] shadow-sm dark:bg-warm-700 dark:text-warm-100' : 'text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] dark:text-[var(--atlas-muted)] dark:hover:text-warm-200'
+              <button key={t} type="button" onClick={() => setTab(t)}
+                className={`flex-1 border-2 py-2.5 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-[0.16em] transition-all duration-200 ${
+                  tab === t ? 'border-[var(--atlas-accent)] bg-[rgba(61,109,118,0.10)] text-[var(--atlas-fg)] dark:bg-[rgba(109,158,168,0.14)]' : 'border-transparent text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)]'
                 }`}
+                style={{ borderRadius: 2 }}
               >{t}</button>
             ))}
           </div>
@@ -97,20 +98,22 @@ export default function Leaderboard() {
               {METRICS.map(m => {
                 const Icon = METRIC_ICONS[m];
                 return (
-                  <motion.button key={m} whileTap={{ scale: 0.95 }} onClick={() => setMetric(m)}
-                    className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold capitalize transition-all duration-200 ${
-                      metric === m ? 'bg-navy-800 text-white shadow-sm dark:bg-navy-600' : 'bg-white text-[var(--atlas-muted)] hover:bg-[var(--atlas-bg)] border border-[var(--atlas-border)] dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)] dark:border-warm-700'
+                  <motion.button key={m} type="button" whileTap={{ scale: 0.95 }} onClick={() => setMetric(m)}
+                    className={`flex items-center gap-1.5 border px-3.5 py-2 text-xs font-semibold capitalize transition-all duration-200 ${
+                      metric === m ? 'border-[var(--atlas-accent)] bg-[var(--atlas-accent)] text-white' : 'border-[var(--atlas-border)] bg-[var(--atlas-elev)] text-[var(--atlas-muted)] hover:border-[var(--atlas-accent)]/55 hover:text-[var(--atlas-fg)]'
                     }`}
+                    style={{ borderRadius: 10 }}
                   ><Icon size={13} weight="regular" /> {m}</motion.button>
                 );
               })}
             </div>
             <div className="flex gap-2">
               {TIME_FILTERS.map(tf => (
-                <button key={tf} onClick={() => setTimeFilter(tf)}
-                  className={`rounded-xl px-3.5 py-2 text-xs font-semibold transition-all duration-200 ${
-                    timeFilter === tf ? 'bg-warm-900 text-white dark:bg-warm-200 dark:text-[var(--atlas-fg)]' : 'text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] dark:text-[var(--atlas-muted)] dark:hover:text-warm-200'
+                <button key={tf} type="button" onClick={() => setTimeFilter(tf)}
+                  className={`border px-3.5 py-2 text-xs font-semibold transition-all duration-200 ${
+                    timeFilter === tf ? 'border-[var(--atlas-fg)] bg-[var(--atlas-fg)] text-[var(--atlas-bg)]' : 'border-transparent text-[var(--atlas-muted)] hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]'
                   }`}
+                  style={{ borderRadius: 10 }}
                 >{tf}</button>
               ))}
             </div>
@@ -146,18 +149,18 @@ export default function Leaderboard() {
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-[var(--atlas-fg)]">{name}</span>
                     {isCurrentUser && (
-                      <span className="rounded-lg bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">YOU</span>
+                      <span className="border border-[var(--atlas-gold)]/55 bg-[rgba(184,154,82,0.10)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--atlas-gold)]" style={{ borderRadius: 2 }}>You</span>
                     )}
                   </div>
                   {subtitle && <p className="text-xs text-[var(--atlas-muted)] dark:text-[var(--atlas-muted)]">{subtitle}</p>}
                 </div>
-                <div className={`col-span-2 text-right font-semibold ${metric === 'uploads' ? 'text-navy-700 dark:text-navy-300' : 'text-[var(--atlas-muted)]'}`}>
+                <div className={`col-span-2 text-right font-[family-name:var(--font-mono)] font-semibold tabular-nums ${metric === 'uploads' ? 'text-[var(--atlas-accent)]' : 'text-[var(--atlas-muted)]'}`}>
                   {item.metrics.totalUploads.toLocaleString()}
                 </div>
-                <div className={`col-span-2 text-right font-semibold ${metric === 'upvotes' ? 'text-navy-700 dark:text-navy-300' : 'text-[var(--atlas-muted)]'}`}>
+                <div className={`col-span-2 text-right font-[family-name:var(--font-mono)] font-semibold tabular-nums ${metric === 'upvotes' ? 'text-[var(--atlas-accent)]' : 'text-[var(--atlas-muted)]'}`}>
                   {item.metrics.totalUpvotes.toLocaleString()}
                 </div>
-                <div className={`col-span-2 text-right font-semibold ${metric === 'downloads' ? 'text-navy-700 dark:text-navy-300' : 'text-[var(--atlas-muted)]'}`}>
+                <div className={`col-span-2 text-right font-[family-name:var(--font-mono)] font-semibold tabular-nums ${metric === 'downloads' ? 'text-[var(--atlas-accent)]' : 'text-[var(--atlas-muted)]'}`}>
                   {item.metrics.totalDownloads.toLocaleString()}
                 </div>
               </motion.div>

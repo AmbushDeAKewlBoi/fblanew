@@ -28,6 +28,7 @@ function FilterSection({ title, children, defaultOpen = true }) {
   return (
     <div className="border-b border-[var(--atlas-border)] pb-4 dark:border-[var(--atlas-border)] last:border-0">
       <button
+        type="button"
         onClick={() => setOpen(!open)}
         className="flex w-full items-center justify-between py-2 text-sm font-semibold text-[var(--atlas-fg)] transition-colors"
       >
@@ -55,11 +56,17 @@ function FilterSection({ title, children, defaultOpen = true }) {
 
 function CheckboxItem({ label, checked, onChange }) {
   return (
-    <label className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 cursor-pointer hover:bg-[var(--atlas-bg)] dark:hover:bg-[var(--atlas-elev)]/40 transition-colors group">
+    <button
+      type="button"
+      aria-pressed={checked}
+      onClick={onChange}
+      className="group flex w-full cursor-pointer items-center gap-2.5 px-2 py-1.5 text-left transition-colors hover:bg-[var(--atlas-bg)] dark:hover:bg-[var(--atlas-elev)]/40"
+      style={{ borderRadius: 8 }}
+    >
       <div className={`flex h-4.5 w-4.5 items-center justify-center rounded-md border-2 transition-all duration-200 ${
         checked
-          ? 'border-navy-600 bg-navy-600 dark:border-navy-400 dark:bg-navy-400'
-          : 'border-warm-300 group-hover:border-warm-400 dark:border-warm-600'
+          ? 'border-[var(--atlas-accent)] bg-[rgba(61,109,118,0.22)]'
+          : 'border-[var(--atlas-border)] group-hover:border-[var(--atlas-accent)]/55'
       }`}>
         <motion.svg
           initial={false}
@@ -67,11 +74,11 @@ function CheckboxItem({ label, checked, onChange }) {
           transition={{ duration: 0.15 }}
           width="10" height="10" viewBox="0 0 10 10" fill="none"
         >
-          <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M2 5L4 7L8 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </motion.svg>
       </div>
       <span className="text-sm text-[var(--atlas-muted)]">{label}</span>
-    </label>
+    </button>
   );
 }
 
@@ -93,8 +100,9 @@ export default function FilterSidebar({ filters, setFilters, tagOptions = [] }) 
         <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--atlas-muted)] dark:text-[var(--atlas-muted)]">Filters</h3>
         {activeCount > 0 && (
           <button
+            type="button"
             onClick={() => setFilters({ types: [], visibility: [], tags: [], sort: 'recent' })}
-            className="text-xs font-medium text-navy-600 hover:text-navy-700 dark:text-navy-400 dark:hover:text-navy-300 transition-colors"
+            className="text-xs font-medium text-[var(--atlas-accent)] transition-colors hover:text-[var(--atlas-fg)]"
           >
             Clear all ({activeCount})
           </button>
@@ -106,11 +114,12 @@ export default function FilterSidebar({ filters, setFilters, tagOptions = [] }) 
         <div className="flex flex-col gap-1">
           {SORT_OPTIONS.map(opt => (
             <button
+              type="button"
               key={opt.value}
               onClick={() => setFilters(prev => ({ ...prev, sort: opt.value }))}
               className={`flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm transition-all duration-200 ${
                 filters.sort === opt.value
-                  ? 'bg-navy-800/10 text-navy-800 font-medium dark:bg-navy-400/15 dark:text-navy-300'
+                  ? 'bg-[rgba(61,109,118,0.14)] text-[var(--atlas-fg)] font-medium'
                   : 'text-[var(--atlas-muted)] hover:bg-[var(--atlas-bg)] dark:text-[var(--atlas-muted)] dark:hover:bg-[var(--atlas-elev)]/40'
               }`}
             >
@@ -151,12 +160,13 @@ export default function FilterSidebar({ filters, setFilters, tagOptions = [] }) 
           <div className="flex flex-wrap gap-1.5 pt-1">
             {tagOptions.map(tag => (
               <button
+                type="button"
                 key={tag}
                 onClick={() => toggleFilter('tags', tag)}
                 className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-all duration-200 ${
                   filters.tags.includes(tag)
-                    ? 'bg-navy-800 text-white dark:bg-navy-500'
-                    : 'bg-[var(--atlas-elev)] text-[var(--atlas-muted)] hover:bg-warm-200 dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)] dark:hover:bg-warm-700'
+                    ? 'bg-[rgba(61,109,118,0.18)] text-[var(--atlas-fg)]'
+                    : 'bg-[var(--atlas-elev)] text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)]'
                 }`}
               >
                 {tag}

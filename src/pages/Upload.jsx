@@ -112,7 +112,6 @@ export default function Upload() {
 
     setUploading(true);
     try {
-      // ── Step 1: Upload file to Supabase Storage ──
       const extension = file.name.split('.').pop();
       const filename = `${user.id}/${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${extension}`;
 
@@ -124,18 +123,16 @@ export default function Upload() {
         });
 
       if (uploadError) {
-        console.error('🔴 [UPLOAD] Supabase upload error:', uploadError);
+        console.error('[UPLOAD] Supabase upload error:', uploadError);
         throw new Error(`Storage upload failed: ${uploadError.message}`);
       }
 
-      // ── Step 2: Get public URL ──
       const { data: urlData } = supabase.storage
         .from(STORAGE_BUCKET)
         .getPublicUrl(uploadData.path);
 
       const downloadURL = urlData.publicUrl;
 
-      // ── Step 3: Save metadata to Firestore ──
       const newResource = {
         title: DOMPurify.sanitize(form.title),
         description: DOMPurify.sanitize(form.description),
@@ -156,10 +153,10 @@ export default function Upload() {
         createdAt: new Date().toISOString(),
       };
 
-      const docRef = await addDoc(collection(db, 'resources'), newResource);
+      await addDoc(collection(db, 'resources'), newResource);
       setSubmitted(true);
     } catch (err) {
-      console.error('🔴 [UPLOAD] Error:', err);
+      console.error('[UPLOAD] Error:', err);
       setError('Failed to upload the resource due to a network or server error. Please try again later.');
     } finally {
       setUploading(false);
@@ -178,6 +175,7 @@ export default function Upload() {
             action={(
               <div className="flex flex-wrap justify-center gap-2">
                 <button
+                  type="button"
                   onClick={() => {
                     setSubmitted(false);
                     setForm({ title: '', description: '', event: '', resourceType: '', tags: [], visibilityLevel: 'region', isAnonymous: true });
@@ -188,6 +186,7 @@ export default function Upload() {
                   Upload another
                 </button>
                 <button
+                  type="button"
                   onClick={() => navigate('/my-uploads')}
                   className="atlas-btn atlas-btn-primary"
                 >

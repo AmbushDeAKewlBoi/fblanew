@@ -90,6 +90,7 @@ export default function Connections() {
                     </div>
                     <div className="mt-4 flex gap-2">
                       <button
+                        type="button"
                         onClick={() => acceptConnectionRequest(profile.id)}
                         className="atlas-btn atlas-btn-primary px-3 py-1.5 text-[11px]"
                       >
@@ -97,6 +98,7 @@ export default function Connections() {
                         Accept
                       </button>
                       <button
+                        type="button"
                         onClick={() => declineConnectionRequest(profile.id)}
                         className="atlas-btn atlas-btn-ghost px-3 py-1.5 text-[11px]"
                       >

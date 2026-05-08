@@ -10,6 +10,7 @@ export default function SignupStudent() {
   const [keyValid, setKeyValid] = useState(null);
   const [chapterLabel, setChapterLabel] = useState('');
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const { loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
@@ -31,11 +32,16 @@ export default function SignupStudent() {
   };
 
   const handleSignup = async () => {
+    if (submitting) return;
     if (!chapterKey.trim() || !keyValid) { setError('Please enter a valid chapter key.'); return; }
     setError('');
+    setSubmitting(true);
     const result = await loginWithGoogle({ isAdvisor: false, chapterId: 1, chapterKey: chapterKey.trim().toUpperCase() });
     if (result.success) { navigate('/dashboard'); }
-    else { setError(result.error || 'Signup failed.'); }
+    else {
+      setError(result.error || 'Signup failed.');
+      setSubmitting(false);
+    }
   };
 
   const fillDemo = () => validateKey('VA-CENT-A1B2');
@@ -61,7 +67,9 @@ export default function SignupStudent() {
 
             {error && (
               <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                className="mb-6 rounded-xl bg-danger-light p-4 text-sm text-danger dark:bg-danger/10"
+                role="alert"
+                className="mb-6 border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-600 dark:text-red-400"
+                style={{ borderRadius: 10 }}
               >{error}</motion.div>
             )}
 
@@ -95,7 +103,7 @@ export default function SignupStudent() {
               </div>
               {keyValid === true && chapterLabel && (
                 <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 text-sm text-emerald-600 dark:text-emerald-400 font-medium">
-                  ✓ {chapterLabel}
+                  Valid key: {chapterLabel}
                 </motion.p>
               )}
               {keyValid === false && (
@@ -105,6 +113,7 @@ export default function SignupStudent() {
 
             {/* Demo key hint */}
             <button
+              type="button"
               onClick={fillDemo}
               className="mb-6 flex w-full items-center gap-2 rounded-lg border border-[var(--atlas-gold)]/35 bg-[rgba(184,154,82,0.10)] px-4 py-3 text-sm text-[var(--atlas-gold)] transition-colors hover:bg-[rgba(184,154,82,0.16)]"
             >
@@ -114,15 +123,17 @@ export default function SignupStudent() {
 
             {/* Google Sign Up */}
             <motion.button
+              type="button"
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleSignup}
-              disabled={!keyValid}
-              className={`flex w-full items-center justify-center gap-3 rounded-xl px-6 py-3.5 text-sm font-semibold shadow-sm transition-all duration-200 ${
+              disabled={!keyValid || submitting}
+              className={`flex w-full items-center justify-center gap-3 px-6 py-3.5 text-sm font-semibold shadow-sm transition-all duration-200 ${
                 keyValid
-                  ? 'border border-[var(--atlas-border)] bg-white text-[var(--atlas-fg)] hover:border-warm-300 hover:shadow-md dark:border-warm-700 dark:bg-[var(--atlas-elev)] dark:text-warm-200'
+                  ? 'border border-[var(--atlas-border)] bg-[var(--atlas-elev)] text-[var(--atlas-fg)] hover:border-[var(--atlas-accent)] hover:shadow-md'
                   : 'border border-[var(--atlas-border)] bg-[var(--atlas-bg)] text-[var(--atlas-muted)] cursor-not-allowed dark:border-[var(--atlas-border)] dark:bg-[var(--atlas-surface)] dark:text-[var(--atlas-muted)]'
               }`}
+              style={{ borderRadius: 10 }}
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
@@ -130,19 +141,19 @@ export default function SignupStudent() {
                 <path d="M3.964 10.706A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.038l3.007-2.332z" fill="#FBBC05"/>
                 <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.962L3.964 7.294C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
               </svg>
-              Sign up with Google
+              {submitting ? 'Creating account...' : 'Sign up with Google'}
             </motion.button>
 
             <div className="mt-8 text-center">
               <p className="text-sm text-[var(--atlas-muted)]">
                 Already have an account?{' '}
-                <Link to="/login" className="font-semibold text-navy-700 hover:text-navy-600 dark:text-navy-400 transition-colors">
+                <Link to="/login" className="font-semibold text-[var(--atlas-accent)] transition-colors hover:text-[var(--atlas-fg)]">
                   Sign in
                 </Link>
               </p>
               <p className="mt-2 text-sm text-[var(--atlas-muted)]">
                 <Link to="/signup/advisor" className="font-medium text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] dark:text-[var(--atlas-muted)] transition-colors">
-                  Register as an advisor →
+                  Register as an advisor
                 </Link>
               </p>
             </div>

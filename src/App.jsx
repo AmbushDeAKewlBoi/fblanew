@@ -81,7 +81,7 @@ function ProtectedRoute({ children }) {
           <p className="mb-8 text-sm leading-relaxed text-[var(--atlas-muted)]">
             Your access to this chapter has been revoked by an administrator due to a violation of community guidelines. You can no longer access the platform.
           </p>
-          <button onClick={logout} className="atlas-btn atlas-btn-ghost w-full">Sign Out</button>
+          <button type="button" onClick={logout} className="atlas-btn atlas-btn-ghost w-full">Sign Out</button>
         </div>
       </div>
     );

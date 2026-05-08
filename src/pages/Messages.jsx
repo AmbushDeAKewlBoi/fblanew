@@ -71,6 +71,7 @@ export default function Messages() {
                 return (
                   <li key={thread.profileId}>
                     <button
+                      type="button"
                       onClick={() => setSelectedProfileId(thread.profileId)}
                       className={`w-full border-2 p-3 text-left transition ${
                         active

@@ -49,6 +49,7 @@ export default function ProfilePreviewCard({
           <Badge tone="warn" icon={<Clock size={11} weight="regular" />}>Pending</Badge>
         ) : (
           <button
+            type="button"
             onClick={onAction}
             className="atlas-btn atlas-btn-primary px-3 py-1.5 text-[11px]"
           >

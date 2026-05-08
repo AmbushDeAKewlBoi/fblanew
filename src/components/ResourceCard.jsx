@@ -37,7 +37,9 @@ export default function ResourceCard({ resource }) {
   const handleDownload = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!resource.downloadUrl) return;
     setDownloadCount(prev => prev + 1);
+    window.open(resource.downloadUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -47,11 +49,9 @@ export default function ResourceCard({ resource }) {
       whileHover={{ y: -3, transition: { duration: 0.2, ease: 'easeOut' } }}
       className="card-surface group relative flex flex-col overflow-hidden"
     >
-      {/* Top accent gradient — reveals on hover */}
       <div className="h-0.5 w-full bg-[var(--atlas-accent)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
       <Link to={`/resource/${resource.id}`} className="flex flex-1 flex-col p-5">
-        {/* Header badges */}
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <span className={`inline-flex items-center px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] font-bold uppercase tracking-[0.12em] ${TYPE_COLORS[resource.resourceType] || TYPE_COLORS.other}`}>
             {RESOURCE_TYPE_LABELS[resource.resourceType] || RESOURCE_TYPE_LABELS.other}
@@ -59,17 +59,14 @@ export default function ResourceCard({ resource }) {
           <VisibilityBadge level={resource.visibilityLevel} />
         </div>
 
-        {/* Title */}
         <h3 className="mb-2 text-[15px] font-bold leading-snug text-[var(--atlas-fg)] transition-colors group-hover:text-[var(--atlas-accent)] line-clamp-2">
           {resource.title}
         </h3>
 
-        {/* Description */}
         <p className="mb-3 flex-1 text-sm leading-relaxed text-[var(--atlas-muted)] line-clamp-2">
           {resource.description}
         </p>
 
-        {/* Tags */}
         <div className="mb-4 flex flex-wrap gap-1.5">
           {(resource.tags || []).slice(0, 3).map(tag => (
             <span key={tag} className="border border-[var(--atlas-border)] bg-[var(--atlas-surface)] px-2 py-0.5 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wide text-[var(--atlas-muted)] transition-colors">
@@ -81,15 +78,12 @@ export default function ResourceCard({ resource }) {
           )}
         </div>
 
-        {/* Meta row */}
         <div className="mb-3 flex items-center gap-2 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-wide text-[var(--atlas-muted)]">
           <span className="flex items-center gap-1">
             <UserIcon size={11} weight="regular" />
-            {resource.isAnonymous ? 'Anonymous' : (
-              <Link to={`/profile/${resource.uploaderId}`} className="text-[var(--atlas-fg)] transition-colors hover:text-[var(--atlas-accent)]">
-                {uploader?.name}
-              </Link>
-            )}
+            <span className="text-[var(--atlas-fg)]">
+              {resource.isAnonymous ? 'Anonymous' : uploader?.name}
+            </span>
           </span>
           <span className="text-[var(--atlas-border)]">·</span>
           <span className="truncate">{chapter?.name}</span>
@@ -101,9 +95,9 @@ export default function ResourceCard({ resource }) {
         </div>
       </Link>
 
-      {/* Actions footer */}
       <div className="flex items-center gap-2 border-t border-[var(--atlas-border)] px-5 py-3">
         <motion.button
+          type="button"
           onClick={handleUpvote}
           whileTap={{ scale: 1.15 }}
           className={`flex items-center gap-1.5 border px-3 py-1.5 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-wide transition-all duration-200 ${
@@ -116,9 +110,12 @@ export default function ResourceCard({ resource }) {
           {upvoteCount}
         </motion.button>
         <motion.button
+          type="button"
           onClick={handleDownload}
+          disabled={!resource.downloadUrl}
           whileTap={{ scale: 1.1 }}
-          className="flex items-center gap-1.5 border border-transparent px-3 py-1.5 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-wide text-[var(--atlas-muted)] transition-all duration-200 hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]"
+          className="flex items-center gap-1.5 border border-transparent px-3 py-1.5 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-wide text-[var(--atlas-muted)] transition-all duration-200 hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)] disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:border-transparent disabled:hover:text-[var(--atlas-muted)]"
+          title={resource.downloadUrl ? 'Download resource' : 'File preview unavailable'}
         >
           <Download size={13} weight="regular" />
           {downloadCount}

@@ -40,10 +40,9 @@ export default function Events() {
   return (
     <PageTransition>
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        {/* Header */}
         <motion.div {...fadeUp} transition={{ duration: 0.4 }} className="mb-8">
           <div className="flex items-center gap-3 mb-1">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-navy-600 to-navy-800 text-white shadow-lg">
+            <div className="flex h-10 w-10 items-center justify-center border border-[var(--atlas-accent)]/45 bg-[rgba(61,109,118,0.12)] text-[var(--atlas-accent)]" style={{ borderRadius: 10 }}>
               <BookOpen size={20} weight="regular" />
             </div>
             <div>
@@ -53,29 +52,29 @@ export default function Events() {
           </div>
         </motion.div>
 
-        {/* Search + Filters */}
         <motion.div {...fadeUp} transition={{ duration: 0.4, delay: 0.1 }} className="mb-6 flex flex-col gap-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <div className="relative flex-1 max-w-md group">
-              <MagnifyingGlass size={15} weight="regular" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)] transition-colors group-focus-within:text-navy-500" />
+              <MagnifyingGlass size={15} weight="regular" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--atlas-muted)] transition-colors group-focus-within:text-[var(--atlas-accent)]" />
               <input
                 type="text"
                 placeholder="Search events..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-xl border border-[var(--atlas-border)] bg-white py-2.5 pl-10 pr-4 text-sm text-[var(--atlas-fg)] placeholder:text-[var(--atlas-muted)] transition-all duration-200 focus:border-navy-400 focus:outline-none focus:ring-2 focus:ring-navy-400/20 dark:border-[var(--atlas-border)] dark:bg-[var(--atlas-surface)] dark:text-warm-100 dark:focus:border-navy-500"
+                className="atlas-input py-2.5 pl-10 pr-4"
               />
             </div>
             <div className="flex flex-wrap gap-2">
               {EVENT_CATEGORIES.map(cat => (
                 <motion.button
                   key={cat}
+                  type="button"
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setCategory(cat)}
-                  className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                  className={`atlas-chip transition-all duration-200 ${
                     category === cat
-                      ? 'bg-navy-800 text-white shadow-sm dark:bg-navy-600'
-                      : 'bg-[var(--atlas-elev)] text-[var(--atlas-muted)] hover:bg-warm-200 dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)] dark:hover:bg-warm-700'
+                      ? 'atlas-chip-active'
+                      : 'hover:border-[var(--atlas-accent)]/45 hover:text-[var(--atlas-fg)]'
                   }`}
                 >
                   {cat}
@@ -88,12 +87,13 @@ export default function Events() {
             {EVENT_TYPES.map(type => (
               <motion.button
                 key={type}
+                type="button"
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setEventType(type)}
-                className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                className={`atlas-chip transition-all duration-200 ${
                   eventType === type
-                    ? 'bg-navy-800 text-white shadow-sm dark:bg-navy-600'
-                    : 'bg-[var(--atlas-elev)] text-[var(--atlas-muted)] hover:bg-warm-200 dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)] dark:hover:bg-warm-700'
+                    ? 'atlas-chip-active'
+                    : 'hover:border-[var(--atlas-accent)]/45 hover:text-[var(--atlas-fg)]'
                 }`}
               >
                 {type}
@@ -102,12 +102,10 @@ export default function Events() {
           </div>
         </motion.div>
 
-        {/* Results count */}
         <motion.p {...fadeUp} transition={{ duration: 0.4, delay: 0.15 }} className="mb-5 text-sm text-[var(--atlas-muted)]">
           {filtered.length} event{filtered.length !== 1 ? 's' : ''}
         </motion.p>
 
-        {/* Events Grid */}
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filtered.map((event, i) => {
             const count = resourceCountsByEvent.get(event.name) || 0;
@@ -122,19 +120,19 @@ export default function Events() {
                   to={`/events/${event.slug}`}
                   className="card-surface group flex items-start gap-3 p-4"
                 >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-500/10 text-navy-700 transition-colors group-hover:bg-navy-500/15 dark:bg-navy-400/10 dark:text-navy-300">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-[var(--atlas-border)] bg-[var(--atlas-surface)] text-[var(--atlas-accent)] transition-colors group-hover:border-[var(--atlas-accent)]/50" style={{ borderRadius: 10 }}>
                     <GridFour size={18} weight="regular" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-sm font-semibold text-[var(--atlas-fg)] leading-snug transition-colors group-hover:text-navy-700 dark:text-warm-100 dark:group-hover:text-navy-300">
+                    <h3 className="text-sm font-semibold text-[var(--atlas-fg)] leading-snug transition-colors group-hover:text-[var(--atlas-accent)]">
                       {event.name}
                     </h3>
                     <div className="mt-1.5 flex items-center gap-2">
-                      <span className="rounded-lg bg-[var(--atlas-elev)] px-2 py-0.5 text-xs font-medium text-[var(--atlas-muted)] dark:bg-[var(--atlas-elev)] dark:text-[var(--atlas-muted)]">
+                      <span className="atlas-chip px-2 py-0.5 text-[10px]">
                         {event.category}
                       </span>
                       {count > 0 && (
-                        <span className="text-xs text-[var(--atlas-muted)] dark:text-[var(--atlas-muted)]">
+                        <span className="text-xs text-[var(--atlas-muted)]">
                           {count} resource{count !== 1 ? 's' : ''}
                         </span>
                       )}
@@ -152,7 +150,7 @@ export default function Events() {
             animate={{ opacity: 1 }}
             className="py-20 text-center"
           >
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--atlas-elev)] dark:bg-[var(--atlas-elev)]">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border border-[var(--atlas-border)] bg-[var(--atlas-elev)]" style={{ borderRadius: 12 }}>
               <MagnifyingGlass size={24} weight="regular" className="text-[var(--atlas-muted)]" />
             </div>
             <p className="text-[var(--atlas-muted)]">No events match your search.</p>

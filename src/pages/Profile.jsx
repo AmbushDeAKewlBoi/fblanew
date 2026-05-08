@@ -60,6 +60,7 @@ export default function Profile() {
             !isSelf && (
               <>
                 <button
+                  type="button"
                   onClick={() => sendConnectionRequest(profile.id)}
                   disabled={isConnected || pending}
                   className="atlas-btn atlas-btn-primary disabled:cursor-not-allowed disabled:opacity-60"

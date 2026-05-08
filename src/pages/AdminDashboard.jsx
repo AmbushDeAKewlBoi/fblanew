@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   Copy,
   Check,
@@ -40,6 +40,8 @@ export default function AdminDashboard() {
   const { user, chapter } = useAuth();
   const [activeTab, setActiveTab] = useState('resources');
   const [keyCopied, setKeyCopied] = useState(false);
+  const [chapterKey, setChapterKey] = useState('');
+  const [keyRegenerating, setKeyRegenerating] = useState(false);
   const [hiddenIds, setHiddenIds] = useState([]);
   const [deletedIds, setDeletedIds] = useState([]);
   const { resources, deleteResource } = useResources();
@@ -91,6 +93,10 @@ export default function AdminDashboard() {
     return () => unsubscribe();
   }, [chapter?.id]);
 
+  useEffect(() => {
+    setChapterKey(chapter?.masterKey || '');
+  }, [chapter?.masterKey]);
+
   const chapterResources = chapter
     ? resources.filter((r) => r.chapterId === chapter.id && !deletedIds.includes(r.id))
     : [];
@@ -106,9 +112,27 @@ export default function AdminDashboard() {
   );
 
   const copyKey = () => {
-    navigator.clipboard.writeText(chapter?.masterKey || '');
+    navigator.clipboard.writeText(chapterKey || '');
     setKeyCopied(true);
     setTimeout(() => setKeyCopied(false), 2000);
+  };
+
+  const regenerateKey = async () => {
+    if (!user?.id || keyRegenerating) return;
+    const stateCode = (chapter?.state || 'FBLA').replace(/[^A-Z]/gi, '').slice(0, 4).toUpperCase().padEnd(4, 'X');
+    const random = Math.random().toString(36).slice(2, 10).toUpperCase();
+    const nextKey = `${stateCode}-${random.slice(0, 4)}-${random.slice(4, 8)}`;
+    setKeyRegenerating(true);
+    const previousKey = chapterKey;
+    setChapterKey(nextKey);
+    try {
+      await updateDoc(doc(db, 'users', user.id), { chapterKey: nextKey });
+    } catch (err) {
+      console.error(err);
+      setChapterKey(previousKey);
+    } finally {
+      setKeyRegenerating(false);
+    }
   };
 
   const handleDelete = async (id, storagePath) => {
@@ -158,9 +182,10 @@ export default function AdminDashboard() {
               <p className="atlas-kicker mb-1.5">Chapter key</p>
               <div className="flex items-center gap-2">
                 <code className="font-[family-name:var(--font-mono)] text-lg font-bold tracking-wide text-[var(--atlas-accent)]">
-                  {chapter?.masterKey}
+                  {chapterKey}
                 </code>
                 <motion.button
+                  type="button"
                   whileTap={{ scale: 0.9 }}
                   onClick={copyKey}
                   aria-label="Copy chapter key"
@@ -171,8 +196,13 @@ export default function AdminDashboard() {
                 </motion.button>
               </div>
             </div>
-            <button className="atlas-btn atlas-btn-ghost">
-              <ArrowsClockwise size={13} weight="regular" /> Regenerate
+            <button
+              type="button"
+              onClick={regenerateKey}
+              disabled={keyRegenerating}
+              className="atlas-btn atlas-btn-ghost disabled:cursor-wait disabled:opacity-60"
+            >
+              <ArrowsClockwise size={13} weight="regular" /> {keyRegenerating ? 'Updating' : 'Regenerate'}
             </button>
           </div>
         </motion.div>
@@ -192,6 +222,7 @@ export default function AdminDashboard() {
             const active = activeTab === tab.id;
             return (
               <button
+                type="button"
                 key={tab.id}
                 role="tab"
                 aria-selected={active}
@@ -255,6 +286,7 @@ export default function AdminDashboard() {
                           <ArrowSquareOut size={15} weight="regular" />
                         </Link>
                         <motion.button
+                          type="button"
                           whileTap={{ scale: 0.9 }}
                           onClick={() => setHiddenIds((prev) => prev.includes(r.id) ? prev.filter((id) => id !== r.id) : [...prev, r.id])}
                           aria-label={hidden ? 'Unhide' : 'Hide'}
@@ -264,6 +296,7 @@ export default function AdminDashboard() {
                           {hidden ? <Eye size={15} weight="regular" /> : <EyeSlash size={15} weight="regular" />}
                         </motion.button>
                         <motion.button
+                          type="button"
                           whileTap={{ scale: 0.9 }}
                           onClick={() => handleDelete(r.id, r.storagePath)}
                           aria-label="Delete resource"
@@ -323,7 +356,13 @@ export default function AdminDashboard() {
                          <Badge>Active</Badge>}
                       </div>
                       <div className="col-span-1 text-right">
-                          <button onClick={() => setOpenMenuId(menuOpen ? null : s.id)} className="p-1.5 text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] transition-colors">
+                          <button
+                            type="button"
+                            onClick={() => setOpenMenuId(menuOpen ? null : s.id)}
+                            className="p-1.5 text-[var(--atlas-muted)] transition-colors hover:text-[var(--atlas-fg)]"
+                            aria-expanded={menuOpen}
+                            aria-label={`Open actions for ${s.name}`}
+                          >
                             <DotsThreeVertical size={16} weight="bold" />
                           </button>
                           <AnimatePresence>
@@ -332,32 +371,33 @@ export default function AdminDashboard() {
                                   initial={{ opacity: 0, scale: 0.95, y: -4 }} 
                                   animate={{ opacity: 1, scale: 1, y: 0 }} 
                                   exit={{ opacity: 0, scale: 0.95, y: -4 }} 
-                                  className="absolute right-6 top-10 mt-1 w-48 rounded bg-[var(--atlas-elev)] p-1 shadow-lg border border-[var(--atlas-border)] z-10 text-left"
+                                  className="absolute right-6 top-10 z-10 mt-1 w-52 border border-[var(--atlas-border)] bg-[var(--atlas-elev)] p-1 text-left shadow-[0_18px_45px_-30px_rgba(61,109,118,0.55)]"
+                                  style={{ borderRadius: 10 }}
                                 >
                                   {isPending && (
-                                    <button onClick={() => handleStudentAction(s.id, 'accept')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
+                                    <button type="button" onClick={() => handleStudentAction(s.id, 'accept')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] transition-colors hover:bg-[var(--atlas-surface)]">
                                       <CheckCircle size={14} weight="regular" className="text-emerald-500" /> Accept
                                     </button>
                                   )}
                                   
                                   {user?.isAdvisor && !isPending && s.role !== 'officer' && (
-                                    <button onClick={() => handleStudentAction(s.id, 'promote')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
-                                      <ArrowCircleUp size={14} weight="regular" className="text-[var(--atlas-accent)]" /> Promote to Officer
+                                    <button type="button" onClick={() => handleStudentAction(s.id, 'promote')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] transition-colors hover:bg-[var(--atlas-surface)]">
+                                      <ArrowCircleUp size={14} weight="regular" className="text-[var(--atlas-accent)]" /> Promote to officer
                                     </button>
                                   )}
                                   
                                   {user?.isAdvisor && s.role === 'officer' && (
-                                    <button onClick={() => handleStudentAction(s.id, 'demote')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
-                                      <ArrowCircleDown size={14} weight="regular" className="text-amber-500" /> Demote to Student
+                                    <button type="button" onClick={() => handleStudentAction(s.id, 'demote')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] transition-colors hover:bg-[var(--atlas-surface)]">
+                                      <ArrowCircleDown size={14} weight="regular" className="text-amber-500" /> Demote to student
                                     </button>
                                   )}
                                   
                                   {isTimedOut ? (
-                                    <button onClick={() => handleStudentAction(s.id, 'untimeout')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
-                                      <Play size={14} weight="regular" className="text-emerald-500" /> Remove Timeout
+                                    <button type="button" onClick={() => handleStudentAction(s.id, 'untimeout')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] transition-colors hover:bg-[var(--atlas-surface)]">
+                                      <Play size={14} weight="regular" className="text-emerald-500" /> Remove timeout
                                     </button>
                                   ) : !isPending && (
-                                    <button onClick={() => handleStudentAction(s.id, 'timeout')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] hover:bg-[var(--atlas-surface)]">
+                                    <button type="button" onClick={() => handleStudentAction(s.id, 'timeout')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[var(--atlas-fg)] transition-colors hover:bg-[var(--atlas-surface)]">
                                       <Clock size={14} weight="regular" className="text-amber-500" /> Timeout (24h)
                                     </button>
                                   )}
@@ -365,13 +405,13 @@ export default function AdminDashboard() {
                                   <div className="border-t border-[var(--atlas-border)] my-1"></div>
                                   
                                   {user?.isAdvisor && !isBanned && (
-                                    <button onClick={() => handleStudentAction(s.id, 'ban')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-danger hover:bg-[var(--atlas-surface)]">
+                                    <button type="button" onClick={() => handleStudentAction(s.id, 'ban')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-danger transition-colors hover:bg-red-500/10">
                                       <Prohibit size={14} weight="regular" /> Ban
                                     </button>
                                   )}
                                   
                                   {user?.isAdvisor && (
-                                    <button onClick={() => handleStudentAction(s.id, 'kick')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-danger hover:bg-[var(--atlas-surface)]">
+                                    <button type="button" onClick={() => handleStudentAction(s.id, 'kick')} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-danger transition-colors hover:bg-red-500/10">
                                       <Trash size={14} weight="regular" /> Kick
                                     </button>
                                   )}

@@ -33,6 +33,7 @@ export default function Notifications() {
           )}
           actions={(
             <button
+              type="button"
               onClick={markAllNotificationsRead}
               disabled={unreadNotificationCount === 0}
               className="atlas-btn atlas-btn-ghost disabled:opacity-50"
@@ -58,6 +59,7 @@ export default function Notifications() {
                 return (
                   <li key={notification.id}>
                     <button
+                      type="button"
                       onClick={() => markNotificationRead(notification.id)}
                       className={`relative w-full border-l-2 px-4 py-3 text-left transition ${
                         unread
