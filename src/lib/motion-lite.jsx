@@ -27,22 +27,17 @@ function createMotionElement(tag) {
   return Component;
 }
 
-const motionTags = [
-  'article',
-  'button',
-  'div',
-  'form',
-  'li',
-  'p',
-  'section',
-  'span',
-  'svg',
-];
+const motionElements = new Map();
 
-export const motion = motionTags.reduce((components, tag) => {
-  components[tag] = createMotionElement(tag);
-  return components;
-}, {});
+export const motion = new Proxy({}, {
+  get(_, tag) {
+    if (typeof tag !== 'string') return undefined;
+    if (!motionElements.has(tag)) {
+      motionElements.set(tag, createMotionElement(tag));
+    }
+    return motionElements.get(tag);
+  },
+});
 
 export function AnimatePresence({ children }) {
   return <>{children}</>;
