@@ -42,11 +42,7 @@ export default function SignupStudent() {
 
   return (
     <PageTransition>
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
-        <div className="fixed inset-0 -z-10">
-          <div className="absolute top-1/3 right-1/4 h-72 w-72 rounded-full bg-navy-400/5 blur-3xl animate-blob" />
-          <div className="absolute bottom-1/3 left-1/4 h-64 w-64 rounded-full bg-gold-400/5 blur-3xl animate-blob animation-delay-2000" />
-        </div>
+      <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4 py-12">
 
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.98 }}
@@ -59,7 +55,7 @@ export default function SignupStudent() {
               <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center border-2 border-[var(--atlas-accent)]/55 bg-[rgba(61,109,118,0.12)] font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--atlas-fg)] dark:bg-[rgba(109,158,168,0.16)]" style={{ borderRadius: 2 }}>
                 A
               </div>
-              <h1 className="text-2xl font-bold text-[var(--atlas-fg)]">Join as a Student</h1>
+              <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold text-[var(--atlas-fg)]">Join as a student</h1>
               <p className="mt-2 text-sm text-[var(--atlas-muted)]">Enter your chapter key to join Atlas</p>
             </div>
 
@@ -79,7 +75,7 @@ export default function SignupStudent() {
                   placeholder="e.g. VA-CENT-A1B2"
                   value={chapterKey}
                   onChange={(e) => validateKey(e.target.value)}
-                  className={`w-full rounded-xl border bg-white py-3.5 pl-11 pr-11 text-sm font-mono tracking-wider transition-all duration-200 focus:outline-none focus:ring-2 dark:bg-[var(--atlas-surface)] dark:text-warm-100 ${
+                  className={`atlas-input py-3.5 pl-11 pr-11 font-mono tracking-wider ${
                     keyValid === true
                       ? 'border-emerald-400 focus:ring-emerald-400/20'
                       : keyValid === false
@@ -110,7 +106,7 @@ export default function SignupStudent() {
             {/* Demo key hint */}
             <button
               onClick={fillDemo}
-              className="mb-6 flex w-full items-center gap-2 rounded-xl border border-gold-300/40 bg-gold-100/40 px-4 py-3 text-sm text-gold-500 transition-colors hover:bg-gold-100/60 dark:border-gold-400/20 dark:bg-gold-400/10 dark:text-gold-400"
+              className="mb-6 flex w-full items-center gap-2 rounded-lg border border-[var(--atlas-gold)]/35 bg-[rgba(184,154,82,0.10)] px-4 py-3 text-sm text-[var(--atlas-gold)] transition-colors hover:bg-[rgba(184,154,82,0.16)]"
             >
               <Lightbulb size={14} weight="regular" />
               <span>Demo: Click to use <code className="font-mono font-semibold">VA-CENT-A1B2</code></span>
@@ -146,7 +142,7 @@ export default function SignupStudent() {
               </p>
               <p className="mt-2 text-sm text-[var(--atlas-muted)]">
                 <Link to="/signup/advisor" className="font-medium text-[var(--atlas-muted)] hover:text-[var(--atlas-fg)] dark:text-[var(--atlas-muted)] transition-colors">
-                  Register as an Advisor →
+                  Register as an advisor →
                 </Link>
               </p>
             </div>

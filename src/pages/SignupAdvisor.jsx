@@ -40,11 +40,7 @@ export default function SignupAdvisor() {
 
   return (
     <PageTransition>
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
-        <div className="fixed inset-0 -z-10">
-          <div className="absolute top-1/4 right-1/3 h-72 w-72 rounded-full bg-gold-400/5 blur-3xl animate-blob" />
-          <div className="absolute bottom-1/4 left-1/3 h-64 w-64 rounded-full bg-navy-400/5 blur-3xl animate-blob animation-delay-2000" />
-        </div>
+      <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4 py-12">
 
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.98 }}
@@ -54,10 +50,10 @@ export default function SignupAdvisor() {
         >
           <div className="card-surface p-8 sm:p-10">
             <div className="mb-8 text-center">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-gold-400/20 to-gold-300/20">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[var(--atlas-gold)]/35 bg-[rgba(184,154,82,0.10)]">
                 <Shield size={28} weight="regular" className="text-gold-500" />
               </div>
-              <h1 className="text-2xl font-bold text-[var(--atlas-fg)]">Register Your Chapter</h1>
+              <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold text-[var(--atlas-fg)]">Register your chapter</h1>
               <p className="mt-2 text-sm text-[var(--atlas-muted)]">Set up your chapter inside Atlas</p>
             </div>
 
@@ -76,7 +72,7 @@ export default function SignupAdvisor() {
                   value={form.schoolName}
                   onChange={(e) => setForm({ ...form, schoolName: e.target.value })}
                   placeholder="Independence High School"
-                  className="w-full rounded-xl border border-[var(--atlas-border)] bg-white px-4 py-3.5 text-sm text-[var(--atlas-fg)] placeholder:text-[var(--atlas-muted)] transition-all duration-200 focus:border-navy-400 focus:outline-none focus:ring-2 focus:ring-navy-400/20 dark:border-warm-700 dark:bg-[var(--atlas-surface)] dark:text-warm-100 dark:focus:border-navy-500"
+                  className="atlas-input px-4 py-3.5"
                 />
               </div>
 
@@ -108,7 +104,7 @@ export default function SignupAdvisor() {
                 whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={handleGoogleSignup}
-                className="mt-2 flex w-full items-center justify-center gap-3 rounded-xl border border-[var(--atlas-border)] bg-white px-6 py-3.5 text-sm font-semibold text-[var(--atlas-fg)] shadow-sm transition-all duration-200 hover:border-warm-300 hover:shadow-md dark:border-warm-700 dark:bg-[var(--atlas-elev)] dark:text-warm-200 dark:hover:border-warm-600"
+                className="mt-2 flex w-full items-center justify-center gap-3 rounded-lg border border-[var(--atlas-border)] bg-[var(--atlas-elev)] px-6 py-3.5 text-sm font-semibold text-[var(--atlas-fg)] shadow-sm transition-all duration-200 hover:border-[var(--atlas-accent)] hover:shadow-md"
               >
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                   <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
@@ -124,7 +120,7 @@ export default function SignupAdvisor() {
               <p className="text-sm text-[var(--atlas-muted)]">
                 <Link to="/login" className="font-semibold text-navy-700 hover:text-navy-600 dark:text-navy-400 transition-colors">Sign in</Link>
                 {' · '}
-                <Link to="/signup/student" className="font-semibold text-navy-700 hover:text-navy-600 dark:text-navy-400 transition-colors">Join as Student</Link>
+                <Link to="/signup/student" className="font-semibold text-navy-700 hover:text-navy-600 dark:text-navy-400 transition-colors">Join as student</Link>
               </p>
             </div>
           </div>

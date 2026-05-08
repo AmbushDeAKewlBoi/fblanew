@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, Link } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useAuth } from './context/AuthContext';
 import Navbar from './components/layout/Navbar';
@@ -27,6 +27,43 @@ const Profile           = lazy(() => import('./pages/Profile'));
 const Search            = lazy(() => import('./pages/Search'));
 const AdminDashboard    = lazy(() => import('./pages/AdminDashboard'));
 const Changelog         = lazy(() => import('./pages/Changelog'));
+
+function LegalPage({ type }) {
+  const isPrivacy = type === 'privacy';
+  return (
+    <div className="atlas-page">
+      <section className="atlas-hero">
+        <div className="relative z-10 max-w-3xl space-y-4">
+          <p className="atlas-kicker">Atlas policy</p>
+          <h1 className="text-4xl leading-[1.05]">{isPrivacy ? 'Privacy notice' : 'Terms of service'}</h1>
+          <p className="max-w-[62ch] text-[15px] leading-relaxed text-[var(--atlas-muted)]">
+            {isPrivacy
+              ? 'Atlas stores the profile, chapter, resource, and activity information needed to run an FBLA study network. Chapter advisors can review member activity for safety and moderation.'
+              : 'Use Atlas for lawful school and FBLA preparation work. Do not upload copyrighted material you cannot share, harass other members, or bypass advisor moderation controls.'}
+          </p>
+          <Link to="/" className="atlas-btn atlas-btn-primary">Back to Atlas</Link>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function NotFound() {
+  return (
+    <div className="atlas-page">
+      <section className="atlas-hero">
+        <div className="relative z-10 max-w-2xl space-y-4">
+          <p className="atlas-kicker">404</p>
+          <h1 className="text-4xl leading-[1.05]">This page is not in the binder.</h1>
+          <p className="max-w-[60ch] text-[15px] leading-relaxed text-[var(--atlas-muted)]">
+            The link may be old, or the resource may have moved. Head back to the main Atlas workspace.
+          </p>
+          <Link to="/" className="atlas-btn atlas-btn-primary">Return home</Link>
+        </div>
+      </section>
+    </div>
+  );
+}
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, user, logout } = useAuth();
@@ -128,6 +165,8 @@ export default function App() {
             <Suspense key={location.pathname} fallback={<RouteFallback />}>
               <Routes location={location}>
                 <Route path="/" element={<Landing />} />
+                <Route path="/privacy" element={<LegalPage type="privacy" />} />
+                <Route path="/terms" element={<LegalPage type="terms" />} />
                 <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
                 <Route path="/signup/student" element={<PublicOnlyRoute><SignupStudent /></PublicOnlyRoute>} />
                 <Route path="/signup/advisor" element={<PublicOnlyRoute><SignupAdvisor /></PublicOnlyRoute>} />
@@ -148,7 +187,7 @@ export default function App() {
                 <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/updates" element={<ProtectedRoute><Changelog /></ProtectedRoute>} />
 
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
           </AnimatePresence>

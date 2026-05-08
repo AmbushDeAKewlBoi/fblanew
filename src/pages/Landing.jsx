@@ -119,8 +119,8 @@ export default function Landing() {
           <div className="al-hero-visual">
             <div className="al-visual-frame">
               <img
-                src="https://picsum.photos/seed/atlas-study-desk/960/1200"
-                alt=""
+                src="/atlas-fbla-stage.webp"
+                alt="FBLA competitors standing on stage with an award banner"
                 className="al-visual-img"
                 width={960}
                 height={1200}
@@ -274,7 +274,10 @@ export default function Landing() {
 
         <footer className="al-footer">
           <span>Atlas / FBLA</span>
-          <span>Study with intent. Connect with purpose.</span>
+          <span className="al-footer-links">
+            <Link to="/privacy">Privacy</Link>
+            <Link to="/terms">Terms</Link>
+          </span>
         </footer>
       </div>
     </PageTransition>
@@ -293,7 +296,7 @@ const css = `
   --al-grid: rgba(255,255,255,0.045);
   background: var(--al-bg);
   color: var(--al-fg);
-  font-family: 'Geist', system-ui, sans-serif;
+  font-family: 'Outfit', system-ui, sans-serif;
   min-height: 100dvh;
   overflow-x: hidden;
   position: relative;
@@ -381,6 +384,7 @@ const css = `
 }
 
 .al-title {
+  font-family: var(--font-editorial);
   font-size: clamp(2.25rem, 4.2vw, 3.75rem);
   font-weight: 600;
   letter-spacing: -0.035em;
@@ -591,6 +595,7 @@ const css = `
   color: var(--al-accent-2);
 }
 .al-sec-title {
+  font-family: var(--font-editorial);
   font-size: clamp(1.75rem, 3vw, 2.75rem);
   font-weight: 600;
   letter-spacing: -0.03em;
@@ -691,6 +696,7 @@ const css = `
 }
 .al-manifesto-label { color: #6d5a3a; }
 .al-manifesto-title {
+  font-family: var(--font-editorial);
   font-size: clamp(1.75rem, 3.2vw, 2.75rem);
   font-weight: 600;
   line-height: 1.15;
@@ -773,6 +779,7 @@ const css = `
   padding: clamp(56px, 8vw, 100px) clamp(20px, 5vw, 48px);
 }
 .al-cta-title {
+  font-family: var(--font-editorial);
   font-size: clamp(2rem, 4vw, 3.25rem);
   font-weight: 600;
   line-height: 1.1;
@@ -800,6 +807,18 @@ const css = `
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--al-muted);
+}
+.al-footer a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.al-footer a:hover {
+  color: var(--al-fg);
+}
+.al-footer-links {
+  display: inline-flex;
+  gap: 18px;
 }
 @media (max-width: 500px) {
   .al-footer { flex-direction: column; text-align: center; justify-content: center; }

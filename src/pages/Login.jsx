@@ -21,7 +21,7 @@ export default function Login() {
 
   return (
     <PageTransition>
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
+      <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4 py-12">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -33,7 +33,7 @@ export default function Login() {
               <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center border-2 border-[var(--atlas-accent)] bg-[var(--atlas-surface)] text-xl font-bold text-[var(--atlas-fg)] font-[family-name:var(--font-mono)]">
                 A
               </div>
-              <h1 className="font-[family-name:var(--font-display)] text-3xl uppercase tracking-tight text-[var(--atlas-fg)]">Welcome back</h1>
+              <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--atlas-fg)]">Welcome back</h1>
               <p className="mt-2 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.2em] text-[var(--atlas-muted)]">Sign in to Atlas</p>
             </div>
 

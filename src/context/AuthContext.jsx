@@ -161,28 +161,18 @@ export function AuthProvider({ children }) {
     masterKey: user.chapterKey || 'UNKNOWN-KEY'
   } : null;
 
-  // Show a loading spinner instead of a blank white screen
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        background: '#141414',
-        color: '#e5e2de',
-        fontFamily: 'Inter, system-ui, sans-serif'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            width: 40, height: 40, margin: '0 auto 16px',
-            border: '3px solid #334155',
-            borderTopColor: '#3b82f6',
-            borderRadius: '50%',
-            animation: 'spin 0.8s linear infinite'
-          }} />
-          <p style={{ fontSize: 14, opacity: 0.6 }}>Loading Atlas...</p>
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <div className="flex min-h-[100dvh] items-center justify-center bg-[var(--atlas-bg)] px-4 text-[var(--atlas-fg)]">
+        <div className="w-full max-w-sm space-y-4 text-center" role="status" aria-live="polite" aria-busy="true">
+          <div className="mx-auto h-12 w-12 rounded-lg border border-[var(--atlas-accent)]/50 bg-[rgba(61,109,118,0.12)]" />
+          <div className="space-y-2">
+            <div className="skeleton mx-auto h-3 w-40" />
+            <div className="skeleton mx-auto h-3 w-28" />
+          </div>
+          <p className="font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--atlas-muted)]">
+            Loading Atlas
+          </p>
         </div>
       </div>
     );
