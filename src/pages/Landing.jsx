@@ -43,20 +43,6 @@ export default function Landing() {
       <div className="al-root">
         <div className="al-grain" aria-hidden />
 
-        <header className="al-topbar">
-          <span className="al-topbar-brand">Atlas</span>
-          <span className="al-topbar-sep">/</span>
-          <span className="al-topbar-muted">Study tools and a professional network for FBLA</span>
-          {isAuthenticated && (
-            <>
-              <span className="al-topbar-spacer" />
-              <Link to="/dashboard" className="al-topbar-link">
-                Dashboard
-              </Link>
-            </>
-          )}
-        </header>
-
         <section className="al-hero-split">
           <div className="al-hero-copy">
             <motion.p className="al-eyebrow" {...fade} transition={{ type: 'spring', stiffness: 100, damping: 22 }}>
@@ -93,14 +79,9 @@ export default function Landing() {
                   Open dashboard
                 </Link>
               ) : (
-                <>
-                  <Link to="/signup/student" className="al-btn al-btn-primary active:scale-[0.98]">
-                    Create account
-                  </Link>
-                  <Link to="/login" className="al-btn al-btn-ghost active:scale-[0.98]">
-                    Sign in
-                  </Link>
-                </>
+                <Link to="/signup/student" className="al-btn al-btn-primary active:scale-[0.98]">
+                  Create account
+                </Link>
               )}
             </motion.div>
 
@@ -315,41 +296,6 @@ const css = `
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
 }
 .al-root > *:not(.al-grain) { position: relative; z-index: 1; }
-
-.al-topbar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding: 12px clamp(16px, 4vw, 28px);
-  border-bottom: 1px solid var(--al-line);
-  font-family: 'Geist Mono', ui-monospace, monospace;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--al-muted);
-}
-.al-topbar-brand {
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--al-fg);
-}
-.al-topbar-sep { opacity: 0.45; }
-.al-topbar-muted { flex: 1; min-width: 200px; }
-.al-topbar-spacer { flex: 1; }
-.al-topbar-link {
-  color: var(--al-accent);
-  text-decoration: none;
-  font-weight: 600;
-  padding: 8px 12px;
-  border: 1px solid rgba(109, 158, 168, 0.35);
-  border-radius: 10px;
-  transition: background 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.al-topbar-link:hover {
-  background: rgba(109, 158, 168, 0.12);
-  color: var(--al-fg);
-}
 
 .al-hero-split {
   display: grid;
