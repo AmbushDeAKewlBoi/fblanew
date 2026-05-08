@@ -47,10 +47,14 @@ export default function Landing() {
           <span className="al-topbar-brand">Atlas</span>
           <span className="al-topbar-sep">/</span>
           <span className="al-topbar-muted">Study tools and a professional network for FBLA</span>
-          <span className="al-topbar-spacer" />
-          <Link to={isAuthenticated ? '/dashboard' : '/login'} className="al-topbar-link">
-            {isAuthenticated ? 'Dashboard' : 'Sign in'}
-          </Link>
+          {isAuthenticated && (
+            <>
+              <span className="al-topbar-spacer" />
+              <Link to="/dashboard" className="al-topbar-link">
+                Dashboard
+              </Link>
+            </>
+          )}
         </header>
 
         <section className="al-hero-split">
