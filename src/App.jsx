@@ -160,7 +160,7 @@ export default function App() {
 
       <div className="relative" style={{ zIndex: 1 }}>
         <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
-        <main id="main-content">
+        <main id="main-content" className="overflow-x-hidden w-full max-w-full">
           <AnimatePresence mode="wait">
             <Suspense key={location.pathname} fallback={<RouteFallback />}>
               <Routes location={location}>

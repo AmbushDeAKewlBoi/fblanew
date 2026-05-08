@@ -5,6 +5,8 @@ import { MagnifyingGlass, GridFour, BookOpen } from '@phosphor-icons/react';
 import { FBLA_EVENTS, EVENT_CATEGORIES } from '../data/mockEvents';
 import { useResources } from '../hooks/useResources';
 import PageTransition from '../components/PageTransition';
+import PageHeader from '../components/ui/PageHeader';
+import StatTile from '../components/ui/StatTile';
 
 const fadeUp = {
   initial: { opacity: 0, y: 16 },
@@ -39,17 +41,19 @@ export default function Events() {
 
   return (
     <PageTransition>
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      <div className="atlas-page">
         <motion.div {...fadeUp} transition={{ duration: 0.4 }} className="mb-8">
-          <div className="flex items-center gap-3 mb-1">
-            <div className="flex h-10 w-10 items-center justify-center border border-[var(--atlas-accent)]/45 bg-[rgba(61,109,118,0.12)] text-[var(--atlas-accent)]" style={{ borderRadius: 10 }}>
-              <BookOpen size={20} weight="regular" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-[var(--atlas-fg)]">Events</h1>
-              <p className="text-sm text-[var(--atlas-muted)]">Browse resources by FBLA competitive event</p>
-            </div>
-          </div>
+          <PageHeader
+            kicker="Competitive events"
+            title="Find the event, then find the work around it."
+            subtitle="Browse FBLA competitive areas, filter by event type, and jump straight into the resources members are already sharing."
+            rightSlot={(
+              <div className="grid grid-cols-2 gap-2 sm:w-[320px]">
+                <StatTile label="Events" value={filtered.length} hint="Visible" icon={<BookOpen size={14} weight="regular" />} tone="accent" />
+                <StatTile label="Files" value={resources.length} hint={loading ? 'Loading' : 'Indexed'} tone="gold" />
+              </div>
+            )}
+          />
         </motion.div>
 
         <motion.div {...fadeUp} transition={{ duration: 0.4, delay: 0.1 }} className="mb-6 flex flex-col gap-4">

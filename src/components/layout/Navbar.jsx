@@ -51,25 +51,25 @@ export default function Navbar({ darkMode, setDarkMode }) {
   const isActive = (path) => location.pathname === path;
 
   const navLinkClass = (path) =>
-    `group flex items-center gap-1.5 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] border transition-colors ${
+    `group flex items-center gap-1.5 rounded-full px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] border transition-all duration-200 ${
       isActive(path)
-        ? 'border-[var(--atlas-accent)] bg-[rgba(109,158,168,0.12)] text-[var(--atlas-fg)]'
-        : 'border-transparent text-[var(--atlas-muted)] hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]'
+        ? 'border-[var(--atlas-accent)] bg-[var(--atlas-fg)] text-[var(--atlas-bg)]'
+        : 'border-transparent text-[var(--atlas-muted)] hover:border-[var(--atlas-border)] hover:bg-[var(--atlas-elev)] hover:text-[var(--atlas-fg)]'
     }`;
 
   const iconBtn = (path) =>
-    `relative p-2.5 border transition-colors ${
+    `relative rounded-full p-2.5 border transition-all duration-200 ${
       isActive(path)
-        ? 'border-[var(--atlas-accent)] bg-[rgba(109,158,168,0.1)] text-[var(--atlas-fg)]'
-        : 'border-transparent text-[var(--atlas-muted)] hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]'
+        ? 'border-[var(--atlas-accent)] bg-[var(--atlas-fg)] text-[var(--atlas-bg)]'
+        : 'border-transparent text-[var(--atlas-muted)] hover:border-[var(--atlas-border)] hover:bg-[var(--atlas-elev)] hover:text-[var(--atlas-fg)]'
     }`;
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-[var(--atlas-border)] bg-[var(--atlas-surface)]/92 backdrop-blur-md">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex h-[4.25rem] items-center justify-between gap-4">
+    <nav className="sticky top-3 z-50 px-3">
+      <div className="mx-auto max-w-7xl rounded-full border border-[var(--atlas-border)] bg-[var(--atlas-surface)]/82 px-3 shadow-[0_24px_70px_-48px_rgba(0,0,0,0.78)] backdrop-blur-2xl sm:px-4">
+        <div className="flex h-[4.35rem] items-center justify-between gap-4">
           <Link to="/" className="flex shrink-0 items-center gap-3 group">
-            <div className="flex h-10 w-10 items-center justify-center border-2 border-[var(--atlas-accent)] bg-[var(--atlas-elev)] text-sm font-bold text-[var(--atlas-fg)] font-[family-name:var(--font-mono)] transition-transform group-hover:-translate-x-0.5 group-hover:-translate-y-0.5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--atlas-accent)] bg-[var(--atlas-fg)] text-sm font-bold text-[var(--atlas-bg)] font-[family-name:var(--font-mono)] transition-transform group-hover:scale-105">
               A
             </div>
             <div className="hidden sm:block">
@@ -132,7 +132,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Link
                     to="/upload"
-                    className="ml-1 flex items-center gap-2 border-2 border-[var(--atlas-accent)] bg-[rgba(109,158,168,0.12)] px-4 py-2.5 font-[family-name:var(--font-mono)] text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--atlas-fg)] transition-colors hover:bg-[rgba(109,158,168,0.2)]"
+                    className="ml-1 flex items-center gap-2 rounded-full border border-[var(--atlas-fg)] bg-[var(--atlas-fg)] px-4 py-2.5 font-[family-name:var(--font-mono)] text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--atlas-bg)] transition-transform hover:-translate-y-0.5"
                   >
                     <Plus size={16} weight="bold" />
                     <span className="hidden sm:inline">Upload</span>
@@ -143,7 +143,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   type="button"
                   whileTap={{ scale: 0.92 }}
                   onClick={() => setDarkMode(!darkMode)}
-                  className="border border-transparent p-2.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] hover:text-[var(--atlas-fg)]"
+                  className="rounded-full border border-transparent p-2.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] hover:bg-[var(--atlas-elev)] hover:text-[var(--atlas-fg)]"
                   aria-label="Toggle theme"
                 >
                   <AnimatePresence mode="wait">
@@ -163,9 +163,9 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   <button
                     type="button"
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-2 border border-transparent py-1.5 pl-1.5 pr-2 transition-colors hover:border-[var(--atlas-border)]"
+                    className="flex items-center gap-2 rounded-full border border-transparent py-1.5 pl-1.5 pr-2 transition-colors hover:border-[var(--atlas-border)] hover:bg-[var(--atlas-elev)]"
                   >
-                    <div className="flex h-9 w-9 items-center justify-center border-2 border-[var(--atlas-border)] bg-[var(--atlas-elev)] text-sm font-semibold text-[var(--atlas-fg)] font-[family-name:var(--font-mono)]">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--atlas-border)] bg-[var(--atlas-elev)] text-sm font-semibold text-[var(--atlas-fg)] font-[family-name:var(--font-mono)]">
                       {user?.name?.charAt(0)}
                     </div>
                     <motion.div animate={{ rotate: userMenuOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
@@ -243,7 +243,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   type="button"
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="border border-transparent p-2.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] lg:hidden"
+                  className="rounded-full border border-transparent p-2.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] hover:bg-[var(--atlas-elev)] lg:hidden"
                 >
                   {mobileMenuOpen ? <X size={20} weight="regular" /> : <List size={20} weight="regular" />}
                 </motion.button>
@@ -254,7 +254,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   type="button"
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setDarkMode(!darkMode)}
-                  className="border border-transparent p-2.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)]"
+                  className="rounded-full border border-transparent p-2.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] hover:bg-[var(--atlas-elev)]"
                   aria-label="Toggle theme"
                 >
                   {darkMode ? <Sun size={18} weight="regular" /> : <Moon size={18} weight="regular" />}
@@ -267,7 +267,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                 </Link>
                 <Link
                   to="/signup/student"
-                  className="border-2 border-[var(--atlas-accent)] bg-[rgba(109,158,168,0.12)] px-4 py-2.5 font-[family-name:var(--font-mono)] text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--atlas-fg)] transition-colors hover:bg-[rgba(109,158,168,0.2)]"
+                  className="rounded-full border border-[var(--atlas-fg)] bg-[var(--atlas-fg)] px-4 py-2.5 font-[family-name:var(--font-mono)] text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--atlas-bg)] transition-transform hover:-translate-y-0.5"
                 >
                   Join Atlas
                 </Link>

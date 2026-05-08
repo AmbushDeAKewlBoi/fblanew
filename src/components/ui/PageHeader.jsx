@@ -14,18 +14,18 @@ export default function PageHeader({
 }) {
   return (
     <header className={`atlas-hero ${className}`}>
-      <div className="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <div className="min-w-0 max-w-2xl space-y-3">
+      <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <div className="min-w-0 max-w-4xl space-y-4">
           {kicker ? (
             <div className="atlas-kicker">{kicker}</div>
           ) : null}
           {title ? (
-            <h1 className="text-3xl leading-[1.05] sm:text-4xl">
+            <h1 className="text-[clamp(2.3rem,5vw,4.8rem)] leading-[0.96]">
               {title}
             </h1>
           ) : null}
           {subtitle ? (
-            <p className="text-[15px] leading-relaxed text-[var(--atlas-muted)]">
+            <p className="max-w-[68ch] text-[clamp(1rem,1.4vw,1.18rem)] leading-relaxed text-[var(--atlas-muted)]">
               {subtitle}
             </p>
           ) : null}
