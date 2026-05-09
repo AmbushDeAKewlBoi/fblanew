@@ -167,7 +167,7 @@ export default function Landing() {
       },
     });
 
-    gsap.utils.toArray('.atl-bento-card, .atl-accordion-panel, .atl-visual-card').forEach((card) => {
+    gsap.utils.toArray('.atl-bento-card, .atl-accordion-panel').forEach((card) => {
       gsap.fromTo(card, { opacity: 0, y: 46, scale: 0.94 }, {
         opacity: 1,
         y: 0,
@@ -193,20 +193,6 @@ export default function Landing() {
       });
     });
 
-    gsap.utils.toArray('.atl-stack-card').forEach((card) => {
-      gsap.fromTo(card, { y: 96, scale: 0.9, opacity: 0.25 }, {
-        y: 0,
-        scale: 1,
-        opacity: 1,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: card,
-          start: 'top 92%',
-          end: 'top 52%',
-          scrub: true,
-        },
-      });
-    });
   }, { scope: root });
 
   const manifesto = 'Atlas turns FBLA preparation into a living exchange: publish the work, meet the right competitors, practice in public, and carry the network beyond awards night.';
