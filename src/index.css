@@ -1219,6 +1219,47 @@
     background: linear-gradient(180deg, transparent 50%, rgba(7,9,11,0.55) 100%);
     pointer-events: none;
   }
+  .atl-stack-system {
+    position: relative;
+    overflow: hidden;
+    min-height: 19rem;
+    border-bottom: 1px solid var(--atl-line);
+    background:
+      linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px),
+      linear-gradient(180deg, rgba(255,255,255,0.055) 1px, transparent 1px),
+      radial-gradient(circle at 26% 24%, rgba(100,210,193,0.24), transparent 16rem),
+      radial-gradient(circle at 78% 38%, rgba(248,196,76,0.16), transparent 18rem),
+      rgba(7,9,11,0.42);
+    background-size: 4.5rem 4.5rem, 4.5rem 4.5rem, auto, auto, auto;
+  }
+  .atl-stack-system::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 42%, rgba(7,9,11,0.58) 100%);
+    pointer-events: none;
+  }
+  .atl-stack-system span {
+    position: absolute;
+    display: block;
+    border: 1px solid rgba(255,255,255,0.13);
+    border-radius: 6px;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.11), transparent 58%),
+      rgba(15,19,22,0.76);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 26px 50px -38px rgba(0,0,0,0.78);
+  }
+  .atl-stack-system-signals span:nth-child(1) { left: 9%; top: 14%; width: 48%; height: 24%; }
+  .atl-stack-system-signals span:nth-child(2) { right: 10%; top: 22%; width: 28%; height: 18%; }
+  .atl-stack-system-signals span:nth-child(3) { left: 15%; bottom: 18%; width: 30%; height: 20%; }
+  .atl-stack-system-signals span:nth-child(4) { right: 13%; bottom: 14%; width: 42%; height: 28%; }
+  .atl-stack-system-network span {
+    border-radius: 999px;
+  }
+  .atl-stack-system-network span:nth-child(1) { left: 12%; top: 18%; width: 6rem; height: 6rem; }
+  .atl-stack-system-network span:nth-child(2) { right: 16%; top: 16%; width: 4.4rem; height: 4.4rem; }
+  .atl-stack-system-network span:nth-child(3) { left: 36%; bottom: 18%; width: 5.2rem; height: 5.2rem; }
+  .atl-stack-system-network span:nth-child(4) { right: 30%; bottom: 32%; width: 2.4rem; height: 2.4rem; background: var(--atl-accent); opacity: 0.72; }
   .atl-stack-body {
     padding: clamp(1.4rem, 3vw, 2.2rem);
     display: grid;

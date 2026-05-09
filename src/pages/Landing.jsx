@@ -61,7 +61,7 @@ const focusAreas = [
   },
   {
     title: 'Chapter Ops',
-    photo: PHOTOS.plaque,
+    photo: PHOTOS.podium,
     copy: 'Advisor-friendly visibility, moderation patterns, and member momentum live in one calm workspace.',
   },
 ];
@@ -71,8 +71,8 @@ const stackItems = [
     title: 'Dashboard',
     copy: 'A command surface for uploads, network suggestions, and chapter momentum.',
     Icon: Lightning,
-    photo: PHOTOS.hero,
     tag: 'Opening session',
+    visual: 'signals',
   },
   {
     title: 'Events',
@@ -85,8 +85,8 @@ const stackItems = [
     title: 'Network',
     copy: 'Profiles, posts, private messages, and collaboration signals in one system.',
     Icon: Handshake,
-    photo: PHOTOS.trophyLine,
     tag: 'Awards line',
+    visual: 'network',
   },
 ];
 
@@ -413,15 +413,24 @@ export default function Landing() {
             </p>
           </div>
           <div className="atl-stack">
-            {stackItems.map(({ title, copy, Icon, photo, tag }) => (
+            {stackItems.map(({ title, copy, Icon, photo, tag, visual }) => (
               <article key={title} className="atl-stack-card atl-visual-card">
-                <div className="atl-stack-photo atl-cutout-soft">
-                  <Photo
-                    name={photo}
-                    alt={`${title} surface — visualised with a Virginia FBLA stage moment.`}
-                    sizes="(min-width: 980px) 60vw, 92vw"
-                  />
-                </div>
+                {photo ? (
+                  <div className="atl-stack-photo atl-cutout-soft">
+                    <Photo
+                      name={photo}
+                      alt={`${title} surface — visualised with a Virginia FBLA stage moment.`}
+                      sizes="(min-width: 980px) 60vw, 92vw"
+                    />
+                  </div>
+                ) : (
+                  <div className={`atl-stack-system atl-stack-system-${visual}`} aria-hidden>
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                )}
                 <div className="atl-stack-body">
                   <span className="atl-stack-tag"><Icon size={16} weight="regular" /> {tag}</span>
                   <h3>{title}</h3>
