@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
+import { useEffect, useMemo, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation, Link } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useAuth } from './context/AuthContext';
@@ -132,19 +132,11 @@ function RouteFallback() {
 
 export default function App() {
   const location = useLocation();
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('atlas-dark-mode') ?? localStorage.getItem('fbla-dark-mode');
-      if (saved !== null) return saved === 'true';
-      return true;
-    }
-    return true;
-  });
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-    localStorage.setItem('atlas-dark-mode', darkMode);
-  }, [darkMode]);
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('atlas-dark-mode', 'true');
+  }, []);
 
   const gearVariant = useMemo(() => getGearVariant(location.pathname), [location.pathname]);
 
@@ -159,7 +151,7 @@ export default function App() {
       </AnimatePresence>
 
       <div className="relative" style={{ zIndex: 1 }}>
-        <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+        <Navbar />
         <main id="main-content" className="overflow-x-hidden w-full max-w-full">
           <AnimatePresence mode="wait">
             <Suspense key={location.pathname} fallback={<RouteFallback />}>

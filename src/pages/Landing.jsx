@@ -29,7 +29,6 @@ const PHOTOS = {
   wave: 'stage-wave-officers',
   campaign: 'campaign-scholarships',
   screen: 'make-your-mark-screen',
-  honorDuo: 'honor-chapter-duo',
   plaque: 'award-plaque-stage',
 };
 
@@ -62,7 +61,7 @@ const focusAreas = [
   },
   {
     title: 'Chapter Ops',
-    photo: PHOTOS.honorDuo,
+    photo: PHOTOS.plaque,
     copy: 'Advisor-friendly visibility, moderation patterns, and member momentum live in one calm workspace.',
   },
 ];
@@ -314,13 +313,14 @@ export default function Landing() {
               </p>
             </article>
 
-            <article className="atl-bento-card atl-bento-quiet atl-bento-mini lg:col-span-2">
-              <div className="atl-mini-photo">
-                <Photo
-                  name={PHOTOS.honorDuo}
-                  alt="Two Virginia FBLA students at an honor chapter table."
-                  sizes="(min-width: 980px) 28vw, 92vw"
-                />
+            <article className="atl-bento-card atl-bento-quiet atl-signal-card lg:col-span-2">
+              <div className="atl-signal-grid" aria-hidden>
+                <span>Event</span>
+                <strong>Management Information Systems</strong>
+                <span>Ask</span>
+                <strong>Practice partner</strong>
+                <span>Match</span>
+                <strong>Chapter-ready</strong>
               </div>
               <div className="atl-bento-icon"><Handshake size={22} weight="regular" /></div>
               <h3>Introductions with context.</h3>
@@ -405,11 +405,11 @@ export default function Landing() {
 
         <section className="atl-desire">
           <div className="atl-pinned-copy">
-            <p className="atl-kicker"><span className="atl-kicker-dot" aria-hidden />The app after the first impression</p>
-            <h2>Every protected screen now inherits the same high-contrast Atlas system.</h2>
+            <p className="atl-kicker"><span className="atl-kicker-dot" aria-hidden />From prep to podium</p>
+            <h2>Atlas keeps chapter resources, event prep, and peer connections moving together.</h2>
             <p>
-              Navigation, cards, headers, forms, chips, stat tiles, and resource modules share one visual language, so
-              the full product feels redesigned when members move through it.
+              Students can find event materials, share work, ask for feedback, and build useful relationships without
+              scattering preparation across chats, drives, and hallway conversations.
             </p>
           </div>
           <div className="atl-stack">

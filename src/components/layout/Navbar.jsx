@@ -12,8 +12,6 @@ import {
   CaretDown,
   List,
   X,
-  Sun,
-  Moon,
   FolderOpen,
   Shield,
   BookOpen,
@@ -24,7 +22,7 @@ import {
   Terminal,
 } from '@phosphor-icons/react';
 
-export default function Navbar({ darkMode, setDarkMode }) {
+export default function Navbar() {
   const { user, isAuthenticated, logout, chapter } = useAuth();
   const { unreadNotificationCount, currentProfile } = useSocial();
   const navigate = useNavigate();
@@ -139,26 +137,6 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   </Link>
                 </motion.div>
 
-                <motion.button
-                  type="button"
-                  whileTap={{ scale: 0.92 }}
-                  onClick={() => setDarkMode(!darkMode)}
-                  className="rounded-full border border-transparent p-2.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] hover:bg-[var(--atlas-elev)] hover:text-[var(--atlas-fg)]"
-                  aria-label="Toggle theme"
-                >
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={darkMode ? 'sun' : 'moon'}
-                      initial={{ rotate: -90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: 90, opacity: 0 }}
-                      transition={{ duration: 0.15 }}
-                    >
-                      {darkMode ? <Sun size={18} weight="regular" /> : <Moon size={18} weight="regular" />}
-                    </motion.div>
-                  </AnimatePresence>
-                </motion.button>
-
                 <div className="relative">
                   <button
                     type="button"
@@ -250,15 +228,6 @@ export default function Navbar({ darkMode, setDarkMode }) {
               </>
             ) : (
               <>
-                <motion.button
-                  type="button"
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setDarkMode(!darkMode)}
-                  className="rounded-full border border-transparent p-2.5 text-[var(--atlas-muted)] transition-colors hover:border-[var(--atlas-border)] hover:bg-[var(--atlas-elev)]"
-                  aria-label="Toggle theme"
-                >
-                  {darkMode ? <Sun size={18} weight="regular" /> : <Moon size={18} weight="regular" />}
-                </motion.button>
                 <Link
                   to="/login"
                   className="px-3 py-2 font-[family-name:var(--font-mono)] text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--atlas-muted)] transition-colors hover:text-[var(--atlas-fg)]"

@@ -1013,6 +1013,38 @@
     justify-content: flex-end;
     gap: 1.1rem;
   }
+  .atl-signal-card {
+    gap: 1.1rem;
+  }
+  .atl-signal-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 0.56fr) minmax(0, 1fr);
+    gap: 0.65rem 0.9rem;
+    width: 100%;
+    margin-bottom: auto;
+    padding: 1rem;
+    border: 1px solid rgba(255,255,255,0.13);
+    border-radius: 6px;
+    background:
+      linear-gradient(135deg, rgba(100,210,193,0.12), transparent 60%),
+      rgba(7,9,11,0.28);
+  }
+  .atl-signal-grid span,
+  .atl-signal-grid strong {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .atl-signal-grid span {
+    color: var(--atl-accent);
+  }
+  .atl-signal-grid strong {
+    color: #f7f1e6;
+    font-weight: 700;
+  }
   .atl-mini-photo {
     position: relative;
     z-index: 1;
