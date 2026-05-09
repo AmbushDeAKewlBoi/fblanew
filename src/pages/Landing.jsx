@@ -20,11 +20,17 @@ import { CAMPUS_SIGNALS } from '../data/mockCommunity';
 gsap.registerPlugin(ScrollTrigger);
 
 const PHOTOS = {
-  pennant: 'mis-pennant-trio',
-  trophy: 'team-trophy-quartet',
-  podium: 'make-your-mark-podium',
-  speaker: 'speaker-projection',
-  stage: 'stage-introduction',
+  hero: 'award-stage-wide',
+  award: 'championship-award-group',
+  trophyLine: 'trophy-line-close',
+  podium: 'student-speaker-podium',
+  speaker: 'make-your-mark-speaker',
+  keynote: 'fbla-keynote-lectern',
+  wave: 'stage-wave-officers',
+  campaign: 'campaign-scholarships',
+  screen: 'make-your-mark-screen',
+  honorDuo: 'honor-chapter-duo',
+  plaque: 'award-plaque-stage',
 };
 
 function Photo({ name, alt, className = '', loading = 'lazy', sizes, fetchPriority }) {
@@ -46,17 +52,17 @@ function Photo({ name, alt, className = '', loading = 'lazy', sizes, fetchPriori
 const focusAreas = [
   {
     title: 'Library',
-    photo: PHOTOS.speaker,
+    photo: PHOTOS.keynote,
     copy: 'Rubric-tagged prep files, examples, study guides, and roleplay drills stay searchable by event.',
   },
   {
     title: 'Network',
-    photo: PHOTOS.stage,
+    photo: PHOTOS.wave,
     copy: 'Find competitors by chapter, strength, event, or ambition, then turn practice into correspondence.',
   },
   {
     title: 'Chapter Ops',
-    photo: PHOTOS.trophy,
+    photo: PHOTOS.honorDuo,
     copy: 'Advisor-friendly visibility, moderation patterns, and member momentum live in one calm workspace.',
   },
 ];
@@ -66,22 +72,22 @@ const stackItems = [
     title: 'Dashboard',
     copy: 'A command surface for uploads, network suggestions, and chapter momentum.',
     Icon: Lightning,
-    photo: PHOTOS.pennant,
-    tag: 'Practice → podium',
+    photo: PHOTOS.hero,
+    tag: 'Opening session',
   },
   {
     title: 'Events',
     copy: 'A fast index for competitive categories, search, and resource counts.',
     Icon: Books,
-    photo: PHOTOS.trophy,
-    tag: 'Glass trophy in hand',
+    photo: PHOTOS.plaque,
+    tag: 'Plaque on stage',
   },
   {
     title: 'Network',
     copy: 'Profiles, posts, private messages, and collaboration signals in one system.',
     Icon: Handshake,
-    photo: PHOTOS.stage,
-    tag: 'Stage introductions',
+    photo: PHOTOS.trophyLine,
+    tag: 'Awards line',
   },
 ];
 
@@ -185,7 +191,7 @@ export default function Landing() {
         <section className="atl-hero">
           <div className="atl-hero-bg" aria-hidden>
             <Photo
-              name={PHOTOS.podium}
+              name={PHOTOS.hero}
               alt=""
               loading="eager"
               fetchPriority="high"
@@ -202,13 +208,7 @@ export default function Landing() {
                 <span className="atl-kicker-dot" aria-hidden /> Virginia FBLA · Study network
               </p>
               <h1 className="atl-title">
-                Where chapter drills compound into
-                <span
-                  className="atl-inline-image"
-                  style={{ backgroundImage: `url(/landingassets/${PHOTOS.trophy}-sm.webp)` }}
-                  aria-hidden
-                />
-                first-place pennants.
+                Where chapter drills compound into first-place pennants.
               </h1>
               <p className="atl-lede">
                 Atlas brings binder prep, chapter signals, event discovery, and private collaboration into one calm
@@ -238,7 +238,7 @@ export default function Landing() {
             <div className="atl-hero-art" aria-hidden>
               <figure className="atl-photo-feature atl-cutout atl-hero-floater">
                 <Photo
-                  name={PHOTOS.pennant}
+                  name={PHOTOS.award}
                   alt=""
                   loading="eager"
                   fetchPriority="high"
@@ -246,7 +246,7 @@ export default function Landing() {
                 />
                 <figcaption className="atl-photo-caption">
                   <span>04 / 11 / 26</span>
-                  <span>Management Information Systems · 1st Place</span>
+                  <span>Virginia FBLA · awards stage</span>
                 </figcaption>
               </figure>
 
@@ -261,7 +261,7 @@ export default function Landing() {
               <div className="atl-hero-chip">
                 <Trophy size={18} weight="regular" />
                 <div>
-                  <span className="atl-hero-chip-label">Glass on stage</span>
+                  <span className="atl-hero-chip-label">Awards night</span>
                   <span className="atl-hero-chip-value">{CAMPUS_SIGNALS[2].value} resources exchanged</span>
                 </div>
               </div>
@@ -298,13 +298,13 @@ export default function Landing() {
             <article className="atl-bento-card atl-bento-feature group lg:col-span-4">
               <div className="atl-bento-image atl-cutout-soft">
                 <Photo
-                  name={PHOTOS.pennant}
-                  alt="Three Virginia FBLA students holding the Management Information Systems first place pennant."
+                  name={PHOTOS.campaign}
+                  alt="Virginia FBLA students campaigning beside a scholarship-themed display board."
                   className="group-hover:scale-[1.04] transition-transform duration-700 ease-out"
                 />
               </div>
               <div className="atl-bento-meta">
-                <span className="atl-meta-pin"><Trophy size={14} weight="regular" /> First place · MIS</span>
+                <span className="atl-meta-pin"><Trophy size={14} weight="regular" /> Campaign table</span>
               </div>
               <div className="atl-bento-icon"><Books size={22} weight="regular" /></div>
               <h3>A shared library that behaves like a competitive advantage.</h3>
@@ -314,7 +314,14 @@ export default function Landing() {
               </p>
             </article>
 
-            <article className="atl-bento-card atl-bento-quiet lg:col-span-2">
+            <article className="atl-bento-card atl-bento-quiet atl-bento-mini lg:col-span-2">
+              <div className="atl-mini-photo">
+                <Photo
+                  name={PHOTOS.honorDuo}
+                  alt="Two Virginia FBLA students at an honor chapter table."
+                  sizes="(min-width: 980px) 28vw, 92vw"
+                />
+              </div>
               <div className="atl-bento-icon"><Handshake size={22} weight="regular" /></div>
               <h3>Introductions with context.</h3>
               <p>
@@ -323,7 +330,14 @@ export default function Landing() {
               </p>
             </article>
 
-            <article className="atl-bento-card atl-bento-quiet lg:col-span-2">
+            <article className="atl-bento-card atl-bento-quiet atl-bento-mini lg:col-span-2">
+              <div className="atl-mini-photo">
+                <Photo
+                  name={PHOTOS.screen}
+                  alt="A Make Your Mark screen at a Virginia FBLA event."
+                  sizes="(min-width: 980px) 28vw, 92vw"
+                />
+              </div>
               <div className="atl-bento-icon"><ChartLineUp size={22} weight="regular" /></div>
               <h3>Momentum you can scan.</h3>
               <p>
@@ -335,8 +349,8 @@ export default function Landing() {
             <article className="atl-bento-card atl-bento-feature group lg:col-span-4">
               <div className="atl-bento-image atl-cutout-soft">
                 <Photo
-                  name={PHOTOS.trophy}
-                  alt="Four Virginia FBLA students celebrating with a glass trophy on stage."
+                  name={PHOTOS.trophyLine}
+                  alt="Virginia FBLA students celebrating with awards on stage."
                   className="group-hover:scale-[1.04] transition-transform duration-700 ease-out"
                 />
               </div>
@@ -356,13 +370,7 @@ export default function Landing() {
         <section className="atl-section atl-accordions">
           <div className="atl-section-head atl-section-head-wide">
             <h2>
-              Built for students who move between
-              <span
-                className="atl-inline-image atl-inline-image-small"
-                style={{ backgroundImage: `url(/landingassets/${PHOTOS.podium}-sm.webp)` }}
-                aria-hidden
-              />
-              practice, proof, and people.
+              Built for students who move between practice, proof, and people.
             </h2>
           </div>
           <div className="atl-accordion-row">
