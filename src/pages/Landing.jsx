@@ -21,7 +21,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const PHOTOS = {
   hero: 'award-stage-wide',
-  award: 'championship-award-group',
+  award: 'mis-first-place-group',
   trophyLine: 'trophy-line-close',
   podium: 'student-speaker-podium',
   speaker: 'make-your-mark-speaker',
@@ -29,7 +29,7 @@ const PHOTOS = {
   wave: 'stage-wave-officers',
   campaign: 'campaign-scholarships',
   screen: 'make-your-mark-screen',
-  plaque: 'award-plaque-stage',
+  plaque: 'mis-first-place-trio',
 };
 
 function Photo({ name, alt, className = '', loading = 'lazy', sizes, fetchPriority }) {
@@ -124,7 +124,7 @@ const stackItems = [
     copy: 'A fast index for competitive categories, search, and resource counts.',
     Icon: Books,
     photo: PHOTOS.plaque,
-    tag: 'Plaque on stage',
+    tag: 'MIS first place',
   },
   {
     title: 'Network',
@@ -257,8 +257,8 @@ export default function Landing() {
                   sizes="(min-width: 1024px) 640px, 92vw"
                 />
                 <figcaption className="atl-photo-caption">
-                  <span>04 / 11 / 26</span>
-                  <span>Virginia FBLA · awards stage</span>
+                  <span>2026</span>
+                  <span>Virginia FBLA · MIS first place</span>
                 </figcaption>
               </figure>
 

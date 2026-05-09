@@ -24,14 +24,14 @@ const aliases = {
 async function run() {
   if (!fs.existsSync(OUT)) fs.mkdirSync(OUT, { recursive: true });
 
-  const files = fs.readdirSync(SRC).filter((f) => /\.(jpe?g)$/i.test(f));
+  const files = fs.readdirSync(SRC).filter((f) => /\.(jpe?g|png)$/i.test(f));
   if (!files.length) {
-    console.log('No JPEGs found in', SRC);
+    console.log('No JPEG or PNG files found in', SRC);
     return;
   }
 
   for (const file of files) {
-    const baseRaw = file.replace(/\.(jpe?g)$/i, '');
+    const baseRaw = file.replace(/\.(jpe?g|png)$/i, '');
     const slug = aliases[baseRaw] || baseRaw.replace(/[^a-z0-9-]/gi, '-').toLowerCase();
     const inputPath = path.join(SRC, file);
 
@@ -39,7 +39,6 @@ async function run() {
     console.log(`[${slug}] source ${meta.width}x${meta.height}`);
 
     for (const t of targets) {
-      if (meta.width && t.width >= meta.width && t.suffix !== 'sm') continue;
       const outName = `${slug}-${t.suffix}.webp`;
       const outPath = path.join(OUT, outName);
       await sharp(inputPath)
