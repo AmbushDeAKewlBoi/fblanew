@@ -48,6 +48,51 @@ function Photo({ name, alt, className = '', loading = 'lazy', sizes, fetchPriori
   );
 }
 
+function ProductPreview({ type }) {
+  if (type === 'network') {
+    return (
+      <div className="atl-product-preview atl-product-preview-network" aria-hidden>
+        <div className="atl-preview-bar">
+          <span>Network match</span>
+          <strong>4 shared events</strong>
+        </div>
+        {[
+          ['Ari Patel', 'Business Management · Richmond', 'Roleplay partner'],
+          ['Mia Chen', 'Marketing · Fairfax', 'Feedback swap'],
+          ['Noah Brooks', 'MIS · Virginia Beach', 'Resource exchange'],
+        ].map(([name, meta, action]) => (
+          <div className="atl-preview-person" key={name}>
+            <div className="atl-preview-avatar">{name.charAt(0)}</div>
+            <div>
+              <strong>{name}</strong>
+              <span>{meta}</span>
+            </div>
+            <em>{action}</em>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="atl-product-preview atl-product-preview-dashboard" aria-hidden>
+      <div className="atl-preview-bar">
+        <span>Chapter dashboard</span>
+        <strong>Live this week</strong>
+      </div>
+      <div className="atl-preview-stats">
+        <div><span>Uploads</span><strong>42</strong></div>
+        <div><span>Intros</span><strong>126</strong></div>
+        <div><span>Events</span><strong>31</strong></div>
+      </div>
+      <div className="atl-preview-task">
+        <span>Next best move</span>
+        <strong>Share Accounting II prep packet with two matched teams.</strong>
+      </div>
+    </div>
+  );
+}
+
 const focusAreas = [
   {
     title: 'Library',
@@ -72,7 +117,7 @@ const stackItems = [
     copy: 'A command surface for uploads, network suggestions, and chapter momentum.',
     Icon: Lightning,
     tag: 'Opening session',
-    visual: 'signals',
+    visual: 'dashboard',
   },
   {
     title: 'Events',
@@ -148,15 +193,7 @@ export default function Landing() {
       });
     });
 
-    ScrollTrigger.create({
-      trigger: '.atl-desire',
-      start: 'top top',
-      end: 'bottom bottom',
-      pin: '.atl-pinned-copy',
-      pinSpacing: false,
-    });
-
-    gsap.utils.toArray('.atl-stack-card').forEach((card, index) => {
+    gsap.utils.toArray('.atl-stack-card').forEach((card) => {
       gsap.fromTo(card, { y: 96, scale: 0.9, opacity: 0.25 }, {
         y: 0,
         scale: 1,
@@ -166,16 +203,6 @@ export default function Landing() {
           trigger: card,
           start: 'top 92%',
           end: 'top 52%',
-          scrub: true,
-        },
-      });
-      gsap.to(card, {
-        filter: 'brightness(0.62)',
-        opacity: index === 2 ? 1 : 0.42,
-        scrollTrigger: {
-          trigger: card,
-          start: 'top 22%',
-          end: 'bottom 12%',
           scrub: true,
         },
       });
@@ -424,11 +451,8 @@ export default function Landing() {
                     />
                   </div>
                 ) : (
-                  <div className={`atl-stack-system atl-stack-system-${visual}`} aria-hidden>
-                    <span />
-                    <span />
-                    <span />
-                    <span />
+                  <div className="atl-stack-system">
+                    <ProductPreview type={visual} />
                   </div>
                 )}
                 <div className="atl-stack-body">
